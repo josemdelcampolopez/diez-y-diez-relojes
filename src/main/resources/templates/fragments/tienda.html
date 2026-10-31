@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<!-- Cabecera de la parte pública: reutiliza los recursos comunes de base.html
+     y añade debajo el tema de la tienda. El admin reutiliza el fragmento "tema" -->
+<head th:fragment="head(titulo)">
+    <th:block th:replace="~{fragments/base :: recursos(${titulo})}"></th:block>
+    <title th:text="|${titulo} · Diez y Diez|">Diez y Diez</title>
+    <th:block th:fragment="tema">
+        <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+
+    <style type="text/tailwindcss">
+
+        /* ===== TEMA «VERDE INGLÉS Y SEGUNDERO» (solo parte pública) =====
+           Paleta complementaria dividida con la regla 60-30-10:
+           60 % fondo, 30 % principal, 10 % acento y dos secundarios para detalles.
+           Este bloque se lee después del de base.html, así que lo que redefino aquí gana. */
+
+        @theme {
+            /* Base (60 %): mismos nombres que en base.html, valores nuevos */
+            --color-fondo: #edf0eb;
+            --color-superficie: #f7f8f5;
+            --color-superficie-elevada: #ffffff;
+            --color-borde: #b7c4ba;
+            --color-borde-campo: #7a8f81;   /* más oscuro para que los campos se distingan (contraste 3:1) */
+            --color-foto: #e7e8ec;          /* el gris de estudio de las fotos de producto */
+            /* Texto */
+            --color-texto: #18241f;
+            --color-texto-atenuado: #4e5e56;
+
+            /* Principal (30 %): verde inglés */
+            --color-principal: #1f4a3c;
+            --color-principal-hover: #2a5e4d;
+
+            /* Acento (10 %): rojo segundero, solo para el precio y la acción principal */
+            --color-acento: #c3362b;
+            --color-acento-hover: #a52a21;
+
+            /* Secundarios */
+            --color-secundario: #5c3a5c;    /* berenjena: marca del reloj */
+            --color-terciario: #93a89a;     /* salvia: subrayados y bordes activos */
+            /* Estados, más oscuros para leerse sobre fondo claro */
+            --color-exito: #2e7550;
+            --color-error: #b3261e;
+            --color-aviso: #8a5a00;
+            --color-info: #2e5e8c;
+        }
+
+        @layer components {
+            /* ===== ESTRUCTURA ===== */
+            .pagina {
+                @apply p-0;
+                background-image: none;
+                color-scheme: light;
+            }
+
+            /* To do lo que va debajo del header lleva los márgenes laterales */
+            .cuerpo-tienda {
+                @apply px-4 pt-8 pb-12 md:px-6 lg:px-8;
+            }
+
+            /* ===== BOTONES (mismas clases que en base.html, colores del tema) ===== */
+            .btn {
+                @apply focus-visible:outline-principal;
+            }
+
+            .btn-primario {
+                @apply border-acento bg-acento text-white;
+                background-image: none;
+            }
+
+            .btn-primario:hover:not(:disabled) {
+                @apply border-acento-hover bg-acento-hover;
+                box-shadow: none;
+            }
+
+            .btn-primario:active:not(:disabled) {
+                box-shadow: none;
+            }
+
+            .btn-secundario {
+                @apply border-principal text-principal hover:bg-principal hover:text-fondo;
+            }
+
+            .btn-neutro {
+                @apply hover:border-principal hover:text-principal;
+            }
+
+            .btn-claro {
+                @apply border-fondo bg-transparent text-fondo hover:bg-fondo hover:text-principal;
+            }
+
+            /* ===== FORMULARIOS ===== */
+            .campo {
+                @apply border-borde-campo bg-superficie-elevada focus:border-principal focus:ring-principal/25;
+                color-scheme: light;
+            }
+
+            .campo-archivo {
+                @apply border-borde-campo bg-superficie-elevada hover:border-principal file:bg-principal file:text-fondo hover:file:bg-principal-hover;
+                color-scheme: light;
+            }
+
+            /* Vista previa del avatar en el registro: círculo punteado vacío, línea continua con foto */
+            .vista-previa-avatar {
+                @apply flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-borde-campo bg-superficie-elevada;
+            }
+
+            .vista-previa-avatar:has(img:not([hidden])) {
+                @apply border-solid border-principal;
+            }
+
+            .vista-previa-avatar img {
+                @apply h-full w-full object-cover;
+            }
+
+            /* ===== LOGO ===== */
+            .logo-reloj {
+                @apply h-9 w-9 shrink-0;
+            }
+
+            /* ===== CABECERA FIJA (abrir, cerrar y compactar: js/cabecera.js) ===== */
+            .cabecera-tienda {
+                @apply sticky top-0 z-40 bg-principal px-4 text-fondo md:px-6 lg:px-8;
+                transition: box-shadow 200ms ease-out;
+            }
+
+            /* Al bajar por la página aparece una línea roja fina abajo, como un segundero */
+            .cabecera-tienda.compacta {
+                box-shadow: inset 0 -2px 0 var(--color-acento);
+            }
+
+            /* Sobre el verde, el contorno del foco tiene que ser claro */
+            .cabecera-tienda .btn {
+                @apply focus-visible:outline-fondo;
+            }
+
+            .cabecera-fila {
+                @apply flex items-center gap-3 py-4 md:gap-8;
+                transition: padding 200ms ease-out;
+            }
+
+            .compacta .cabecera-fila {
+                @apply py-2;
+            }
+
+            /* Logo a la izquierda; en el móvil empuja el avatar y la hamburguesa a la derecha */
+            .cabecera-logo {
+                @apply mr-auto inline-flex min-h-11 items-center gap-3 rounded-sm font-serif text-2xl font-medium text-fondo transition-colors duration-200 ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo md:mr-0;
+            }
+
+            .cabecera-logo .logo-reloj {
+                @apply h-10 w-10 duration-200 ease-out;
+                transition-property: width, height;
+            }
+
+            .compacta .cabecera-logo .logo-reloj {
+                @apply h-8 w-8;
+            }
+
+            /* Menú: en fila desde md; en el móvil, panel que se despliega bajo el header */
+            .cabecera-menu {
+                @apply absolute inset-x-0 top-full hidden flex-col gap-1 border-t border-white/15 bg-principal px-4 pt-2 pb-4 md:static md:flex md:flex-1 md:flex-row md:items-center md:gap-6 md:border-0 md:p-0;
+            }
+
+            .menu-abierto .cabecera-menu {
+                @apply flex;
+            }
+
+            .nav-enlace {
+                @apply relative inline-flex min-h-11 items-center gap-2 text-base font-medium text-fondo transition-colors duration-200 ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo;
+            }
+
+            .nav-enlace::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: .5rem;
+                height: 1px;
+                background: var(--color-terciario);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 200ms ease-out;
+            }
+
+            .nav-enlace:hover::after, .nav-enlace:focus-visible::after {
+                transform: scaleX(1);
+            }
+
+            /* Acceso al admin: en escritorio solo el icono (el texto queda para lectores de pantalla) */
+            .cabecera-admin {
+                @apply inline-flex min-h-11 items-center gap-2 rounded-sm text-base font-medium text-fondo transition-colors duration-200 ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo md:ml-auto md:text-terciario;
+            }
+
+            /* Usuario identificado: avatar con su inicial y desplegable */
+            .cabecera-usuario {
+                @apply relative;
+            }
+
+            .usuario-boton {
+                @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-sm text-base font-medium text-fondo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo;
+            }
+
+            .usuario-boton .flecha {
+                transition: transform 200ms ease-out;
+            }
+
+            .usuario-boton[aria-expanded="true"] .flecha {
+                transform: rotate(180deg);
+            }
+
+            .avatar {
+                @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fondo font-serif text-lg font-medium leading-none text-acento overflow-hidden;
+            }
+
+            /* La foto deja un aro fino del color de fondo alrededor (p-0.5) */
+            .avatar-foto {
+                @apply h-full w-full rounded-full object-cover p-0.5;
+            }
+
+            .compacta .avatar {
+                @apply h-8 w-8 text-base;
+            }
+
+            .menu-usuario {
+                @apply absolute right-0 top-full z-50 mt-2 w-52 rounded-md border border-borde bg-superficie-elevada p-1.5 text-texto shadow-lg;
+            }
+
+            .menu-usuario-enlace {
+                @apply flex min-h-11 items-center rounded-sm px-3 text-base text-texto transition-colors duration-200 ease-out hover:bg-fondo hover:text-principal focus-visible:outline-2 focus-visible:outline-principal;
+            }
+
+            /* Botón de hamburguesa (solo móvil): cambia de icono según aria-expanded */
+            .cabecera-hamburguesa {
+                @apply inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-sm text-fondo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo md:hidden;
+            }
+
+            .cabecera-hamburguesa .icono-cerrar,
+            .cabecera-hamburguesa[aria-expanded="true"] .icono-abrir {
+                display: none;
+            }
+
+            .cabecera-hamburguesa[aria-expanded="true"] .icono-cerrar {
+                display: block;
+            }
+
+            /* Sesión: tienda.js pone la clase con-sesion en #cabecera al identificarse */
+            .cabecera-tienda:not(.con-sesion) .solo-sesion,
+            .cabecera-tienda.con-sesion .solo-anonimo {
+                display: none;
+            }
+
+            /* ===== PRODUCTOS ===== */
+            .tarjeta {
+                @apply hover:border-terciario hover:bg-superficie-elevada;
+            }
+
+            .tarjeta:hover {
+                box-shadow: none;
+            }
+
+            .marco-imagen {
+                @apply bg-foto;
+                background-image: none;
+            }
+
+            .marca {
+                @apply text-secundario;
+            }
+
+            .precio {
+                @apply font-serif text-[1.75rem] font-medium italic text-acento;
+            }
+
+            .pie-tarjeta {
+                @apply flex flex-wrap items-center justify-between gap-3 border-t border-borde bg-fondo/50 px-4 py-3 sm:px-5;
+            }
+
+            .ficha {
+                @apply mt-5 grid grid-cols-2 gap-4;
+            }
+
+            .ficha dt {
+                @apply text-xs font-semibold uppercase tracking-[0.18em] text-texto-atenuado;
+            }
+
+            .ficha dd {
+                @apply mt-1 text-base font-medium text-texto;
+            }
+
+            /* ===== LISTADO EN REJILLA (plantillas_html/listado_productos.html) ===== */
+            /* 1 columna en el móvil, 2 desde sm y 3 desde lg */
+            .rejilla-productos {
+                @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
+            }
+
+            /* En el listado, #contenedor pierde el marco del panel: las tarjetas ya llevan el suyo.
+               :has() = "si dentro tiene...". El login, el registro y la ficha siguen igual */
+            #contenedor:has(.rejilla-productos) {
+                @apply border-0 bg-transparent p-0;
+            }
+
+            /* Tarjeta vertical: foto arriba, datos y pie abajo. flex-col + flex-1 en los datos
+               hace que todas las tarjetas de una fila midan lo mismo y los botones queden alineados */
+            .tarjeta-producto {
+                @apply flex flex-col;
+            }
+
+            /* La foto va en absoluto dentro de un cuadrado: así nunca estira la tarjeta */
+            .tarjeta-foto {
+                @apply relative aspect-square overflow-hidden rounded-none bg-superficie p-0;
+            }
+
+            /* ===== PILA DE FOTOS (la mueve cambiarFoto en tienda.js) =====
+               Cada foto es una carta. data-pos dice dónde está: 0 delante, 1 y 2 detrás,
+               "cae" ya ha caído por abajo y "fondo" espera escondida detrás de todas */
+            .pila-fotos {
+                @apply absolute inset-0;
+                perspective: 700px;
+                perspective-origin: 50% 0%;   /* las de detrás se alejan hacia arriba y asoman */
+            }
+
+            .carta {
+                @apply absolute overflow-hidden rounded-md bg-foto;
+                inset: 20% 15% 10%;   /* cuadrada, un poco baja para que asomen las de detrás */
+                transition: transform 700ms cubic-bezier(.2, .7, .3, 1), opacity 400ms ease-out;
+            }
+
+            /* Luz: oscurece y tiñe las cartas de detrás con los colores del tema */
+            .carta::after {
+                content: "";
+                @apply pointer-events-none absolute inset-0 opacity-0;
+                background: radial-gradient(ellipse at 50% 110%, transparent 25%, var(--tinte) 95%);
+                transition: opacity 700ms ease-out;
+            }
+
+            .carta:nth-child(3n+1) { --tinte: var(--color-principal); }
+            .carta:nth-child(3n+2) { --tinte: var(--color-secundario); }
+            .carta:nth-child(3n) { --tinte: var(--color-terciario); }
+
+            .carta[data-pos="0"] {
+                z-index: 3;
+                box-shadow: 0 18px 30px -18px rgb(24 36 31 / .45);
+            }
+
+            .carta[data-pos="1"] {
+                z-index: 2;
+                transform: translate3d(0, -11%, -70px);
+            }
+
+            .carta[data-pos="1"]::after {
+                opacity: .55;
+            }
+
+            .carta[data-pos="2"] {
+                z-index: 1;
+                transform: translate3d(0, -22%, -140px);
+            }
+
+            .carta[data-pos="2"]::after {
+                opacity: .85;
+            }
+
+            .carta[data-pos="fondo"] {
+                transform: translate3d(0, -33%, -210px);
+                opacity: 0;
+            }
+
+            /* La de delante cae: primero sube un poco y luego se va abajo (como back.in de GSAP) */
+            .carta[data-pos="cae"] {
+                z-index: 4;
+                transform: translate3d(0, 115%, 40px) rotateX(-12deg);
+                opacity: 0;
+                transition: transform 700ms cubic-bezier(.6, -.55, .75, .05), opacity 120ms linear 580ms;
+            }
+
+            /* Con solo 2 fotos, la tercera repetiría la de delante */
+            .pila-fotos[data-total="2"] .carta[data-pos="2"] {
+                opacity: 0;
+            }
+
+            .carta.sin-transicion,
+            .carta.sin-transicion::after {
+                transition: none;
+            }
+
+            .carta img {
+                @apply absolute inset-0 h-full w-full object-contain p-5;
+                transition: transform 300ms ease-out;
+            }
+
+            .tarjeta-producto:hover .carta[data-pos="0"] img {
+                transform: scale(1.03);
+            }
+
+            .tarjeta-datos {
+                @apply flex flex-1 flex-col px-4 pt-4 pb-5 sm:px-5;
+            }
+
+            .tarjeta-resumen {
+                @apply mt-2 text-sm text-texto-atenuado;
+            }
+
+            /* Los dos botones del pie se reparten el ancho sin partir el texto */
+            .tarjeta-producto .pie-tarjeta {
+                @apply gap-2;
+            }
+
+            .tarjeta-producto .pie-tarjeta .btn {
+                @apply flex-1 whitespace-nowrap px-2;
+            }
+
+            /* ===== FOTOS DE LA TARJETA: flechas y puntos (los mueve tienda.js) ===== */
+           .puntos-foto {
+                @apply absolute inset-x-0 bottom-2 z-10 flex justify-center;
+            }
+
+            /* El botón mide 24 px para que sea fácil de pulsar; el punto que se ve es el ::before */
+            .punto-foto {
+                @apply inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-principal;
+            }
+
+            .punto-foto::before {
+                content: "";
+                @apply h-2 w-2 rounded-full bg-principal/30 transition-colors duration-200 ease-out;
+            }
+
+            .punto-foto:hover::before {
+                @apply bg-principal/60;
+            }
+
+            /* El punto de la foto que se ve: aria-current="true" lo pone tienda.js */
+            .punto-foto[aria-current="true"]::before {
+                @apply bg-acento;
+            }
+
+            /* Sin zoom si el usuario ha pedido en su sistema que se reduzcan las animaciones */
+            @media (prefers-reduced-motion: reduce) {
+                .tarjeta-producto:hover .tarjeta-foto img {
+                    transform: none;
+                }
+            }
+
+            /* ===== CARRUSEL DE LA FICHA (lo monta js/carrusel.js) ===== */
+            .carrusel {
+                @apply relative overflow-hidden bg-principal;
+                container-type: size; /* cqw y cqh pasan a ser % del ancho y del alto de la banda */
+                height: clamp(22rem, 60vh, 34rem);
+            }
+
+            .carrusel-pista {
+                @apply pointer-events-none absolute inset-0;
+            }
+
+            .carrusel-baldosa {
+                position: absolute;
+                transform-style: preserve-3d;
+            }
+
+            .carrusel-tira {
+                @apply absolute top-0 overflow-hidden bg-foto;
+            }
+
+            .carrusel-tira:first-child {
+                @apply rounded-l-lg;
+            }
+
+            .carrusel-tira:last-child {
+                @apply rounded-r-lg;
+            }
+
+            .carrusel-tira img {
+                @apply absolute top-0 max-w-none object-cover;
+            }
+
+            /* Marca y modelo encima de la banda, en claro sobre el verde */
+            .carrusel-titulo {
+                @apply relative z-10 px-6 pt-7 text-center text-fondo;
+            }
+
+            .carrusel-titulo .marca {
+                @apply text-fondo;
+            }
+
+
+            /* ===== HERO DE PORTADA (index.html; el despiece lo controla js/despiece.js) ===== */
+            /* La portada mide más que la pantalla: mientras la recorres, .portada-fija se queda
+               quieta debajo del header. En el móvil, el reloj arriba y el texto debajo */
+            .portada {
+                @apply mb-14;
+                height: 220svh;
+            }
+
+            .portada-fija {
+                @apply sticky top-16 grid items-center gap-8 md:grid-cols-2 md:gap-10;
+                min-height: calc(100svh - 4rem);
+            }
+
+            /* Antetítulo con una raya roja corta delante */
+            .portada-antetitulo {
+                @apply flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-texto-atenuado;
+            }
+
+            .portada-antetitulo::before {
+                content: "";
+                @apply h-0.5 w-8 bg-acento;
+            }
+
+            .portada-titulo {
+                @apply mt-4 font-serif font-medium leading-[0.95] tracking-[-0.02em] text-texto;
+                font-size: clamp(2.75rem, 6vw, 4.75rem);
+            }
+
+            .portada-titulo em {
+                @apply italic text-principal;
+            }
+
+            .portada-explicacion {
+                @apply mt-5 max-w-lg text-base leading-relaxed text-texto-atenuado;
+            }
+
+            .portada-acciones {
+                @apply mt-7;
+            }
+
+            /* "Ver relojes" baja a #contenedor: que el header fijo no lo tape al llegar */
+            #contenedor {
+                scroll-margin-top: 6rem;
+            }
+
+            /* ----- Reloj despiezado ----- */
+            /* --avance (0 a 1) lo pone despiece.js en #portada y lo heredan todas las piezas.
+               cqw = % del ancho del reloj, así la separación crece con el tamaño */
+            .reloj-despiece {
+                @apply relative mx-auto aspect-square w-full -order-1 md:order-none;
+                max-width: min(26rem, 45svh);
+                container-type: inline-size;
+                perspective: 300cqw;
+            }
+
+            /* Montado se ve de frente; al despiezar se tumba y gira para verlo en 3D */
+            .reloj-piezas {
+                @apply absolute inset-0;
+                transform-style: preserve-3d;
+                transform: rotateX(calc(var(--avance, 0) * 58deg)) rotateZ(calc(var(--avance, 0) * -32deg));
+            }
+
+            /* Cada capa sube según su --altura; restar 25 centra el montón en el sitio del reloj */
+            .reloj-pieza {
+                @apply absolute inset-0 h-full w-full overflow-visible;
+                transform: translateZ(calc(var(--avance, 0) * (var(--altura) - 25) * 2cqw));
+            }
+
+            /* Los engranajes giran al bajar; el pequeño, al revés y más rápido, como si engranaran */
+            .reloj-engranaje {
+                transform-box: fill-box;
+                transform-origin: center;
+                transform: rotate(calc(var(--avance, 0) * 360deg));
+            }
+
+            .reloj-engranaje-inverso {
+                transform: rotate(calc(var(--avance, 0) * -520deg));
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .tarjeta-producto:hover .carta[data-pos="0"] img {
+                    transform: none;
+                }
+            }
+
+            /* ===== AVISO FLOTANTE (index.html; lo rellena avisar() en tienda.js) ===== */
+            /* Abajo en el centro, encima de todo. Verde si ha ido bien, rojo si es un error */
+            .aviso {
+                @apply fixed bottom-6 left-1/2 z-50 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-md border-l-4 border-terciario bg-principal px-5 py-3 text-base font-medium text-fondo shadow-lg;
+            }
+
+            .aviso:empty {
+                display: none;
+            }
+
+            .aviso[data-tipo="error"] {
+                @apply border-white/50 bg-error text-white;
+            }
+
+            /* ===== PIE DE PÁGINA (index.html) ===== */
+            /* Verde como la cabecera: la página cierra como empieza */
+            .pie-tienda {
+                @apply bg-principal px-4 pt-12 pb-6 text-fondo md:px-6 lg:px-8;
+            }
+
+            /* 1 columna en el móvil; desde md, la marca ocupa el doble que las otras dos */
+            .pie-fila {
+                @apply grid gap-10 md:grid-cols-[2fr_1fr_1fr];
+            }
+
+            .pie-texto {
+                @apply mt-4 max-w-sm text-base leading-relaxed text-fondo/80;
+            }
+
+            .pie-titulo {
+                @apply font-serif text-xl font-medium text-fondo;
+            }
+
+            .pie-lista {
+                @apply mt-3 grid gap-1 text-base text-fondo/80;
+            }
+
+            /* min-h-11: 44 px de alto, fácil de pulsar con el dedo */
+            .pie-enlace {
+                @apply inline-flex min-h-11 items-center rounded-sm text-fondo/80 transition-colors duration-200 ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo;
+            }
+
+            /* Raya fina encima del copyright */
+            .pie-legal {
+                @apply mt-10 border-t border-white/15 pt-5 text-sm text-fondo/70;
+            }
+
+            /* ===== CARRITO (plantillas_html/carrito.html) ===== */
+            /* Líneas separadas por una raya fina */
+            .lista-carrito {
+                @apply mt-2 divide-y divide-borde;
+            }
+
+            /* En el móvil: foto | datos, y debajo las acciones a todo el ancho.
+               Desde sm: foto | datos | acciones, en una sola fila */
+            .linea-carrito {
+                @apply grid grid-cols-[5rem_1fr] items-center gap-x-4 gap-y-3 py-5 sm:grid-cols-[6rem_1fr_auto] sm:gap-x-6;
+            }
+
+            .linea-carrito-foto {
+                @apply relative aspect-square overflow-hidden rounded-md;
+            }
+
+            .linea-carrito-foto img {
+                @apply absolute inset-0 h-full w-full object-contain p-2;
+            }
+
+            .linea-carrito .titulo-producto {
+                @apply text-xl;
+            }
+
+            /* col-span-2: en el móvil ocupa la fila de abajo entera */
+            .linea-carrito-acciones {
+                @apply col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:justify-end;
+            }
+
+            /* Cantidad: [ − | n | + ] dentro de un mismo borde */
+            .selector-cantidad {
+                @apply inline-flex items-stretch overflow-hidden rounded-sm border border-borde-campo bg-superficie-elevada focus-within:border-principal;
+            }
+
+            .selector-cantidad button {
+                @apply inline-flex h-11 w-11 cursor-pointer items-center justify-center text-principal transition-colors duration-200 ease-out hover:bg-principal hover:text-fondo focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-principal;
+            }
+
+            /* Total a la izquierda y botón a la derecha */
+            .pie-carrito {
+                @apply mt-2 flex flex-wrap items-center justify-between gap-4 border-t border-borde pt-5;
+            }
+
+            .total-carrito {
+                @apply flex items-baseline gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-texto-atenuado;
+            }
+
+            /* En 1 (−) o en el stock (+): apagado y sin el verde al pasar el ratón */
+            .selector-cantidad button:disabled {
+                @apply cursor-not-allowed text-principal/35;
+                background-color: transparent;
+            }
+
+            .selector-cantidad input {
+                @apply w-12 border-x border-borde bg-transparent text-center text-base font-medium text-texto focus:outline-none;
+                appearance: textfield; /* sin las flechas del navegador: ya están − y + */
+            }
+
+            .selector-cantidad input::-webkit-inner-spin-button,
+            .selector-cantidad input::-webkit-outer-spin-button {
+                appearance: none;
+                margin: 0;
+            }
+
+            .borrar-carrito {
+                @apply inline-flex min-h-11 items-center gap-2 rounded-sm text-sm font-medium text-texto-atenuado transition-colors duration-200 ease-out hover:text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-principal;
+            }
+
+            .carrito-vacio {
+                @apply py-10 text-center;
+            }
+
+            .pie-carrito {
+                @apply mt-2 flex justify-end border-t border-borde pt-5;
+            }
+
+            /* Con el carrito vacío no tiene sentido el botón de pedido.
+               ~ = "un hermano que va después" */
+            .carrito-vacio ~ .pie-carrito {
+                display: none;
+            }
+            /* ===== CHECKOUT (plantillas_html/check_out_1..4.html) ===== */
+            /* Indicador: 4 pasos en fila. El número lo pone counter(); el actual lleva aria-current="step" */
+            .pasos-pedido {
+                @apply mt-6 grid grid-cols-4 gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-texto-atenuado;
+                counter-reset: paso;
+            }
+
+            .pasos-pedido li {
+                @apply flex flex-col items-center gap-2 border-t-2 border-borde pt-3 text-center sm:flex-row sm:text-left;
+                counter-increment: paso;
+            }
+
+            .pasos-pedido li::before {
+                content: counter(paso);
+                @apply inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-borde-campo bg-superficie-elevada font-serif text-sm;
+            }
+
+            /* Hechos en verde; el actual en rojo segundero */
+            .pasos-pedido li.hecho {
+                @apply border-principal text-principal;
+            }
+
+            .pasos-pedido li.hecho::before {
+                @apply border-principal bg-principal text-fondo;
+            }
+
+            .pasos-pedido li[aria-current="step"] {
+                @apply border-acento text-texto;
+            }
+
+            .pasos-pedido li[aria-current="step"]::before {
+                @apply border-acento bg-acento text-white;
+            }
+
+        }
+    </style>
+    </th:block>
+</head>
+<body>
+<!-- ===== LOGO «DIEZ Y DIEZ» =====
+     Reloj marcando las 10:10. Se usa con th:replace="~{fragments/tienda :: logo}".
+     El aro toma el color del texto que lo rodea (stroke-current): verde sobre fondo claro
+     y claro dentro del menú verde. La esfera es siempre blanca para que las agujas rojas se lean. -->
+<svg th:fragment="logo" class="logo-reloj" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+    <circle cx="24" cy="24" r="20" class="fill-white stroke-current" stroke-width="3"/>
+    <!-- Marcas de las 12, 3, 6 y 9 -->
+    <line x1="24" y1="7.5" x2="24" y2="10.5" class="stroke-principal" stroke-width="2"/>
+    <line x1="40.5" y1="24" x2="37.5" y2="24" class="stroke-principal" stroke-width="2"/>
+    <line x1="24" y1="40.5" x2="24" y2="37.5" class="stroke-principal" stroke-width="2"/>
+    <line x1="7.5" y1="24" x2="10.5" y2="24" class="stroke-principal" stroke-width="2"/>
+    <!-- Agujas a las 10:10: horas (gruesa, hacia las 10) y minutos (fina, hacia las 2) -->
+    <line x1="24" y1="24" x2="14.5" y2="18" class="stroke-acento" stroke-width="3.6" stroke-linecap="round"/>
+    <line x1="24" y1="24" x2="37" y2="14" class="stroke-acento" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="24" cy="24" r="3" class="fill-principal"/>
+</svg>
+</body>
+</html>

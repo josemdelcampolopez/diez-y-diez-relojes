@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Inicio')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <header th:replace="~{fragments/general :: cabecera('Inicio', null)}"></header>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('inicio')}"></nav>
+
+        <!-- .![...] saca una columna de cada fila y #aggregates.sum la suma -->
+        <div class="inicio" th:with="ingresos=${#aggregates.sum(ventas.![#this['INGRESOS']])},
+                                     pedidos=${#aggregates.sum(ventas.![#this['PEDIDOS']])}">
+
+            <!-- ===== VENTAS ===== -->
+            <section class="hoja" aria-label="Ventas de los últimos 14 días">
+                <dl class="cifras">
+                    <div>
+                        <dt>Ingresos en 14 días</dt>
+                        <dd class="cifra-grande" th:text="|${#numbers.formatDecimal(ingresos, 1, 'POINT', 0, 'COMMA')} €|">0 €</dd>
+                    </div>
+                    <div>
+                        <dt>Pedidos</dt>
+                        <dd th:text="${pedidos}">0</dd>
+                    </div>
+                    <div>
+                        <dt>Ticket medio</dt>
+                        <dd th:text="${pedidos > 0 ? #numbers.formatDecimal(ingresos / pedidos, 1, 'POINT', 0, 'COMMA') + ' €' : '—'}">0 €</dd>
+                    </div>
+                </dl>
+
+                <ol class="grafica" aria-label="Ingresos por día">
+                    <li th:each="v : ${ventas}"
+                        th:with="detalle=|${v['FECHA']}: ${v['PEDIDOS']} pedidos, ${#numbers.formatDecimal(v['INGRESOS'], 1, 'POINT', 2, 'COMMA')} €|"
+                        th:title="${detalle}">
+                        <span class="grafica-columna" aria-hidden="true">
+                            <span class="grafica-barra" th:style="|height: ${v['ALTURA']}%|"></span>
+                        </span>
+                        <span aria-hidden="true" th:text="${v['DIA_MES']}">1</span>
+                        <span class="sr-only" th:text="${detalle}">detalle</span>
+                    </li>
+                </ol>
+            </section>
+
+            <!-- ===== POR RESOLVER ===== -->
+            <aside>
+                <h2 class="titulo-bloque">Por resolver</h2>
+                <p th:if="${#lists.isEmpty(incidencias) and #lists.isEmpty(stockBajo)}" class="texto-ayuda">
+                    No hay incidencias ni relojes con poco stock.
+                </p>
+
+                <div th:unless="${#lists.isEmpty(incidencias)}" class="resolver-grupo">
+                    <h3 class="resolver-titulo">
+                        <span class="resolver-urgente" th:text="${#lists.size(incidencias)}">0</span>
+                        <span th:text="${#lists.size(incidencias) == 1 ? 'incidencia' : 'incidencias'}">incidencias</span>
+                    </h3>
+                    <a th:each="p : ${incidencias}" th:href="@{verDetallesPedido(id=${p.id})}"
+                       th:aria-label="|Ver pedido ${p.id} de ${p.nombreCompleto}|" class="resolver-fila">
+                        <span class="min-w-0 truncate" th:text="${p.nombreCompleto}">Cliente</span>
+                        <span class="tabular-nums text-texto-atenuado" th:text="${p.id}">0</span>
+                    </a>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(stockBajo)}" class="resolver-grupo">
+                    <h3 class="resolver-titulo">Stock bajo</h3>
+                    <a th:each="r : ${stockBajo}" th:href="@{editarReloj(id=${r['ID']})}" class="resolver-fila">
+                        <span class="min-w-0 truncate" th:text="|${r['MARCA_RELOJ']} ${r['MODELO']}|">Reloj</span>
+                        <span class="whitespace-nowrap tabular-nums text-texto-atenuado" th:text="|${r['STOCK']} uds.|">0 uds.</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- ===== ÚLTIMOS PEDIDOS ===== -->
+            <section class="min-w-0">
+                <div class="bloque-cabecera">
+                    <h2 class="titulo-bloque">Últimos pedidos</h2>
+                    <a href="gestionarPedidos" class="enlace-bloque">Ver todos</a>
+                </div>
+                <p th:if="${#lists.isEmpty(ultimosPedidos)}" class="texto-ayuda">Todavía no hay pedidos.</p>
+                <div th:unless="${#lists.isEmpty(ultimosPedidos)}" class="overflow-x-auto">
+                    <table class="tabla">
+                        <thead>
+                        <tr>
+                            <th scope="col">Pedido</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col" class="hidden xl:table-cell">Fecha</th>
+                            <th scope="col" class="derecha">Importe</th>
+                            <th scope="col">Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="p : ${ultimosPedidos}">
+                            <td><a th:href="@{verDetallesPedido(id=${p.id})}" th:text="${p.id}"
+                                   th:aria-label="|Ver pedido ${p.id}|">0</a></td>
+                            <td class="cliente" th:text="${p.nombreCompleto}">Cliente</td>
+                            <!-- Los pedidos anteriores al paso 2 no tienen fecha -->
+                            <td class="hidden xl:table-cell"
+                                th:text="${p.fecha != null ? #temporals.format(p.fecha, 'd/M HH:mm') : '—'}">—</td>
+                            <td class="derecha"
+                                th:text="${#lists.isEmpty(p.productosPedido) ? '—' : #numbers.formatDecimal(#aggregates.sum(p.productosPedido.![cantidad * reloj.precio]), 1, 'POINT', 2, 'COMMA') + ' €'}">0 €</td>
+                            <td><span class="chapa" th:data-estado="${p.estado}"
+                                      th:text="${p.estado == 'Completado' ? 'Pagado' : p.estado}">estado</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ===== MÁS VENDIDOS ===== -->
+            <section>
+                <h2 class="titulo-bloque mb-2">Más vendidos</h2>
+                <p th:if="${#lists.isEmpty(masVendidos)}" class="texto-ayuda">Sin ventas en estos 14 días.</p>
+                <ol>
+                    <li th:each="m : ${masVendidos}" class="vendido">
+                        <img th:src="@{/mostrar_miniatura(id=${m['ID']})}" alt="" width="48" height="48" loading="lazy">
+                        <p class="min-w-0 flex-1 truncate text-texto" th:text="|${m['MARCA_RELOJ']} ${m['MODELO']}|">Reloj</p>
+                        <p class="whitespace-nowrap tabular-nums text-texto-atenuado" th:text="|${m['UNIDADES']} uds.|">0 uds.</p>
+                    </li>
+                </ol>
+            </section>
+        </div>
+    </section>
+</main>
+</body>
+</html>

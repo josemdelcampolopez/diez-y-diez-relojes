@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Editar cliente')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <header th:replace="~{fragments/general :: cabecera('Editar cliente', null)}"></header>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('clientes')}"></nav>
+
+        <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <div class="caja">
+            <form th:action="@{/admin/guardarCambiosUsuario}" th:object="${usuarioEditar}" method="post" class="formulario">
+
+                <!-- Campo oculto para mantener el ID y evitar que el merge cree un registro nuevo -->
+                <input type="hidden" th:field="*{id}">
+
+                <div class="grupo md:col-span-2">
+                    <label for="email" class="etiqueta">Email</label>
+                    <input type="email" th:field="*{email}" aria-describedby="error_email" class="campo">
+                    <span id="error_email" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></span>
+                </div>
+
+                <div class="grupo">
+                    <label for="nombre" class="etiqueta">Nombre</label>
+                    <input type="text" th:field="*{nombre}" aria-describedby="error_nombre" class="campo">
+                    <span id="error_nombre" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></span>
+                </div>
+
+                <div class="grupo">
+                    <label for="apellidos" class="etiqueta">Apellidos</label>
+                    <input type="text" th:field="*{apellidos}" aria-describedby="error_apellidos" class="campo">
+                    <span id="error_apellidos" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}" class="error"></span>
+                </div>
+
+                <div class="grupo">
+                    <label for="telefono" class="etiqueta">Teléfono</label>
+                    <input type="tel" th:field="*{telefono}" aria-describedby="error_telefono" class="campo">
+                    <span id="error_telefono" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}" class="error"></span>
+                </div>
+
+                <div class="grupo">
+                    <label for="pass" class="etiqueta">Contraseña</label>
+                    <!-- Usamos type="text" para mostrar la contraseña actual sin que Thymeleaf la limpie -->
+                    <input type="text" th:field="*{pass}" aria-describedby="error_pass" class="campo">
+                    <span id="error_pass" th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}" class="error"></span>
+                </div>
+
+                <div class="flex flex-wrap justify-end gap-3 border-t border-borde pt-5 md:col-span-2">
+                    <a th:href="@{/admin/gestionarUsuarios}" class="btn btn-neutro">Cancelar</a>
+                    <button type="submit" class="btn btn-primario">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

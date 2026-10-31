@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/tienda :: head('Relojes')}"></head>
+<body class="pagina">
+
+<!-- ===== SALTAR AL CONTENIDO (solo visible con el foco del teclado) ===== -->
+<a href="#contenedor"
+   class="sr-only rounded-sm bg-fondo px-4 py-3 font-semibold text-principal focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-principal">Saltar
+    al contenido</a>
+
+<!-- ===== CABECERA FIJA =====
+     Aspecto: fragments/tienda.html · Abrir, cerrar y compactar: js/cabecera.js
+     Cada data-accion tiene su función en js/tienda.js -->
+<header id="cabecera" class="cabecera-tienda">
+    <div class="contenedor cabecera-fila">
+
+        <!-- Logo: vuelve al listado -->
+        <a href="" data-accion="inicio" class="cabecera-logo">
+            <svg th:replace="~{fragments/tienda :: logo}"></svg>
+            Diez y Diez
+        </a>
+
+        <!-- Menú principal: en el móvil se pliega tras el botón de hamburguesa -->
+        <nav id="menu" class="cabecera-menu" aria-label="Navegación principal">
+            <a href="#" data-accion="ver_relojes" class="nav-enlace">Relojes</a>
+            <a href="#" data-accion="carrito" class="nav-enlace">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 8h12l-1 12H7z"/>
+                    <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+                </svg>
+                Carrito
+            </a>
+            <a href="admin/inicioAdmin" class="cabecera-admin" title="Acceso a administración">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="8" cy="15" r="4"/>
+                    <path d="M11 12l9-9"/>
+                    <path d="M16 7l3 3"/>
+                </svg>
+                <span class="md:sr-only">Acceso a administración</span>
+            </a>
+            <a href="#" data-accion="identificarme" class="nav-enlace solo-anonimo">Identificarme</a>
+            <a href="#" data-accion="registrarme" class="btn btn-claro solo-anonimo">Registrarme</a>
+        </nav>
+
+        <!-- Usuario identificado: avatar con su inicial y desplegable (solo con sesión) -->
+        <div class="cabecera-usuario solo-sesion">
+            <button type="button" id="boton_usuario" class="usuario-boton" aria-expanded="false" aria-controls="menu_usuario">
+                <span class="avatar" aria-hidden="true">
+                    <span id="avatar_inicial"></span>
+                    <img id="avatar_foto" class="avatar-foto" alt="" hidden>
+                </span>
+                <span id="nombre_usuario" class="sr-only sm:not-sr-only"></span>
+                <svg class="flecha h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </button>
+            <div id="menu_usuario" class="menu-usuario" hidden>
+                <a href="#" data-accion="pedidos" class="menu-usuario-enlace">Mis pedidos</a>
+                <a href="#" data-accion="mis_datos" class="menu-usuario-enlace">Mis datos</a>
+                <hr class="my-1 border-borde">
+                <a href="#" data-accion="cerrar_sesion" class="menu-usuario-enlace">Cerrar sesión</a>
+            </div>
+        </div>
+
+        <!-- Hamburguesa (solo móvil) -->
+        <button type="button" id="boton_menu" class="cabecera-hamburguesa" aria-expanded="false" aria-controls="menu"
+                aria-label="Abrir menú">
+            <svg class="icono-abrir h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                 stroke-linecap="round" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16"/>
+            </svg>
+            <svg class="icono-cerrar h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                 stroke-linecap="round" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+        </button>
+    </div>
+</header>
+
+<div class="cuerpo-tienda">
+
+    <!-- ===== HERO DE PORTADA (solo se ve con el listado: lo oculta pintar() en tienda.js) ===== -->
+    <!-- #portada es alta; .portada-fija se queda quieta mientras la recorres y el reloj se despieza
+         (--avance lo pone js/despiece.js, el movimiento está en fragments/tienda.html) -->
+    <section id="portada" class="portada">
+        <div class="contenedor portada-fija">
+            <div>
+                <p class="portada-antetitulo">Relojería Diez y Diez</p>
+                <h1 class="portada-titulo">Siempre son las <em>diez y diez</em></h1>
+                <p class="portada-explicacion">Es la hora a la que se fotografían los relojes: las agujas enmarcan la
+                    esfera y parece que sonríen. Elige el tuyo entre automáticos, de cuarzo, solares y smartwatches.</p>
+                <div class="portada-acciones">
+                    <a href="#contenedor" class="btn btn-primario">Ver relojes</a>
+                </div>
+            </div>
+
+            <!-- Reloj por capas, de abajo arriba. Todas usan el mismo viewBox: montadas, coinciden -->
+            <div class="reloj-despiece" aria-hidden="true">
+                <div class="reloj-piezas">
+                    <!-- Correa y fondo de la caja -->
+                    <svg class="reloj-pieza" style="--altura:0" viewBox="0 0 200 200">
+                        <path d="M72 30 L76 0 H124 L128 30 Z M72 170 L76 200 H124 L128 170 Z" class="fill-secundario"/>
+                        <circle cx="100" cy="100" r="78" class="fill-principal"/>
+                    </svg>
+                    <!-- Movimiento: un trazo grueso a rayas hace los dientes; los rubíes son los puntos rojos -->
+                    <svg class="reloj-pieza" style="--altura:10" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="66" class="fill-terciario"/>
+                        <g class="reloj-engranaje">
+                            <circle cx="82" cy="88" r="26" fill="none" class="stroke-principal" stroke-width="8" stroke-dasharray="4 3"/>
+                            <circle cx="82" cy="88" r="3" class="fill-acento"/>
+                        </g>
+                        <g class="reloj-engranaje reloj-engranaje-inverso">
+                            <circle cx="124" cy="116" r="18" fill="none" class="stroke-principal" stroke-width="7" stroke-dasharray="3 3"/>
+                            <circle cx="124" cy="116" r="3" class="fill-acento"/>
+                        </g>
+                    </svg>
+                    <!-- Esfera: pathLength="60" divide el círculo en 60 partes; una raya cada 5 = 12 horas -->
+                    <svg class="reloj-pieza" style="--altura:20" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="66" class="fill-white"/>
+                        <circle cx="100" cy="100" r="58" fill="none" class="stroke-principal" stroke-width="8"
+                                pathLength="60" stroke-dasharray="0.5 4.5" stroke-dashoffset="0.25"/>
+                        <text x="100" y="74" text-anchor="middle" class="fill-principal font-serif" font-size="9">Diez y Diez</text>
+                    </svg>
+                    <!-- Agujas a las 10:10 y segundero rojo -->
+                    <svg class="reloj-pieza" style="--altura:30" viewBox="0 0 200 200">
+                        <line x1="100" y1="100" x2="65" y2="80" class="stroke-principal" stroke-width="6" stroke-linecap="round"/>
+                        <line x1="100" y1="100" x2="145" y2="74" class="stroke-principal" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="100" y1="88" x2="100" y2="156" class="stroke-acento" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="100" cy="100" r="4" class="fill-acento"/>
+                    </svg>
+                    <!-- Caja (bisel) y corona -->
+                    <svg class="reloj-pieza" style="--altura:40" viewBox="0 0 200 200">
+                        <rect x="176" y="92" width="10" height="16" rx="2" class="fill-terciario"/>
+                        <circle cx="100" cy="100" r="72" fill="none" class="stroke-terciario" stroke-width="12"/>
+                    </svg>
+                    <!-- Cristal con un brillo -->
+                    <svg class="reloj-pieza" style="--altura:50" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="66" class="fill-white/10 stroke-white/60" stroke-width="1"/>
+                        <path d="M58 70 A50 50 0 0 1 96 44" fill="none" class="stroke-white" stroke-width="4"
+                              stroke-linecap="round" opacity=".7"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== AQUÍ SE PINTA CADA PANTALLA (SPA) ===== -->
+    <main>
+        <div id="contenedor" class="contenedor panel min-h-56" aria-live="polite"></div>
+    </main>
+</div>
+
+<!-- Aviso flotante: lo rellena avisar() en tienda.js y se vacía solo. Vacío no se ve.
+     role="status" hace que el lector de pantalla lea cada mensaje nuevo -->
+<p id="aviso" class="aviso" role="status"></p>
+
+<!-- ===== PIE DE PÁGINA (estilos en fragments/tienda.html)
+     Los data-accion funcionan igual que en la cabecera: los recoge el mismo evento de tienda.js -->
+<footer id="pie" class="pie-tienda">
+    <div class="contenedor pie-fila">
+        <div>
+            <a href="" data-accion="inicio" class="cabecera-logo">
+                <svg th:replace="~{fragments/tienda :: logo}"></svg>
+                Diez y Diez
+            </a>
+            <p class="pie-texto">Relojería independiente desde 1998. Revisamos cada reloj antes de enviarlo
+                y, si no te convence, lo cambias en 30 días.</p>
+        </div>
+        <nav aria-label="Enlaces de la tienda">
+            <h2 class="pie-titulo">Tienda</h2>
+            <ul class="pie-lista">
+                <li><a href="#" data-accion="ver_relojes" class="pie-enlace">Relojes</a></li>
+                <li><a href="#" data-accion="carrito" class="pie-enlace">Carrito</a></li>
+                <li><a href="admin/inicioAdmin" class="pie-enlace">Acceso a administración</a></li>
+            </ul>
+        </nav>
+        <div>
+            <h2 class="pie-titulo">Visítanos</h2>
+            <address class="pie-lista not-italic">
+                <p>Calle del Reloj 10, 28010 Madrid</p>
+                <p>De lunes a sábado, de 10:10 a 20:10</p>
+                <p>910 10 10 10</p>
+                <p>hola@diezydiez.example</p>
+            </address>
+        </div>
+    </div>
+    <p class="contenedor pie-legal">© 2026 Diez y Diez · Tienda ficticia, proyecto de clase.</p>
+</footer>
+
+<script src="librerias_js/jquery.js"></script>
+<script src="librerias_js/mustache.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.2.0/dist/confetti.min.js"></script>
+<script src="js/cabecera.js"></script>
+<script src="js/carrusel.js"></script>
+<script src="js/despiece.js"></script>
+<script src="js/tienda.js"></script>
+</body>
+</html>

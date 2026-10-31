@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<!-- Cabecera del admin: mismos recursos y tema que la tienda, más los estilos propios del panel -->
+<head th:fragment="head(titulo)">
+    <th:block th:replace="~{fragments/base :: recursos(${titulo})}"></th:block>
+    <title th:text="|${titulo} · Administración · Diez y Diez|">Administración · Diez y Diez</title>
+    <th:block th:replace="~{fragments/tienda :: tema}"></th:block>
+
+    <style type="text/tailwindcss">
+        @layer components {
+            /* ===== ESTRUCTURA ===== */
+            .pagina .contenedor {
+                @apply px-4 py-6 md:px-8 md:py-7;
+            }
+
+            /* Hueco para la barra: arriba en el móvil, a la izquierda desde md.
+               El login no tiene barra, así que no deja hueco */
+            .pagina:has(.lateral) {
+                @apply pt-27 md:pt-0 md:pl-58;
+            }
+
+            .pagina .panel {
+                @apply mt-5;
+            }
+
+            /* ===== TÍTULO DE LA PÁGINA ===== */
+            .pagina .cabecera {
+                @apply rounded-none border-0 p-0;
+                background-image: none;
+            }
+
+            .pagina .cabecera-titulo {
+                @apply mt-0 text-3xl font-medium sm:text-4xl;
+            }
+
+            .pagina .cabecera-texto {
+                @apply mt-1 max-w-none;
+            }
+
+            /* En el admin el rojo queda reservado para lo urgente */
+            .pagina .btn-primario {
+                @apply border-principal bg-principal text-white;
+            }
+
+            .pagina .btn-primario:hover:not(:disabled) {
+                @apply border-principal-hover bg-principal-hover;
+            }
+
+            /* ===== CHAPAS: sin mayúsculas, y Enviado en azul (el oro no se lee sobre claro) ===== */
+            .pagina .chapa {
+                @apply font-medium normal-case tracking-normal;
+            }
+
+            .pagina .chapa[data-estado="Enviado"] {
+                @apply border-info/40 bg-info/10 text-info;
+            }
+
+            /* ===== PANEL DE INICIO ===== */
+            .inicio {
+                @apply grid gap-x-10 gap-y-8 lg:grid-cols-[minmax(0,1fr)_18rem];
+            }
+
+            .hoja {
+                @apply rounded-sm border border-borde bg-superficie-elevada p-5 sm:p-6;
+            }
+
+            .cifras {
+                @apply flex flex-wrap items-end gap-x-10 gap-y-3;
+            }
+
+            .cifras dt {
+                @apply text-sm text-texto-atenuado;
+            }
+
+            .cifras dd {
+                @apply font-serif text-2xl font-medium tabular-nums text-texto;
+            }
+
+            .cifras .cifra-grande {
+                @apply text-5xl text-principal sm:text-6xl;
+            }
+
+            .grafica {
+                @apply mt-6 grid h-40 grid-cols-14 gap-1 sm:gap-2;
+            }
+
+            .grafica li {
+                @apply grid min-w-0 grid-rows-[1fr_auto] gap-1 text-center text-xs tabular-nums text-texto-atenuado;
+            }
+
+            .grafica-columna {
+                @apply flex items-end border-b border-borde;
+            }
+
+            .grafica-barra {
+                @apply block w-full rounded-t-[1px];
+                background-color: #6b8a78;
+            }
+
+            /* Hoy */
+            .grafica li:last-child {
+                @apply font-semibold text-principal;
+            }
+
+            .grafica li:last-child .grafica-barra {
+                @apply bg-principal;
+            }
+
+            .titulo-bloque {
+                @apply font-serif text-2xl font-medium text-texto;
+            }
+
+            .bloque-cabecera {
+                @apply mb-2 flex flex-wrap items-baseline justify-between gap-4;
+            }
+
+            .enlace-bloque {
+                @apply text-sm font-medium text-principal underline underline-offset-4;
+            }
+
+            .resolver-grupo {
+                @apply mt-5 border-t border-borde pt-4;
+            }
+
+            .resolver-titulo {
+                @apply mb-1 font-medium text-texto;
+            }
+
+            .resolver-urgente {
+                @apply font-semibold text-acento;
+            }
+
+            .resolver-fila {
+                @apply flex min-h-11 items-center justify-between gap-3 border-b border-borde/60 text-texto hover:text-principal;
+            }
+
+            .tabla {
+                @apply w-full text-left tabular-nums;
+            }
+
+            .tabla th {
+                @apply border-b border-borde py-2 pr-2 text-sm font-medium text-texto-atenuado sm:pr-4;
+            }
+
+            .tabla td {
+                @apply whitespace-nowrap border-b border-borde/60 py-3 pr-2 sm:pr-4;
+            }
+
+            .tabla td.cliente {
+                @apply whitespace-normal;
+            }
+
+            .tabla th:last-child, .tabla td:last-child {
+                @apply pr-0;
+            }
+
+            .tabla .derecha {
+                @apply text-right;
+            }
+
+            .tabla a {
+                @apply font-medium text-principal underline underline-offset-4;
+            }
+
+            .vendido {
+                @apply flex items-center gap-3 border-b border-borde/60 py-2;
+            }
+
+            .vendido img {
+                @apply h-12 w-12 shrink-0 rounded-sm bg-foto object-contain p-0.5;
+            }
+
+            /* ===== LISTA DE PEDIDOS ===== */
+            /* Sin terminar en gris: el azul ya es de Enviado */
+            .pagina .chapa[data-estado="EnProceso"] {
+                @apply border-borde bg-transparent text-texto-atenuado;
+            }
+
+            .filtros {
+                @apply mb-4 flex flex-wrap gap-x-6 border-b border-borde;
+            }
+
+            .filtro {
+                @apply -mb-px inline-flex min-h-11 items-center gap-2 border-b-2 border-transparent text-texto-atenuado hover:text-principal;
+            }
+
+            .filtro[aria-current="page"] {
+                @apply border-principal font-medium text-principal;
+            }
+
+            .filtro span {
+                @apply text-sm tabular-nums;
+            }
+
+            /* ===== LISTA DE RELOJES ===== */
+            .reloj-celda {
+                @apply flex items-center gap-3;
+            }
+
+            .reloj-celda img {
+                @apply h-12 w-12 shrink-0 rounded-sm bg-foto object-contain p-0.5;
+            }
+
+            /* En el móvil, una acción encima de otra para que quepa la fila */
+            .acciones-fila {
+                @apply flex flex-col items-end sm:flex-row sm:justify-end sm:gap-4;
+            }
+
+            .acciones-fila a {
+                @apply inline-flex min-h-11 items-center;
+            }
+
+            .acciones-fila .borrar {
+                @apply text-acento;
+            }
+
+            /* ===== FORMULARIOS ===== */
+            .pagina {
+                accent-color: var(--color-principal);
+            }
+
+            /* El panel ya es la hoja: la caja de dentro sobraba */
+            .pagina .panel > .caja {
+                @apply mt-0 rounded-none border-0 bg-transparent p-0;
+            }
+
+            .pagina .panel:has(.formulario, [role="status"]) {
+                @apply max-w-3xl;
+            }
+
+            .pagina .formulario {
+                @apply mt-0;
+            }
+
+            .pagina .campo:has(+ .error), .pagina .campo-archivo:has(+ .error) {
+                @apply border-error;
+            }
+
+            /* ===== LOGIN ===== */
+            .pagina.login {
+                @apply grid min-h-svh place-items-center bg-principal p-4;
+            }
+
+
+            /* ===== BARRA LATERAL ===== */
+            .lateral {
+                @apply fixed inset-x-0 top-0 z-40 bg-principal px-2 pb-1 pt-1 text-fondo md:inset-x-auto md:bottom-0 md:left-0 md:flex md:w-58 md:flex-col md:overflow-y-auto md:px-3 md:py-5;
+            }
+
+            .lateral-marca {
+                @apply inline-flex min-h-11 items-center gap-2 rounded-sm px-1 font-serif text-xl font-medium text-fondo md:mb-4 md:gap-3 md:px-2 md:text-[1.375rem];
+            }
+
+            .lateral-nav {
+                @apply grid grid-cols-5 gap-0.5 md:grid-cols-1;
+            }
+
+            .lateral-enlace {
+                @apply flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-sm text-xs font-medium text-fondo transition-colors duration-150 ease-out hover:bg-white/10 md:min-h-11 md:flex-row md:justify-start md:gap-3 md:px-3 md:text-base;
+            }
+
+            .lateral-enlace[aria-current="page"] {
+                @apply bg-white/15 text-white;
+                box-shadow: inset 0 -2px 0 var(--color-acento);
+            }
+
+            /* En el móvil, arriba a la derecha; desde md, al final de la barra */
+            .lateral-volver {
+                @apply absolute right-2 top-1 inline-flex min-h-11 items-center gap-2 rounded-sm px-2 text-sm text-fondo transition-colors duration-150 ease-out hover:text-white md:static md:mt-auto md:gap-3 md:px-3 md:text-[0.9375rem];
+            }
+
+            .lateral a:focus-visible {
+                @apply outline-2 outline-offset-2 outline-fondo;
+            }
+
+            .icono {
+                @apply h-5 w-5 shrink-0;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.75;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .saltar {
+                position: absolute;
+                left: -999px;
+            }
+
+            .saltar:focus {
+                @apply left-3 top-3 z-50 rounded-sm bg-white px-3 py-2 text-principal;
+            }
+        }
+
+        @media (width >= 48rem) {
+            .lateral-enlace[aria-current="page"] {
+                box-shadow: inset 2px 0 0 var(--color-acento);
+            }
+        }
+
+        /* Fuera de @layer para ganar al mt-6 del primer bloque de cada página */
+        #contenido + * {
+            margin-top: 0;
+        }
+
+        /* Que la barra fija del móvil no tape lo que recibe el foco */
+        html:has(.lateral) {
+            scroll-padding-top: 7rem;
+        }
+
+        @media (width >= 48rem) {
+            html:has(.lateral) {
+                scroll-padding-top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== TÍTULO DE LA PÁGINA (título y texto cambian en cada página) ===== -->
+<header th:fragment="cabecera(titulo, texto)" class="cabecera">
+    <h1 class="cabecera-titulo" th:text="${titulo}">Título</h1>
+    <p class="cabecera-texto" th:if="${texto}" th:text="${texto}">Descripción</p>
+</header>
+
+<div>
+    <a href="">Español</a>
+</div>
+
+<!-- ===== BARRA LATERAL =====
+     activa: inicio, pedidos, relojes, clientes o categorias.
+     Va en position: fixed, así que da igual en qué punto de la página se inserte.
+     #contenido marca dónde empieza la página para el enlace de saltar -->
+<th:block th:fragment="menu(activa)">
+    <nav class="lateral" aria-label="Administración">
+        <a class="saltar" href="#contenido">Saltar al contenido</a>
+        <a href="inicioAdmin" class="lateral-marca">
+            <svg th:replace="~{fragments/tienda :: logo}"></svg>
+            Diez y Diez
+        </a>
+        <div class="lateral-nav">
+            <a href="inicioAdmin" class="lateral-enlace" th:aria-current="${activa == 'inicio'} ? 'page'">
+                <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Inicio
+            </a>
+            <a href="gestionarPedidos" class="lateral-enlace" th:aria-current="${activa == 'pedidos'} ? 'page'">
+                <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
+                Pedidos
+            </a>
+            <a href="gestionarRelojes" class="lateral-enlace" th:aria-current="${activa == 'relojes'} ? 'page'">
+                <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><polyline points="12 10 12 12 13 13"/><path d="m16.13 7.66-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05"/><path d="m7.88 16.36.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.81-4.05"/></svg>
+                Relojes
+            </a>
+            <a href="gestionarUsuarios" class="lateral-enlace" th:aria-current="${activa == 'clientes'} ? 'page'">
+                <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Clientes
+            </a>
+            <a href="gestionarCategorias" class="lateral-enlace" th:aria-current="${activa == 'categorias'} ? 'page'">
+                <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
+                Categorías
+            </a>
+        </div>
+        <a href="../" class="lateral-volver">
+            <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            Volver a la tienda
+        </a>
+    </nav>
+    <div id="contenido" tabindex="-1"></div>
+</th:block>
+
+</body>
+</html>

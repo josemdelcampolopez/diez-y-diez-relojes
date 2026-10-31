@@ -1,0 +1,34 @@
+<!-- Ficha de detalle renderizada con Mustache. Las claves van en mayúsculas, como las devuelve H2. -->
+<article class="tarjeta">
+
+    <!-- ===== CARRUSEL: js/carrusel.js mete aquí la fila de fotos (portada + extra) ===== -->
+    <section id="carrusel_reloj" class="carrusel" aria-labelledby="titulo_reloj">
+        <div class="carrusel-titulo">
+            <p class="marca">{{MARCA_RELOJ}}</p>
+            <h1 id="titulo_reloj" class="mt-2 font-serif text-4xl font-medium leading-tight sm:text-6xl">{{MODELO}}</h1>
+        </div>
+    </section>
+
+    <!-- ===== DATOS ===== -->
+    <div class="grid gap-8 p-5 sm:p-6 md:grid-cols-[1fr_auto] md:items-end">
+        <div>
+            <p class="texto-ayuda">{{CATEGORIA}}</p>
+            <p class="precio mt-2">{{PRECIO}}&nbsp;€</p>
+
+            <dl class="ficha border-t border-borde pt-5 sm:grid-cols-3">
+                <div><dt>Movimiento</dt><dd>{{TIPO_MOVIMIENTO}}</dd></div>
+                <div><dt>Resistencia al agua</dt><dd>{{RESISTENCIA_AGUA}}&nbsp;atm</dd></div>
+                <div><dt>Género</dt><dd>{{GENERO}}</dd></div>
+            </dl>
+        </div>
+
+        <!-- ===== ACCIONES ===== -->
+        <div class="flex flex-wrap items-end gap-3">
+            <div class="grupo">
+                <label for="cantidad_{{ID}}" class="etiqueta">Cantidad</label>
+                <input type="number" id="cantidad_{{ID}}" value="1" min="1" max="{{STOCK}}" class="campo w-20 text-center">
+            </div>
+            <button type="button" class="btn btn-primario" data-carrito="{{ID}}" aria-label="Agregar {{MARCA_RELOJ}} {{MODELO}} al carrito">Agregar al carrito</button>
+        </div>
+    </div>
+</article>

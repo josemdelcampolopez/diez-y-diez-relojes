@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Clientes')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <div class="bloque-cabecera items-center">
+        <header th:replace="~{fragments/general :: cabecera('Clientes', null)}"></header>
+        <a href="registrarUsuario" class="btn btn-primario shrink-0">Nuevo cliente</a>
+    </div>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('clientes')}"></nav>
+
+        <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <p th:if="${error}" th:text="${error}" class="aviso-error"></p>
+        <p th:if="${#lists.isEmpty(usuarios)}" class="vacio">Todavía no hay clientes.</p>
+
+        <div th:unless="${#lists.isEmpty(usuarios)}" class="mt-4 overflow-x-auto">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th scope="col">Cliente</th>
+                    <th scope="col" class="hidden md:table-cell">Email</th>
+                    <th scope="col" class="hidden xl:table-cell">Teléfono</th>
+                    <th scope="col" class="derecha">Pedidos</th>
+                    <th scope="col" class="derecha hidden sm:table-cell">Gastado</th>
+                    <th scope="col"><span class="sr-only">Acciones</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td class="cliente">
+                        <span class="font-medium" th:text="|${u['NOMBRE']} ${u['APELLIDOS']}|">Nombre Apellidos</span>
+                        <!-- En el móvil no hay columna Email: va debajo del nombre -->
+                        <span class="block break-all text-sm text-texto-atenuado md:hidden" th:text="${u['EMAIL']}">email</span>
+                    </td>
+                    <td class="hidden md:table-cell" th:text="${u['EMAIL']}">email</td>
+                    <td class="hidden xl:table-cell" th:text="${u['TELEFONO']}">teléfono</td>
+                    <td class="derecha" th:text="${u['PEDIDOS']}">0</td>
+                    <td class="derecha hidden sm:table-cell"
+                        th:text="${#numbers.formatDecimal(u['GASTADO'], 1, 'POINT', 2, 'COMMA') + ' €'}">0 €
+                    </td>
+                    <td>
+                        <div class="acciones-fila">
+                            <a th:href="@{editarUsuario(id=${u['ID']})}"
+                               th:aria-label="|Editar ${u['NOMBRE']} ${u['APELLIDOS']}|">Editar</a>
+                            <a th:href="@{borrarUsuario(id=${u['ID']})}"
+                               th:aria-label="|Borrar ${u['NOMBRE']} ${u['APELLIDOS']}|"
+                               class="borrar" onclick="return confirm('¿Borrar este cliente?')">Borrar</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

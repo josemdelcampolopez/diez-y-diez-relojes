@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Gestionar pedidos')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <header th:replace="~{fragments/general :: cabecera('Gestionar pedidos', 'Consulta y actualiza los pedidos.')}"></header>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('pedidos')}"></nav>
+
+        <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <p th:if="${#lists.isEmpty(pedidos)}" class="vacio">No hay pedidos todavía.</p>
+
+        <div th:unless="${#lists.isEmpty(pedidos)}">
+            <!-- .?[...] se queda con los pedidos que cumplen la condición -->
+            <nav class="filtros" aria-label="Filtrar pedidos por estado">
+                <a href="gestionarPedidos" class="filtro" data-estado="">Todos
+                    <span th:text="${#lists.size(pedidos)}">0</span></a>
+                <a href="gestionarPedidos?estado=Completado" class="filtro" data-estado="Completado">Pagado
+                    <span th:text="${#lists.size(pedidos.?[estado == 'Completado'])}">0</span></a>
+                <a href="gestionarPedidos?estado=Enviado" class="filtro" data-estado="Enviado">Enviado
+                    <span th:text="${#lists.size(pedidos.?[estado == 'Enviado'])}">0</span></a>
+                <a href="gestionarPedidos?estado=Incidencia" class="filtro" data-estado="Incidencia">Incidencia
+                    <span class="resolver-urgente" th:text="${#lists.size(pedidos.?[estado == 'Incidencia'])}">0</span></a>
+                <a href="gestionarPedidos?estado=EnProceso" class="filtro" data-estado="EnProceso">Sin terminar
+                    <span th:text="${#lists.size(pedidos.?[estado == 'EnProceso'])}">0</span></a>
+            </nav>
+
+            <p id="sin-pedidos" class="texto-ayuda hidden">No hay pedidos en esta pestaña.</p>
+
+            <div class="overflow-x-auto">
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th scope="col">Pedido</th>
+                        <th scope="col">Cliente</th>
+                        <th scope="col" class="hidden lg:table-cell">Fecha</th>
+                        <th scope="col" class="derecha hidden sm:table-cell">Importe</th>
+                        <th scope="col" class="hidden md:table-cell">Estado</th>
+                        <th scope="col" class="lg:w-60">Cambiar estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${pedidos}" class="fila-pedido" th:data-estado="${p.estado}">
+                        <td><a th:href="@{verDetallesPedido(id=${p.id})}" th:text="${p.id}"
+                               th:aria-label="|Ver pedido ${p.id}|">0</a></td>
+                        <!-- ?: pone el texto de la derecha si el pedido aún no tiene datos de envío (sigue en el carrito) -->
+                        <td class="cliente" th:text="${p.nombreCompleto} ?: 'Sin datos de envío'">Cliente</td>
+                        <td class="hidden lg:table-cell"
+                            th:text="${p.fecha != null ? #temporals.format(p.fecha, 'd/M HH:mm') : '—'}">—</td>
+                        <td class="derecha hidden sm:table-cell"
+                            th:text="${#lists.isEmpty(p.productosPedido) ? '—' : #numbers.formatDecimal(#aggregates.sum(p.productosPedido.![cantidad * reloj.precio]), 1, 'POINT', 2, 'COMMA') + ' €'}">0 €</td>
+                        <td class="hidden md:table-cell">
+                            <span class="chapa" th:data-estado="${p.estado}"
+                                  th:text="${p.estado == 'EnProceso' ? 'Sin terminar' : (p.estado == 'Completado' ? 'Pagado' : p.estado)}">estado</span>
+                        </td>
+                        <td>
+                            <!-- Los carritos a medias no se cambian de estado -->
+                            <span th:if="${p.estado == 'EnProceso'}" class="text-sm text-texto-atenuado md:hidden">Sin terminar</span>
+                            <form th:unless="${p.estado == 'EnProceso'}" action="cambiarEstadoPedidoLista" method="post"
+                                  class="flex flex-wrap items-center gap-2">
+                                <input type="hidden" name="id" th:value="${p.id}">
+                                <input type="hidden" name="pestana" value="">
+                                <select name="estado" autocomplete="off" class="campo min-h-11 w-auto px-2"
+                                        th:data-actual="${p.estado}" th:aria-label="|Cambiar estado del pedido ${p.id}|">
+                                    <option value="Completado" th:selected="${p.estado == 'Completado'}">Pagado</option>
+                                    <option value="Enviado" th:selected="${p.estado == 'Enviado'}">Enviado</option>
+                                    <option value="Incidencia" th:selected="${p.estado == 'Incidencia'}">Incidencia</option>
+                                </select>
+                                <button type="submit" class="btn btn-primario hidden px-3">Guardar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+<script th:src="@{/librerias_js/jquery.js}"></script>
+<script th:src="@{/js/pedidos_admin.js}"></script>
+</body>
+</html>

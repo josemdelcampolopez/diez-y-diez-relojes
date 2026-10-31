@@ -1,0 +1,31 @@
+<!-- Formulario de identificacion: se inserta dentro de #contenedor -->
+<div class="barra-seccion">
+    <div>
+        <h2 class="titulo-seccion">Iniciar sesión en tu cuenta</h2>
+        <p class="texto-ayuda">Introduce tus datos para identificarte.</p>
+    </div>
+</div>
+
+<form id="form_login" class="formulario">
+
+<!--    QUITAR VALORES POR DEFECTO DE PASS Y GMAIL-->
+    
+    <div class="grupo">
+        <label for="email" class="etiqueta">Email</label>
+        <input value="pepe@gmail.com" type="email" id="email" name="email" autocomplete="email" spellcheck="false" class="campo">
+    </div>
+
+    <div class="grupo">
+        <label for="pass" class="etiqueta">Contraseña</label>
+        <input value="123" type="password" id="pass" name="pass" autocomplete="new-password" class="campo">
+    </div>
+
+    <div class="grupo">
+        <label for="recordar_pass" class="etiqueta">Recordar mis datos (Por terminar)</label>
+        <input type="checkbox" id="recordar_pass" name="recordar_pass" autocomplete="recordar_pass" class="campo">
+    </div>
+
+    <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
+        <button type="submit" class="btn btn-primario">Identificarse</button>
+    </div>
+</form>

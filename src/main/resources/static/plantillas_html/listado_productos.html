@@ -1,0 +1,49 @@
+<!-- Rejilla del listado: 1, 2 o 3 columnas según el ancho (estilos en fragments/tienda.html).
+     Mustache repite la tarjeta por cada elemento del array. Las claves van en mayúsculas, como las devuelve H2. -->
+<div class="rejilla-productos">
+    {{#.}}
+    <article class="tarjeta tarjeta-producto">
+
+        <!-- ===== FOTOS =====
+             data-fotos lleva los id de las fotos extra ("11,12,13") o nada si no tiene.
+             Con ellos tienda.js monta la lista de fotos y los puntos (prepararFotosTarjetas) -->
+        <div class="marco-imagen tarjeta-foto" data-fotos="{{FOTOS_EXTRA}}">
+            <!-- La foto también abre la ficha. tabindex="-1" y aria-hidden para que el teclado y los lectores
+                  de pantalla no pasen dos veces por el mismo enlace (ya está en el título).
+                  Cada foto es una carta de la pila; si hay fotos extra, tienda.js añade las demás -->
+            <a href="#" data-detalles="{{ID}}" tabindex="-1" aria-hidden="true" class="pila-fotos">
+                <span class="carta" data-pos="0">
+                    <img src="mostrar_miniatura?id={{ID}}" alt="" width="400" height="400" loading="lazy">
+                </span>
+            </a>
+            <!-- Solo si tiene fotos extra: con null, Mustache se salta este trozo -->
+            {{#FOTOS_EXTRA}}
+            <div class="puntos-foto"></div>
+            {{/FOTOS_EXTRA}}
+        </div>
+
+
+        <!-- ===== DATOS ===== -->
+        <div class="tarjeta-datos">
+            <p class="marca">{{MARCA_RELOJ}}</p>
+            <h2 class="titulo-producto">
+                <a href="#" data-detalles="{{ID}}"
+                   class="transition-colors duration-200 ease-out hover:text-principal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-principal">{{MODELO}}</a>
+            </h2>
+            <p class="texto-ayuda">{{CATEGORIA}}</p>
+            <!-- La ficha técnica completa está en detalles_producto.html; aquí, un resumen en una línea -->
+            <p class="tarjeta-resumen">{{TIPO_MOVIMIENTO}} · {{RESISTENCIA_AGUA}} atm · {{GENERO}}</p>
+            <!-- mt-auto empuja el precio abajo: así queda a la misma altura en toda la fila -->
+            <p class="precio mt-auto pt-4">{{PRECIO}}&nbsp;€</p>
+        </div>
+
+        <!-- ===== ACCIONES ===== -->
+        <div class="pie-tarjeta">
+            <a href="#" class="btn btn-secundario" data-detalles="{{ID}}"
+               aria-label="Ver detalles de {{MARCA_RELOJ}} {{MODELO}}">Ver detalles</a>
+            <a href="#" class="btn btn-primario" data-carrito="{{ID}}"
+               aria-label="Agregar {{MARCA_RELOJ}} {{MODELO}} al carrito">Al carrito</a>
+        </div>
+    </article>
+    {{/.}}
+</div>

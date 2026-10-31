@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Detalles del pedido')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <header th:replace="~{fragments/general :: cabecera('Detalles del pedido', 'Datos de envío, productos y estado.')}"></header>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('pedidos')}"></nav>
+
+        <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <div class="barra-seccion mt-6">
+            <div>
+                <p class="etiqueta-pequena" th:text="|Pedido ${pedido.id}|">Pedido 0</p>
+                <h2 class="titulo-seccion" th:text="${pedido.nombreCompleto} ?: 'Sin datos de envío'">Cliente</h2>
+            </div>
+            <a href="gestionarPedidos" class="btn btn-neutro">Volver a pedidos</a>
+        </div>
+
+        <!-- Desde lg: datos del pedido a la izquierda (2 de 3 columnas) y estado a la derecha -->
+        <div class="mt-6 grid gap-6 lg:grid-cols-3">
+            <div class="grid content-start gap-6 md:grid-cols-2 lg:col-span-2">
+
+                <article class="tarjeta-admin p-6">
+                    <h3 class="titulo-producto">Envío</h3>
+                    <dl class="lista-datos mt-4">
+                        <div><dt>Cuenta</dt><dd class="min-w-0 break-all text-right" th:text="${pedido.usuario.email}">cuenta</dd></div>
+                        <div><dt>Email</dt><dd class="min-w-0 break-all text-right" th:text="${pedido.email}">email</dd></div>
+                        <div><dt>Teléfono</dt><dd th:text="${pedido.telefono}">teléfono</dd></div>
+                        <div><dt>Dirección</dt><dd class="min-w-0 text-right" th:text="${pedido.direccion}">dirección</dd></div>
+                        <div><dt>Provincia</dt><dd th:text="${pedido.provincia}">provincia</dd></div>
+                        <div><dt>Código postal</dt><dd th:text="${pedido.codigoPostal}">CP</dd></div>
+                    </dl>
+                </article>
+
+                <article class="tarjeta-admin p-6">
+                    <h3 class="titulo-producto">Pago</h3>
+                    <dl class="lista-datos mt-4">
+                        <div><dt>Titular</dt><dd class="min-w-0 text-right" th:text="${pedido.titularTarjeta}">titular</dd></div>
+                        <div><dt>Tarjeta</dt><dd th:text="${pedido.tipoTarjeta}">tipo</dd></div>
+                        <div><dt>Número</dt><dd th:text="${pedido.numeroTarjeta?.length() > 4
+                                ? '•••• ' + pedido.numeroTarjeta.substring(pedido.numeroTarjeta.length() - 4)
+                                : pedido.numeroTarjeta}">•••• 0000</dd></div>
+                        <div><dt>Caducidad</dt><dd th:text="${pedido.caducidad}">caducidad</dd></div>
+                    </dl>
+                </article>
+
+                <!-- Solo si el cliente ha contestado la pregunta extra -->
+                <p th:if="${pedido.motivoCompra}" class="caja mt-0 md:col-span-2">
+                    <span class="etiqueta-pequena block">Motivo de compra</span>
+                    <span th:text="${pedido.motivoCompra}">motivo</span>
+                </p>
+
+                <article class="tarjeta-admin p-6 md:col-span-2">
+                    <h3 class="titulo-producto">Productos</h3>
+                    <p th:if="${#lists.isEmpty(pedido.productosPedido)}" class="texto-ayuda">Este pedido no tiene productos.</p>
+                    <ul class="mt-2 divide-y divide-borde">
+                        <li th:each="pp : ${pedido.productosPedido}" class="flex items-center gap-4 py-3">
+                            <img th:src="@{/mostrar_miniatura(id=${pp.reloj.id})}" alt="" width="64" height="64" loading="lazy"
+                                 class="h-16 w-16 shrink-0 rounded-sm bg-fondo object-contain p-1">
+                            <div class="min-w-0 flex-1">
+                                <p class="marca" th:text="${pp.reloj.marca}">Marca</p>
+                                <p class="truncate text-texto" th:text="${pp.reloj.modelo}">Modelo</p>
+                            </div>
+                            <p class="whitespace-nowrap text-texto-atenuado" th:text="|${pp.cantidad} × ${pp.reloj.precio} €|">1 × 0 €</p>
+                        </li>
+                    </ul>
+                    <!-- .![...] calcula cantidad × precio de cada línea y #aggregates.sum las suma -->
+                    <p th:unless="${#lists.isEmpty(pedido.productosPedido)}"
+                       class="mt-2 flex justify-between border-t border-borde pt-4 font-serif text-2xl text-texto">
+                        <span>Total</span>
+                        <span th:text="|${#numbers.formatDecimal(#aggregates.sum(pedido.productosPedido.![cantidad * reloj.precio]), 1, 2)} €|">0 €</span>
+                    </p>
+                </article>
+            </div>
+
+            <!-- ===== ESTADO ===== -->
+            <aside class="tarjeta-admin h-fit p-6">
+                <h3 class="titulo-producto">Estado</h3>
+                <p class="mt-3"><span class="chapa" th:data-estado="${pedido.estado}"
+                                      th:text="${pedido.estado == 'EnProceso' ? 'Sin terminar' : (pedido.estado == 'Completado' ? 'Pagado' : pedido.estado)}">estado</span></p>
+                <form th:unless="${pedido.estado == 'EnProceso'}" action="cambiarEstadoPedido" method="post" class="mt-4 grid gap-4">
+                    <input type="hidden" name="id" th:value="${pedido.id}">
+                    <div class="grupo">
+                        <label for="estado" class="etiqueta">Estado del pedido</label>
+                        <select id="estado" name="estado" class="campo">
+                            <option th:each="e : ${estados}" th:unless="${e.name() == 'EnProceso'}" th:value="${e}"
+                                    th:text="${e.name() == 'Completado' ? 'Pagado' : e}"
+                                    th:selected="${e.name() == pedido.estado}"></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primario">Guardar estado</button>
+                </form>
+            </aside>
+        </div>
+    </section>
+</main>
+</body>
+</html>

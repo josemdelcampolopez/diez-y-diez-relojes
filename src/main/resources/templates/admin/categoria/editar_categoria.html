@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Editar categoría')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <header th:replace="~{fragments/general :: cabecera('Editar categoría', null)}"></header>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('categorias')}"></nav>
+
+        <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <div class="caja">
+            <form th:action="@{/admin/guardarCambiosCategoria}" th:object="${categoriaEditar}" method="post" class="formulario">
+
+                <div class="grupo md:col-span-2">
+                    <label for="nombre" class="etiqueta">Nombre</label>
+                    <input type="text" th:field="*{nombre}" aria-describedby="error_nombre" class="campo">
+                    <span id="error_nombre" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></span>
+                </div>
+
+                <div class="grupo md:col-span-2">
+                    <label for="descripcion" class="etiqueta">Descripción</label>
+                    <textarea th:field="*{descripcion}" rows="4" aria-describedby="error_descripcion" class="campo"></textarea>
+                    <span id="error_descripcion" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}" class="error"></span>
+                </div>
+
+                <input type="hidden" th:field="*{id}">
+
+                <div class="flex flex-wrap justify-end gap-3 border-t border-borde pt-5 md:col-span-2">
+                    <a th:href="@{/admin/gestionarCategorias}" class="btn btn-neutro">Cancelar</a>
+                    <button type="submit" class="btn btn-primario">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

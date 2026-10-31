@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Cliente creado')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <header th:replace="~{fragments/general :: cabecera('Nuevo cliente', null)}"></header>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('clientes')}"></nav>
+
+        <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <div class="caja mx-auto max-w-lg p-8 text-center" role="status">
+            <svg class="mx-auto h-12 w-12 text-exito" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m9 12 2 2 4-4"/>
+            </svg>
+            <h2 class="titulo-seccion mt-4">Cliente creado</h2>
+            <p class="texto-ayuda">Ya aparece en la lista de clientes.</p>
+            <a href="gestionarUsuarios" class="btn btn-secundario mt-6">Volver a clientes</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

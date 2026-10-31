@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Relojes')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <div class="bloque-cabecera items-center">
+        <header th:replace="~{fragments/general :: cabecera('Relojes', null)}"></header>
+        <a href="registrarReloj" class="btn btn-primario shrink-0">Nuevo reloj</a>
+    </div>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('relojes')}"></nav>
+
+        <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <p th:if="${error}" th:text="${error}" class="aviso-error"></p>
+        <p th:if="${#lists.isEmpty(relojes)}" class="vacio">No hay relojes todavía.</p>
+
+        <div th:unless="${#lists.isEmpty(relojes)}" class="mt-4 overflow-x-auto">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th scope="col">Reloj</th>
+                    <th scope="col" class="hidden md:table-cell">Categoría</th>
+                    <th scope="col" class="derecha hidden sm:table-cell">Precio</th>
+                    <th scope="col" class="derecha">Stock</th>
+                    <th scope="col"><span class="sr-only">Acciones</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${relojes}">
+                    <td class="cliente">
+                        <div class="reloj-celda">
+                            <img th:src="@{/mostrar_miniatura(id=${r.id})}" alt="" width="48" height="48" loading="lazy">
+                            <div class="min-w-0">
+                                <span class="font-medium" th:text="|${r.marca} ${r.modelo}|">Marca Modelo</span>
+                                <!-- En el móvil no hay columna Precio: va debajo del nombre -->
+                                <span class="block text-sm text-texto-atenuado sm:hidden"
+                                      th:text="${#numbers.formatDecimal(r.precio, 1, 'POINT', 2, 'COMMA') + ' €'}">0 €</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="hidden md:table-cell" th:text="${r.categoria.nombre}">Categoría</td>
+                    <td class="derecha hidden sm:table-cell"
+                        th:text="${#numbers.formatDecimal(r.precio, 1, 'POINT', 2, 'COMMA') + ' €'}">0 €</td>
+                    <!-- Stock bajo: el mismo límite de 5 que el panel de inicio -->
+                    <td class="derecha">
+                        <span th:classappend="${r.stock le 5} ? 'resolver-urgente'"
+                              th:text="${r.stock == 0 ? 'Agotado' : r.stock}">0</span>
+                    </td>
+                    <td>
+                        <div class="acciones-fila">
+                            <a th:href="@{editarReloj(id=${r.id})}" th:aria-label="|Editar ${r.marca} ${r.modelo}|">Editar</a>
+                            <a th:href="@{borrarReloj(id=${r.id})}" th:aria-label="|Borrar ${r.marca} ${r.modelo}|"
+                               class="borrar" onclick="return confirm('¿Borrar este reloj?')">Borrar</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

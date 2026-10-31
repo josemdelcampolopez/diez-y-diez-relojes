@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/general :: head('Editar reloj')}"></head>
+
+<body class="pagina">
+
+    <main class="contenedor">
+        <header th:replace="~{fragments/general :: cabecera('Editar reloj', null)}"></header>
+
+        <section class="panel">
+            <nav th:replace="~{fragments/general :: menu('relojes')}"></nav>
+
+            <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+            <div class="caja">
+                <form th:action="@{/admin/guardarCambiosReloj}" th:object="${relojEditar}" method="post"
+                    enctype="multipart/form-data" class="formulario">
+                    <th:block th:replace="~{fragments/reloj :: campos}"></th:block>
+                    <div class="grupo md:col-span-2">
+                        <p class="etiqueta">Foto actual</p>
+                        <div class="marco-imagen w-40">
+                            <img th:src="@{/mostrar_imagen(id=*{id})}" alt="Portada actual del reloj" width="144" height="112"
+                                class="h-28 w-full object-contain">
+                        </div>
+                    </div>
+
+                    <div class="grupo md:col-span-2">
+                        <p class="etiqueta">Imágenes adicionales</p>
+                        <label class="flex items-center gap-2 text-sm">
+                            <input type="radio" name="idImagenNuevaPrincipal" value="0" checked> Mantener la portada actual
+                        </label>
+                        <div class="flex flex-wrap gap-4">
+                            <div th:each="img : ${imagenesExtra}" class="w-40 space-y-2">
+                                <div class="marco-imagen">
+                                    <img th:src="@{/mostrar_imagen_extra(id=${img.ID})}" alt="Imagen adicional del reloj" width="144" height="112" class="h-28 w-full object-contain">
+                                </div>
+                                <label class="flex items-center gap-2 text-sm text-texto-atenuado">
+                                    <input type="checkbox" name="idsImagenesBorrar" th:value="${img.ID}"> Borrar
+                                </label>
+                                <label class="flex items-center gap-2 text-sm text-texto-atenuado">
+                                    <input type="radio" name="idImagenNuevaPrincipal" th:value="${img.ID}"> Usar como principal
+                                </label>
+                            </div>
+                        </div>
+                        <p th:if="${#lists.isEmpty(imagenesExtra)}" class="texto-ayuda">Este reloj no tiene imágenes adicionales.</p>
+                    </div>
+
+                    <div class="grupo md:col-span-2">
+                        <label for="fotosExtra" class="etiqueta">Añadir imágenes adicionales (máximo 4 en total)</label>
+                        <input type="file" id="fotosExtra" name="fotosExtra" multiple accept="image/jpeg,image/png,image/webp" aria-describedby="error_fotosExtra" th:attr="aria-invalid=${#fields.hasErrors('fotosExtra')}" class="campo-archivo">
+                        <span id="error_fotosExtra" th:if="${#fields.hasErrors('fotosExtra')}" th:errors="*{fotosExtra}" class="error"></span>
+                    </div>
+                    <input type="hidden" th:field="*{id}">
+                    <div class="flex flex-wrap justify-end gap-3 border-t border-borde pt-5 md:col-span-2">
+                        <a th:href="@{/admin/gestionarRelojes}" class="btn btn-neutro">Cancelar</a>
+                        <button type="submit" class="btn btn-primario">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+</body>
+
+</html>

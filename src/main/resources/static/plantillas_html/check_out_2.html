@@ -1,0 +1,40 @@
+<!-- Checkout · paso 2: pago. El botón lo recoge tienda.js (#aceptar_paso_2) -->
+<div class="barra-seccion">
+    <div>
+        <h2 class="titulo-seccion">Datos de pago</h2>
+        <p class="texto-ayuda">Tienda de clase: no se cobra nada.</p>
+    </div>
+</div>
+
+<ol class="pasos-pedido" aria-label="Pasos del pedido">
+    <li class="hecho">Envío</li>
+    <li aria-current="step">Pago</li>
+    <li>Tu opinión</li>
+    <li>Resumen</li>
+</ol>
+
+<form class="formulario" novalidate>
+    <div class="grupo">
+        <label for="tipo_tarjeta" class="etiqueta">Tipo de tarjeta</label>
+        <select id="tipo_tarjeta" class="campo">
+            <option value="0">Elegir tipo</option>
+            <option value="visa">VISA</option>
+            <option value="mastercard">MasterCard</option>
+        </select>
+    </div>
+    <div class="grupo">
+        <label for="numero_tarjeta" class="etiqueta">Número de la tarjeta</label>
+        <input type="text" id="numero_tarjeta" autocomplete="cc-number" inputmode="numeric" class="campo">
+    </div>
+    <div class="grupo">
+        <label for="titular_tarjeta" class="etiqueta">Titular de la tarjeta</label>
+        <input type="text" id="titular_tarjeta" autocomplete="cc-name" class="campo">
+    </div>
+    <div class="grupo">
+        <label for="caducidad_tarjeta" class="etiqueta">Caducidad (MM/AA)</label>
+        <input type="text" id="caducidad_tarjeta" autocomplete="cc-exp" placeholder="MM/AA" class="campo">
+    </div>
+    <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
+        <button type="button" id="aceptar_paso_2" class="btn btn-primario">Continuar</button>
+    </div>
+</form>

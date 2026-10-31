@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/general :: head('Nuevo reloj')}"></head>
+
+<body class="pagina">
+
+    <main class="contenedor">
+        <header th:replace="~{fragments/general :: cabecera('Nuevo reloj', null)}"></header>
+
+        <section class="panel">
+            <nav th:replace="~{fragments/general :: menu('relojes')}"></nav>
+
+            <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+            <div class="caja">
+                <form th:action="@{/admin/guardarReloj}" th:object="${nuevo}" method="post"
+                    enctype="multipart/form-data" class="formulario">
+                    <th:block th:replace="~{fragments/reloj :: campos}"></th:block>
+                    <div class="grupo md:col-span-2">
+                        <label for="fotosExtra" class="etiqueta">Imágenes adicionales (máximo 4)</label>
+                        <input type="file" id="fotosExtra" name="fotosExtra" multiple accept="image/jpeg,image/png,image/webp" aria-describedby="error_fotosExtra" th:attr="aria-invalid=${#fields.hasErrors('fotosExtra')}" class="campo-archivo">
+                        <span id="error_fotosExtra" th:if="${#fields.hasErrors('fotosExtra')}" th:errors="*{fotosExtra}" class="error"></span>
+                    </div>
+                    <div class="flex flex-wrap justify-end gap-3 border-t border-borde pt-5 md:col-span-2">
+                        <a th:href="@{/admin/gestionarRelojes}" class="btn btn-neutro">Cancelar</a>
+                        <button type="submit" class="btn btn-primario">Guardar reloj</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+</body>
+
+</html>

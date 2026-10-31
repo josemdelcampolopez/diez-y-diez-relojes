@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+    <th:block th:fragment="recursos(titulo)">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600;700&display=swap"
+              rel="stylesheet">
+        <script th:src="@{/librerias_js/tailwind.js}"></script>
+
+        <style type="text/tailwindcss">
+            /* ===== DISEÑO «MEDIANOCHE» (ver DESIGN.md) ===== */
+            @theme {
+                /* Base */
+                --color-fondo: #182431;
+                --color-superficie: #223447;
+                --color-superficie-elevada: #2d455d;
+                --color-borde: #3a526c;
+                --color-marino: #17334d;
+                --color-marino-hover: #21425f;
+
+                /* Texto */
+                --color-texto: #f3ecdd;
+                --color-texto-atenuado: #bac4cf;
+
+                /* Oro */
+                --color-oro: #e2b866;
+                --color-oro-hover: #f0cc8a;
+                --color-oro-claro: #f0cc8a;
+                --color-oro-profundo: #b88a3e;
+
+                /* Estados */
+                --color-exito: #4fc18a;
+                --color-error: #ff7a70;
+                --color-aviso: #f2c14e;
+                --color-info: #7db4f0;
+
+                /* Tipografías */
+                --font-serif: "Bodoni Moda", serif;
+                --font-sans: "Jost", sans-serif;
+            }
+
+            @layer components {
+                /* ===== ESTRUCTURA ===== */
+                .pagina {
+                    @apply min-h-screen bg-fondo p-4 text-base text-texto md:p-6 lg:p-8;
+                    color-scheme: dark;
+                    background-image: radial-gradient(60rem 28rem at 50% -8%, rgba(16, 42, 67, .9), transparent 70%);
+                    background-repeat: no-repeat;
+                }
+
+                .contenedor {
+                    @apply mx-auto max-w-7xl;
+                }
+
+                .panel {
+                    @apply mt-6 rounded-lg border border-borde bg-superficie p-5 sm:p-6;
+                }
+
+                .caja {
+                    @apply mt-6 rounded-lg border border-borde bg-fondo/60 p-5;
+                }
+
+                .barra-seccion {
+                    @apply flex flex-col gap-3 border-b border-borde pb-5 sm:flex-row sm:items-center sm:justify-between;
+                }
+
+                /* ===== CABECERA DE ADMINISTRACIÓN ===== */
+                .cabecera {
+                    @apply rounded-lg border border-borde px-6 py-8 sm:px-8;
+                    background-image: linear-gradient(135deg, var(--color-fondo) 0%, var(--color-marino) 55%, var(--color-superficie) 100%);
+                }
+
+                .cabecera-marca {
+                    @apply text-xs font-semibold uppercase tracking-[0.18em] text-oro;
+                }
+
+                .cabecera-titulo {
+                    @apply mt-3 font-serif text-4xl font-semibold leading-tight tracking-tight text-texto sm:text-5xl;
+                }
+
+                .cabecera-texto {
+                    @apply mt-3 max-w-xl text-base leading-relaxed text-texto-atenuado;
+                }
+
+                /* ===== TEXTOS ===== */
+                .titulo-seccion {
+                    @apply font-serif text-3xl font-medium leading-tight text-texto sm:text-4xl;
+                }
+
+                .texto-ayuda {
+                    @apply mt-1 text-base text-texto-atenuado;
+                }
+
+                .etiqueta-pequena {
+                    @apply text-xs font-semibold uppercase tracking-[0.18em] text-texto-atenuado;
+                }
+
+                .vacio {
+                    @apply mt-6 rounded-lg border border-dashed border-borde bg-superficie/60 p-6 text-base text-texto-atenuado;
+                }
+
+                .aviso-error {
+                    @apply mt-6 flex items-start gap-2 rounded-sm border border-error/60 bg-error/10 p-3 text-sm font-medium text-error;
+                }
+
+                .aviso-error::before, .error::before {
+                    content: "";
+                    flex: none;
+                    display: inline-block;
+                    width: 1.1em;
+                    height: 1.1em;
+                    margin-right: .375rem;
+                    vertical-align: -.2em;
+                    background-color: currentColor;
+                    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E") center / contain no-repeat;
+                    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E") center / contain no-repeat;
+                }
+
+                .aviso-error::before {
+                    margin-right: 0;
+                    margin-top: .1em;
+                }
+
+                /* ===== FORMULARIOS ===== */
+                .formulario {
+                    @apply mt-6 grid gap-5 md:grid-cols-2;
+                }
+
+                .grupo {
+                    @apply space-y-2;
+                }
+
+                .etiqueta {
+                    @apply block text-sm font-medium text-texto-atenuado;
+                }
+
+                .campo {
+                    @apply min-h-12 w-full rounded-sm border border-borde bg-superficie px-4 py-2 text-base text-texto duration-200 ease-out placeholder:text-texto-atenuado/70 focus:border-oro focus:outline-none focus:ring-[3px] focus:ring-oro/25;
+                    transition-property: border-color, box-shadow;
+                    color-scheme: dark;
+                }
+
+                .campo-archivo {
+                    @apply block min-h-12 w-full rounded-sm border border-dashed border-borde bg-superficie px-4 py-2 text-base text-texto-atenuado transition-colors duration-200 ease-out hover:border-oro file:mr-4 file:min-h-9 file:cursor-pointer file:rounded-sm file:border-0 file:bg-oro file:px-4 file:py-1.5 file:text-sm file:font-semibold file:text-fondo hover:file:bg-oro-hover;
+                    color-scheme: dark;
+                }
+
+                .error {
+                    @apply block text-sm font-medium text-error;
+                }
+
+                /* ===== BOTONES (siempre "btn" + una variante) ===== */
+                .btn {
+                    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-sm border px-5 py-2 text-sm font-semibold uppercase tracking-[0.08em] duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oro-hover disabled:cursor-not-allowed disabled:opacity-40;
+                    transition-property: color, background-color, border-color, box-shadow, transform;
+                }
+
+                .btn:active:not(:disabled) {
+                    transform: translateY(1px);
+                }
+
+                .btn-primario {
+                    @apply border-oro-profundo text-fondo;
+                    background-image: linear-gradient(135deg, #b88a3e 0%, #f0cc8a 45%, #e2b866 60%, #b88a3e 100%);
+                }
+
+                .btn-primario:hover:not(:disabled) {
+                    @apply border-oro-hover bg-oro-hover;
+                    background-image: none;
+                    box-shadow: 0 0 24px rgba(226, 184, 102, .35);
+                    transform: translateY(-1px);
+                }
+
+                .btn-primario:active:not(:disabled) {
+                    box-shadow: 0 0 12px rgba(226, 184, 102, .25);
+                    transform: translateY(1px);
+                }
+
+                .btn-secundario {
+                    @apply border-oro bg-transparent text-oro hover:bg-oro hover:text-fondo;
+                }
+
+                .btn-neutro {
+                    @apply border-borde bg-transparent text-texto hover:border-oro hover:text-oro;
+                }
+
+                .btn-peligro {
+                    @apply border-error bg-error text-fondo hover:brightness-110;
+                }
+
+                /* ===== MENÚS ===== */
+                .menu-enlace {
+                    @apply flex min-h-11 items-center rounded-sm border border-borde bg-superficie px-4 py-3 text-base font-medium text-texto transition-colors duration-200 ease-out hover:border-oro hover:bg-superficie-elevada hover:text-oro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oro-hover;
+                }
+
+                /* ===== PRODUCTOS ===== */
+                .tarjeta {
+                    @apply overflow-hidden rounded-lg border border-borde bg-superficie duration-500 ease-in-out hover:border-oro/60 hover:bg-superficie-elevada;
+                    transition-property: background-color, border-color, box-shadow;
+                }
+
+                .tarjeta:hover {
+                    box-shadow: 0 0 24px rgba(226, 184, 102, .05);
+                }
+
+                .tarjeta-admin {
+                    @apply overflow-hidden rounded-lg border border-borde bg-superficie;
+                }
+
+                .marco-imagen {
+                    @apply flex items-center justify-center rounded-lg p-3;
+                    background-image: radial-gradient(circle, rgba(226, 184, 102, .12), transparent 70%);
+                }
+
+                .marca {
+                    @apply text-xs font-semibold uppercase tracking-[0.18em] text-oro;
+                }
+
+                .titulo-producto {
+                    @apply mt-1 font-serif text-2xl font-semibold leading-snug text-texto;
+                }
+
+                .lista-datos {
+                    @apply grid gap-2 text-base text-texto;
+                }
+
+                .lista-datos > div {
+                    @apply flex justify-between gap-3;
+                }
+
+                .lista-datos dt {
+                    @apply font-medium text-texto-atenuado;
+                }
+
+            /* ===== CHAPAS DE ESTADO (el color sale de data-estado) ===== */
+            .chapa {
+                @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-borde px-3 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-texto-atenuado;
+            }
+
+            .chapa::before {
+                content: "";
+                width: .5rem;
+                height: .5rem;
+                border-radius: 9999px;
+                background-color: currentColor;
+            }
+
+            .chapa[data-estado="EnProceso"]  { @apply border-info/40 bg-info/10 text-info; }
+            .chapa[data-estado="Completado"] { @apply border-exito/40 bg-exito/10 text-exito; }
+            .chapa[data-estado="Enviado"]    { @apply border-oro/40 bg-oro/10 text-oro; }
+            .chapa[data-estado="Incidencia"] { @apply border-error/40 bg-error/10 text-error; }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                *, *::before, *::after {
+                    transition-duration: .01ms !important;
+                    animation-duration: .01ms !important;
+                    scroll-behavior: auto !important;
+                }
+
+                .btn, .btn:hover, .btn:active {
+                    transform: none !important;
+                }
+            }
+        </style>
+    </th:block>
+    <title th:text="|${titulo} · Tienda de relojes|">Tienda de relojes</title>
+</head>
+</html>

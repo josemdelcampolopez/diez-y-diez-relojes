@@ -1,0 +1,30 @@
+<!-- Checkout · paso 3: pregunta extra. El botón lo recoge tienda.js (#aceptar_paso_3) -->
+<div class="barra-seccion">
+    <div>
+        <h2 class="titulo-seccion">Tu opinión</h2>
+        <p class="texto-ayuda">Una pregunta rápida antes de terminar.</p>
+    </div>
+</div>
+
+<ol class="pasos-pedido" aria-label="Pasos del pedido">
+    <li class="hecho">Envío</li>
+    <li class="hecho">Pago</li>
+    <li aria-current="step">Tu opinión</li>
+    <li>Resumen</li>
+</ol>
+
+<form class="formulario" novalidate>
+    <div class="grupo">
+        <label for="motivo_compra" class="etiqueta">¿Qué te hizo elegir este reloj?</label>
+        <select id="motivo_compra" class="campo">
+            <option value="">Elegir motivo</option>
+            <option value="marca">Marca</option>
+            <option value="precio">Precio</option>
+            <option value="diseno">Diseño</option>
+            <option value="recomendacion">Recomendación</option>
+        </select>
+    </div>
+    <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
+        <button type="button" id="aceptar_paso_3" class="btn btn-primario">Ver resumen</button>
+    </div>
+</form>

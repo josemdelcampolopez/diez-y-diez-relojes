@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head('Categorías')}"></head>
+<body class="pagina">
+<main class="contenedor">
+
+    <div class="bloque-cabecera items-center">
+        <header th:replace="~{fragments/general :: cabecera('Categorías', null)}"></header>
+        <a href="registrarCategoria" class="btn btn-primario shrink-0">Nueva categoría</a>
+    </div>
+
+    <section class="panel">
+        <nav th:replace="~{fragments/general :: menu('categorias')}"></nav>
+
+        <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <p th:if="${error}" th:text="${error}" class="aviso-error"></p>
+        <p th:if="${#lists.isEmpty(categorias)}" class="vacio">Todavía no hay categorías.</p>
+
+        <div th:unless="${#lists.isEmpty(categorias)}" class="mt-4 overflow-x-auto">
+            <table class="tabla">
+                <thead>
+                <tr>
+                    <th scope="col">Categoría</th>
+                    <th scope="col" class="hidden md:table-cell">Descripción</th>
+                    <th scope="col" class="derecha">Relojes</th>
+                    <th scope="col"><span class="sr-only">Acciones</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${categorias}">
+                    <td class="cliente">
+                        <span class="font-medium" th:text="${c.nombre}">Nombre</span>
+                        <!-- En el móvil no hay columna Descripción: va debajo del nombre -->
+                        <span class="block text-sm text-texto-atenuado md:hidden"
+                              th:text="${c.descripcion}">Descripción</span>
+                    </td>
+                    <td class="cliente hidden md:table-cell" th:text="${c.descripcion}">Descripción</td>
+                    <td class="derecha" th:text="${#lists.size(c.relojes)}">0</td>
+                    <td>
+                        <div class="acciones-fila">
+                            <a th:href="@{editarCategoria(id=${c.id})}" th:aria-label="|Editar ${c.nombre}|">Editar</a>
+                            <a th:href="@{borrarCategoria(id=${c.id})}" th:aria-label="|Borrar ${c.nombre}|"
+                               class="borrar" onclick="return confirm('¿Borrar esta categoría?')">Borrar</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

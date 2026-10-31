@@ -1,0 +1,70 @@
+<!-- Carrito de la compra: se inserta dentro de #contenedor (estilos en fragments/tienda.html, apartado CARRITO).
+     Mustache repite la línea por cada producto. Las claves van en mayúsculas, como las devuelve H2. -->
+<div class="barra-seccion">
+    <div>
+        <h2 class="titulo-seccion">Tu carrito</h2>
+        <p class="texto-ayuda">Revisa los relojes antes de hacer el pedido.</p>
+    </div>
+</div>
+
+<div class="lista-carrito">
+    {{#productos}}
+    <article class="linea-carrito" data-reloj="{{RELOJ_ID}}">
+
+        <!-- ===== FOTO ===== -->
+        <div class="marco-imagen linea-carrito-foto">
+            <img src="mostrar_miniatura?id={{RELOJ_ID}}" alt="" width="96" height="96" loading="lazy">
+        </div>
+
+        <!-- ===== DATOS ===== -->
+        <div>
+            <p class="marca">{{MARCA_RELOJ}}</p>
+            <h3 class="titulo-producto">{{MODELO}}</h3>
+            <p class="precio text-xl">{{PRECIO}}&nbsp;€</p>
+            {{#VARIOS}}
+            <p class="texto-ayuda text-sm">{{CANTIDAD}} × {{PRECIO}}&nbsp;€ = {{SUBTOTAL}}&nbsp;€</p>
+            {{/VARIOS}}
+        </div>
+
+        <!-- ===== ACCIONES (eventos en tienda.js) ===== -->
+        <div class="linea-carrito-acciones">
+            <div class="selector-cantidad">
+                <button type="button" data-sumar="-1" {{#EN_MINIMO}}disabled{{/EN_MINIMO}} aria-label="Quitar uno de {{MARCA_RELOJ}} {{MODELO}}">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" aria-hidden="true">
+                        <path d="M5 12h14"/>
+                    </svg>
+                </button>
+                <input type="number" value="{{CANTIDAD}}" min="1" max="{{STOCK}}" aria-label="Cantidad de {{MARCA_RELOJ}} {{MODELO}}">
+                <button type="button" data-sumar="1" {{#EN_MAXIMO}}disabled{{/EN_MAXIMO}} aria-label="Añadir uno de {{MARCA_RELOJ}} {{MODELO}}">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                </button>
+            </div>
+            <a href="#" class="borrar-carrito" data-borrar="{{MARCA_RELOJ}} {{MODELO}}" aria-label="Borrar {{MARCA_RELOJ}} {{MODELO}} del carrito">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>
+                </svg>
+                Borrar
+            </a>
+        </div>
+    </article>
+    {{/productos}}
+</div>
+
+<!-- Solo si la lista está vacía: la sección invertida (con ^) es lo contrario de la normal (con #) -->
+{{^productos}}
+<div class="carrito-vacio">
+    <p class="titulo-producto">Tu carrito está vacío</p>
+    <p class="texto-ayuda">Añade algún reloj desde el listado.</p>
+    <a href="./" class="btn btn-secundario mt-5">Ver relojes</a>
+</div>
+{{/productos}}
+
+<div class="pie-carrito">
+    <p class="total-carrito">Total <span class="precio">{{total}}&nbsp;€</span></p>
+    <a href="#" id="realizar_pedido" class="btn btn-primario">Realizar pedido</a>
+</div>
