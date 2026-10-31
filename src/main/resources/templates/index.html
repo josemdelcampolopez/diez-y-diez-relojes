@@ -2,6 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/tienda :: head('Relojes')}"></head>
 <body class="pagina">
+<style th:replace="~{fragments/despiece :: estilos}"></style>
 
 <!-- ===== SALTAR AL CONTENIDO (solo visible con el foco del teclado) ===== -->
 <a href="#contenedor"
@@ -83,67 +84,31 @@
 <div class="cuerpo-tienda">
 
     <!-- ===== HERO DE PORTADA (solo se ve con el listado: lo oculta pintar() en tienda.js) ===== -->
-    <!-- #portada es alta; .portada-fija se queda quieta mientras la recorres y el reloj se despieza
-         (--avance lo pone js/despiece.js, el movimiento está en fragments/tienda.html) -->
+    <!-- #portada es alta; .portada-fija se queda quieta mientras la recorres y el reloj se despieza.
+         Reloj, azar y scroll: js/despiece.js · CSS: fragments/despiece.html -->
     <section id="portada" class="portada">
-        <div class="contenedor portada-fija">
-            <div>
-                <p class="portada-antetitulo">Relojería Diez y Diez</p>
-                <h1 class="portada-titulo">Siempre son las <em>diez y diez</em></h1>
-                <p class="portada-explicacion">Es la hora a la que se fotografían los relojes: las agujas enmarcan la
-                    esfera y parece que sonríen. Elige el tuyo entre automáticos, de cuarzo, solares y smartwatches.</p>
-                <div class="portada-acciones">
-                    <a href="#contenedor" class="btn btn-primario">Ver relojes</a>
+        <div class="portada-fija">
+            <div class="contenedor portada-rejilla">
+                <div class="portada-texto">
+                    <p class="portada-antetitulo">Relojería Diez y Diez</p>
+                    <h1 class="portada-titulo">Siempre son las <em>diez y diez</em></h1>
+                    <p class="portada-explicacion">Es la hora a la que se fotografían los relojes: las agujas enmarcan la
+                        esfera y parece que sonríen. Elige el tuyo entre automáticos, de cuarzo, solares y smartwatches.</p>
+                    <div class="portada-acciones">
+                        <a href="#contenedor" class="btn btn-primario">Ver relojes</a>
+                    </div>
+                </div>
+
+                <!-- La foto se ve al instante y es la alternativa si no hay 3D; despiece.js pone cuál -->
+                <div class="despiece-hueco">
+                    <img class="despiece-foto" alt="" width="1024" height="1024">
                 </div>
             </div>
 
-            <!-- Reloj por capas, de abajo arriba. Todas usan el mismo viewBox: montadas, coinciden -->
-            <div class="reloj-despiece" aria-hidden="true">
-                <div class="reloj-piezas">
-                    <!-- Correa y fondo de la caja -->
-                    <svg class="reloj-pieza" style="--altura:0" viewBox="0 0 200 200">
-                        <path d="M72 30 L76 0 H124 L128 30 Z M72 170 L76 200 H124 L128 170 Z" class="fill-secundario"/>
-                        <circle cx="100" cy="100" r="78" class="fill-principal"/>
-                    </svg>
-                    <!-- Movimiento: un trazo grueso a rayas hace los dientes; los rubíes son los puntos rojos -->
-                    <svg class="reloj-pieza" style="--altura:10" viewBox="0 0 200 200">
-                        <circle cx="100" cy="100" r="66" class="fill-terciario"/>
-                        <g class="reloj-engranaje">
-                            <circle cx="82" cy="88" r="26" fill="none" class="stroke-principal" stroke-width="8" stroke-dasharray="4 3"/>
-                            <circle cx="82" cy="88" r="3" class="fill-acento"/>
-                        </g>
-                        <g class="reloj-engranaje reloj-engranaje-inverso">
-                            <circle cx="124" cy="116" r="18" fill="none" class="stroke-principal" stroke-width="7" stroke-dasharray="3 3"/>
-                            <circle cx="124" cy="116" r="3" class="fill-acento"/>
-                        </g>
-                    </svg>
-                    <!-- Esfera: pathLength="60" divide el círculo en 60 partes; una raya cada 5 = 12 horas -->
-                    <svg class="reloj-pieza" style="--altura:20" viewBox="0 0 200 200">
-                        <circle cx="100" cy="100" r="66" class="fill-white"/>
-                        <circle cx="100" cy="100" r="58" fill="none" class="stroke-principal" stroke-width="8"
-                                pathLength="60" stroke-dasharray="0.5 4.5" stroke-dashoffset="0.25"/>
-                        <text x="100" y="74" text-anchor="middle" class="fill-principal font-serif" font-size="9">Diez y Diez</text>
-                    </svg>
-                    <!-- Agujas a las 10:10 y segundero rojo -->
-                    <svg class="reloj-pieza" style="--altura:30" viewBox="0 0 200 200">
-                        <line x1="100" y1="100" x2="65" y2="80" class="stroke-principal" stroke-width="6" stroke-linecap="round"/>
-                        <line x1="100" y1="100" x2="145" y2="74" class="stroke-principal" stroke-width="4" stroke-linecap="round"/>
-                        <line x1="100" y1="88" x2="100" y2="156" class="stroke-acento" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="100" cy="100" r="4" class="fill-acento"/>
-                    </svg>
-                    <!-- Caja (bisel) y corona -->
-                    <svg class="reloj-pieza" style="--altura:40" viewBox="0 0 200 200">
-                        <rect x="176" y="92" width="10" height="16" rx="2" class="fill-terciario"/>
-                        <circle cx="100" cy="100" r="72" fill="none" class="stroke-terciario" stroke-width="12"/>
-                    </svg>
-                    <!-- Cristal con un brillo -->
-                    <svg class="reloj-pieza" style="--altura:50" viewBox="0 0 200 200">
-                        <circle cx="100" cy="100" r="66" class="fill-white/10 stroke-white/60" stroke-width="1"/>
-                        <path d="M58 70 A50 50 0 0 1 96 44" fill="none" class="stroke-white" stroke-width="4"
-                              stroke-linecap="round" opacity=".7"/>
-                    </svg>
-                </div>
-            </div>
+            <canvas id="lienzo_despiece" aria-hidden="true"></canvas>
+            <p id="nombre_pieza" aria-hidden="true"></p>
+            <!-- Para lectores de pantalla: las piezas, sin depender del scroll -->
+            <ol id="lista_piezas" class="sr-only" aria-label="Piezas del reloj"></ol>
         </div>
     </section>
 
@@ -195,7 +160,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.2.0/dist/confetti.min.js"></script>
 <script src="js/cabecera.js"></script>
 <script src="js/carrusel.js"></script>
-<script src="js/despiece.js"></script>
 <script src="js/tienda.js"></script>
+<!-- Three.js solo se descarga si despiece.js decide usar el 3D -->
+<script type="importmap">
+    {"imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.min.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+    }}
+</script>
+<script type="module" src="js/despiece.js"></script>
 </body>
 </html>

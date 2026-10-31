@@ -1,25 +1,95 @@
 // ===== despiece.js · reloj del hero que se despieza al bajar =====
-// El CSS (fragments/tienda.html) separa las piezas según la variable --avance:
-// 0 = montado, 1 = despiezado. Este JS solo calcula --avance: cuánto has bajado dentro de #portada
+// Elige un reloj al azar y enseña su foto. Si el dispositivo puede, carga el 3D y lo pone encima.
+// Si algo falla, se queda la foto: la portada vuelve a su altura normal y la tienda sigue igual.
+import {avanceDesdeScroll, fase, piezaVisible} from "./relojes3d/coreografia.js";
+import {elegirReloj} from "./relojes3d/catalogo.js";
 
-function prepararDespiece() {
-    const $portada = $("#portada");
-    const quieto = window.matchMedia("(prefers-reduced-motion: reduce)");
+const portada = document.getElementById("portada");
+const fija = portada.querySelector(".portada-fija");
+const lienzo = document.getElementById("lienzo_despiece");
+const foto = portada.querySelector(".despiece-foto");
+const reloj = elegirReloj();
 
-    function medir() {
-        // Con "reducir movimiento" no hay scroll largo: lo dejo a medio despiezar y quieto
-        if (quieto.matches) {
-            $portada.css("--avance", 0.6);
-            return;
-        }
-        // Recorrido = lo que #portada mide de más sobre la pantalla: es lo que dura el despiece
-        const recorrido = $portada[0].offsetHeight - window.innerHeight;
-        const bajado = -$portada[0].getBoundingClientRect().top;
-        $portada.css("--avance", Math.min(1, Math.max(0, bajado / (recorrido || 1))).toFixed(3));
+foto.src = `imagenes_productos_iniciales/${reloj.id}/1.png`;
+foto.alt = `${reloj.marca} ${reloj.modelo}`;
+
+const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const hayWebgl = Boolean(document.createElement("canvas").getContext("webgl2"));
+
+// ----- Sin 3D: se queda la foto -----
+function quedarseConFoto() {
+    // Si ya había bajado, compenso lo que encoge la portada para que la página no salte
+    const antes = portada.offsetHeight;
+    portada.classList.remove("con-3d", "listo-3d");
+    portada.removeAttribute("data-fase");
+    window.scrollBy(0, portada.offsetHeight - antes);
+}
+
+// ----- Con 3D -----
+async function iniciar3d() {
+    const {crearEscena, montarModelo} = await import("./relojes3d/escena.js");
+    const movil = window.matchMedia("(pointer: coarse), (max-width: 767px)").matches;
+    const escena = crearEscena(lienzo, {movil});
+    const modelo = montarModelo(reloj.id);
+    escena.poner(modelo);
+
+    const $nombre = $("#nombre_pieza");
+    $("#lista_piezas").append(modelo.capas.map(capa => $("<li>").text(capa.nombre)));
+
+    let avance = -1, pedido = false, visible = true;
+
+    function dibujar() {
+        pedido = false;
+        if (!visible) return;
+        escena.dibujar(avance);
+        portada.classList.add("listo-3d");
     }
 
-    $(window).on("scroll resize", medir);
+    function pedirDibujo() {
+        if (!pedido) {
+            pedido = true;
+            requestAnimationFrame(dibujar);
+        }
+    }
+
+    function medir() {
+        if (portada.hidden) return;
+        const bajado = fija.offsetTop - portada.offsetTop;
+        const nuevo = avanceDesdeScroll(bajado, portada.offsetHeight - fija.offsetHeight);
+        if (nuevo === avance) return;
+        avance = nuevo;
+        portada.style.setProperty("--avance", avance.toFixed(4));
+        portada.dataset.fase = fase(avance);
+        const i = piezaVisible(avance, modelo.capas.length);
+        $nombre.text(i < 0 ? "" : modelo.capas[i].nombre);
+        pedirDibujo();
+    }
+
+    // Al cambiar de tamaño (girar el móvil) hay que volver a encuadrar aunque no cambie el avance
+    new ResizeObserver(() => {
+        escena.ajustar();
+        avance = -1;
+        medir();
+    }).observe(lienzo);
+
+    // Con la portada fuera de la vista u oculta no se dibuja nada
+    new IntersectionObserver(([entrada]) => {
+        visible = entrada.isIntersecting;
+        if (visible) {
+            avance = -1;
+            medir();
+        }
+    }).observe(portada);
+
+    $(window).on("scroll", medir);
+    escena.ajustar();
     medir();
 }
 
-prepararDespiece();
+if (hayWebgl && !quieto) {
+    portada.classList.add("con-3d");
+    iniciar3d().catch(error => {
+        console.error("No se pudo cargar el reloj 3D:", error);
+        quedarseConFoto();
+    });
+}
