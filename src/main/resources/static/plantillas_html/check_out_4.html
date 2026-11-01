@@ -2,22 +2,22 @@
      Las claves de los relojes van en mayúsculas, como en el carrito (las devuelve H2) -->
 <div class="barra-seccion">
     <div>
-        <h2 class="titulo-seccion">Revisa tu pedido</h2>
-        <p class="texto-ayuda">Si todo está bien, confírmalo.</p>
+        <h2 class="titulo-seccion">{{t.resumen_titulo}}</h2>
+        <p class="texto-ayuda">{{t.resumen_texto}}</p>
     </div>
 </div>
 
-<ol class="pasos-pedido" aria-label="Pasos del pedido">
-    <li class="hecho">Envío</li>
-    <li class="hecho">Pago</li>
-    <li class="hecho">Tu opinión</li>
-    <li aria-current="step">Resumen</li>
+<ol class="pasos-pedido" aria-label="{{t.pasos_pedido}}">
+    <li class="hecho">{{t.paso_envio}}</li>
+    <li class="hecho">{{t.paso_pago}}</li>
+    <li class="hecho">{{t.paso_opinion}}</li>
+    <li aria-current="step">{{t.paso_resumen}}</li>
 </ol>
 
 <!-- Desde lg: productos a la izquierda (2 de 3 columnas), envío y pago a la derecha -->
 <div class="mt-6 grid gap-6 lg:grid-cols-3">
     <section class="lg:col-span-2">
-        <h3 class="titulo-producto">Productos</h3>
+        <h3 class="titulo-producto">{{t.productos}}</h3>
         <ul class="mt-2 divide-y divide-borde">
             {{#relojes}}
             <li class="flex items-center gap-4 py-3">
@@ -36,17 +36,17 @@
             </li>
             {{/relojes}}
         </ul>
-        <p class="total-carrito justify-between border-t border-borde pt-4">Total <span class="precio">{{total}}&nbsp;€</span></p>
+        <p class="total-carrito justify-between border-t border-borde pt-4">{{t.total}} <span class="precio">{{total}}&nbsp;€</span></p>
     </section>
 
     <div class="grid content-start gap-4">
         <section class="caja mt-0">
-            <h3 class="etiqueta-pequena">Envío</h3>
+            <h3 class="etiqueta-pequena">{{t.paso_envio}}</h3>
             <p class="mt-2">{{nombreCompleto}}</p>
             <p class="texto-ayuda">{{direccion}} ({{provincia}})</p>
         </section>
         <section class="caja mt-0">
-            <h3 class="etiqueta-pequena">Pago</h3>
+            <h3 class="etiqueta-pequena">{{t.paso_pago}}</h3>
             <p class="mt-2"><span class="uppercase">{{tipoTarjeta}}</span> {{numeroTarjeta}}</p>
             <p class="texto-ayuda">{{titularTarjeta}}</p>
         </section>
@@ -54,5 +54,5 @@
 </div>
 
 <div class="mt-6 flex justify-end border-t border-borde pt-5">
-    <button type="button" id="confirmar_pedido" class="btn btn-primario">Confirmar pedido</button>
+    <button type="button" id="confirmar_pedido" class="btn btn-primario">{{t.confirmar_pedido}}</button>
 </div>

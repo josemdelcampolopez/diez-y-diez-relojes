@@ -16,19 +16,19 @@
             <p class="precio mt-2">{{PRECIO}}&nbsp;€</p>
 
             <dl class="ficha border-t border-borde pt-5 sm:grid-cols-3">
-                <div><dt>Movimiento</dt><dd>{{TIPO_MOVIMIENTO}}</dd></div>
-                <div><dt>Resistencia al agua</dt><dd>{{RESISTENCIA_AGUA}}&nbsp;atm</dd></div>
-                <div><dt>Género</dt><dd>{{GENERO}}</dd></div>
+                <div><dt>{{t.ficha_movimiento}}</dt><dd>{{TIPO_MOVIMIENTO}}</dd></div>
+                <div><dt>{{t.ficha_resistencia}}</dt><dd>{{RESISTENCIA_AGUA}}&nbsp;atm</dd></div>
+                <div><dt>{{t.ficha_genero}}</dt><dd>{{GENERO}}</dd></div>
             </dl>
         </div>
 
         <!-- ===== ACCIONES ===== -->
         <div class="flex flex-wrap items-end gap-3">
             <div class="grupo">
-                <label for="cantidad_{{ID}}" class="etiqueta">Cantidad</label>
+                <label for="cantidad_{{ID}}" class="etiqueta">{{t.cantidad}}</label>
                 <input type="number" id="cantidad_{{ID}}" value="1" min="1" max="{{STOCK}}" class="campo w-20 text-center">
             </div>
-            <button type="button" class="btn btn-primario" data-carrito="{{ID}}" aria-label="Agregar {{MARCA_RELOJ}} {{MODELO}} al carrito">Agregar al carrito</button>
+            <button type="button" class="btn btn-primario" data-carrito="{{ID}}" aria-label="{{t.agregar_al_carrito}}: {{MARCA_RELOJ}} {{MODELO}}">{{t.agregar_al_carrito}}</button>
         </div>
     </div>
 </article>

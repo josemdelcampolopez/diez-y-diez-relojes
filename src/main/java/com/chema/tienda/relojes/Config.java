@@ -1,6 +1,5 @@
 package com.chema.tienda.relojes;
 
-
 import com.chema.tienda.relojes.interceptores.InterceptorAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,33 +21,30 @@ public class Config implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // El de idioma va primero: si InterceptorAdmin redirige al login, el idioma ya ha cambiado
+        registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(interceptorAdmin);
-//        registry.addInterceptor( localeChangeInterceptor());
     }
 
 
-//    //Indicamos que el siguiente método devuelve una bean de spring
-//    @Bean
-//    public LocaleResolver localeResolver() {
-//        //Al tener @Bean en este método, spring va a meter
-//        // lo que se devuelva en el return en el contenedor de spring
-//
-//        //Para que queremos un LocaleResolver?
-//        //Sirve para resolver en que idioma queremos mostrar la web
-//        //Vamos a decir que el cambio de idiom se mantenga en sesion
-//        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-//        localeResolver.setDefaultLocale(Locale.getDefault());
-//        return localeResolver;
-//    }
-//
-//
-//    @Bean
-//    public LocaleChangeInterceptor localeChangeInterceptor() {
-//        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-//        localeChangeInterceptor().setIgnoreInvalidLocale(true);
-//        localeChangeInterceptor.setParamName("idioma");
-//        return localeChangeInterceptor;
-//    }
+    //Indicamos que el siguiente método devuelve una bean de spring
+    @Bean
+    public LocaleResolver localeResolver() {
+        //Sirve para resolver en que idioma queremos mostrar la web
+        //El idioma elegido se mantiene en sesion. Quien entra por primera vez lo ve en español
+        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+        localeResolver.setDefaultLocale(Locale.forLanguageTag("es"));
+        return localeResolver;
+    }
 
+
+    //Cambia el idioma cuando la URL lleva ?idioma=en
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+        localeChangeInterceptor.setIgnoreInvalidLocale(true);
+        localeChangeInterceptor.setParamName("idioma");
+        return localeChangeInterceptor;
+    }
 
 }

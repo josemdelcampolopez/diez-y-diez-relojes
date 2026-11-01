@@ -1,30 +1,30 @@
 <!-- Checkout · paso 3: pregunta extra. El botón lo recoge tienda.js (#aceptar_paso_3) -->
 <div class="barra-seccion">
     <div>
-        <h2 class="titulo-seccion">Tu opinión</h2>
-        <p class="texto-ayuda">Una pregunta rápida antes de terminar.</p>
+        <h2 class="titulo-seccion">{{t.paso_opinion}}</h2>
+        <p class="texto-ayuda">{{t.opinion_texto}}</p>
     </div>
 </div>
 
-<ol class="pasos-pedido" aria-label="Pasos del pedido">
-    <li class="hecho">Envío</li>
-    <li class="hecho">Pago</li>
-    <li aria-current="step">Tu opinión</li>
-    <li>Resumen</li>
+<ol class="pasos-pedido" aria-label="{{t.pasos_pedido}}">
+    <li class="hecho">{{t.paso_envio}}</li>
+    <li class="hecho">{{t.paso_pago}}</li>
+    <li aria-current="step">{{t.paso_opinion}}</li>
+    <li>{{t.paso_resumen}}</li>
 </ol>
 
 <form class="formulario" novalidate>
     <div class="grupo">
-        <label for="motivo_compra" class="etiqueta">¿Qué te hizo elegir este reloj?</label>
+        <label for="motivo_compra" class="etiqueta">{{t.opinion_pregunta}}</label>
         <select id="motivo_compra" class="campo">
-            <option value="">Elegir motivo</option>
-            <option value="marca">Marca</option>
-            <option value="precio">Precio</option>
-            <option value="diseno">Diseño</option>
-            <option value="recomendacion">Recomendación</option>
+            <option value="">{{t.opinion_elegir}}</option>
+            <option value="marca">{{t.opinion_marca}}</option>
+            <option value="precio">{{t.opinion_precio}}</option>
+            <option value="diseno">{{t.opinion_diseno}}</option>
+            <option value="recomendacion">{{t.opinion_recomendacion}}</option>
         </select>
     </div>
     <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
-        <button type="button" id="aceptar_paso_3" class="btn btn-primario">Ver resumen</button>
+        <button type="button" id="aceptar_paso_3" class="btn btn-primario">{{t.ver_resumen}}</button>
     </div>
 </form>

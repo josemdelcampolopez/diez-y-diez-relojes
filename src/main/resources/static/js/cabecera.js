@@ -25,7 +25,7 @@ function abrirMenuMovil(abrir) {
     $cabecera.toggleClass("menu-abierto", abrir);
     $("#boton_menu")
         .attr("aria-expanded", abrir)
-        .attr("aria-label", abrir ? "Cerrar menú" : "Abrir menú");
+        .attr("aria-label", abrir ? texto("menu_cerrar") : texto("menu_abrir"));
 }
 
 // Desplegable del usuario (avatar)

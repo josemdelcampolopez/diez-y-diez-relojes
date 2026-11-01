@@ -1,32 +1,32 @@
 <!-- Checkout · paso 1: datos de envío. El botón lo recoge tienda.js (#aceptar_paso_1) -->
 <div class="barra-seccion">
     <div>
-        <h2 class="titulo-seccion">Datos de envío</h2>
-        <p class="texto-ayuda">¿Dónde te llevamos el reloj?</p>
+        <h2 class="titulo-seccion">{{t.envio_titulo}}</h2>
+        <p class="texto-ayuda">{{t.envio_texto}}</p>
     </div>
 </div>
 
-<ol class="pasos-pedido" aria-label="Pasos del pedido">
-    <li aria-current="step">Envío</li>
-    <li>Pago</li>
-    <li>Tu opinión</li>
-    <li>Resumen</li>
+<ol class="pasos-pedido" aria-label="{{t.pasos_pedido}}">
+    <li aria-current="step">{{t.paso_envio}}</li>
+    <li>{{t.paso_pago}}</li>
+    <li>{{t.paso_opinion}}</li>
+    <li>{{t.paso_resumen}}</li>
 </ol>
 
 <!-- type="button": el botón no envía el form (recargaría la página), solo lanza el click de tienda.js -->
 <form class="formulario" novalidate>
     <div class="grupo md:col-span-2">
-        <label for="campo_nombre" class="etiqueta">Nombre completo</label>
+        <label for="campo_nombre" class="etiqueta">{{t.envio_nombre}}</label>
         <input type="text" id="campo_nombre" autocomplete="name" class="campo">
     </div>
     <div class="grupo md:col-span-2">
-        <label for="campo_direccion" class="etiqueta">Dirección</label>
+        <label for="campo_direccion" class="etiqueta">{{t.envio_direccion}}</label>
         <input type="text" id="campo_direccion" autocomplete="street-address" class="campo">
     </div>
     <div class="grupo">
-        <label for="campo_provincia" class="etiqueta">Provincia</label>
+        <label for="campo_provincia" class="etiqueta">{{t.envio_provincia}}</label>
         <select id="campo_provincia" autocomplete="address-level1" class="campo">
-            <option value="">Elige Provincia</option>
+            <option value="">{{t.envio_elige_provincia}}</option>
             <option value="Álava/Araba">Álava/Araba</option>
             <option value="Albacete">Albacete</option>
             <option value="Alicante">Alicante</option>
@@ -82,18 +82,18 @@
         </select>
     </div>
     <div class="grupo">
-        <label for="campo_cp" class="etiqueta">Código postal</label>
+        <label for="campo_cp" class="etiqueta">{{t.envio_cp}}</label>
         <input type="text" id="campo_cp" autocomplete="postal-code" inputmode="numeric" class="campo">
     </div>
     <div class="grupo">
-        <label for="campo_email" class="etiqueta">Email de contacto</label>
+        <label for="campo_email" class="etiqueta">{{t.envio_email}}</label>
         <input type="email" id="campo_email" autocomplete="email" spellcheck="false" class="campo">
     </div>
     <div class="grupo">
-        <label for="campo_telefono" class="etiqueta">Teléfono</label>
+        <label for="campo_telefono" class="etiqueta">{{t.telefono}}</label>
         <input type="tel" id="campo_telefono" autocomplete="tel" inputmode="tel" class="campo">
     </div>
     <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
-        <button type="button" id="aceptar_paso_1" class="btn btn-primario">Continuar al pago</button>
+        <button type="button" id="aceptar_paso_1" class="btn btn-primario">{{t.envio_continuar}}</button>
     </div>
 </form>

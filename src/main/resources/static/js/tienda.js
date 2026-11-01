@@ -9,6 +9,9 @@
 
 const plantillas = {};
 
+// Textos del idioma actual (messages_*.properties). Los pide cargarTextos() al arrancar
+let textos = {};
+
 // Variables globales
 nombre_login = "" // variable que indica el nombre del usuario si se ha identificado
 avatar_login = false // true si el usuario identificado tiene foto de avatar
@@ -29,10 +32,25 @@ function cargarPlantillas() {
     return $.when(...peticiones);
 }
 
+// Pido al servidor los textos del idioma elegido. Las plantillas los usan como {{t.clave}}
+function cargarTextos() {
+    return $.getJSON("restIdioma/textos").done(json => {
+        textos = json;
+    });
+}
+
+// Devuelve un texto para los avisos de JavaScript. Cambia {0}, {1}... por los datos:
+// texto("foto_de", 1, 5) → "Foto 1 de 5". Si falta la clave, se ve la clave
+function texto(clave, ...datos) {
+    return (textos[clave] || clave).replace(/\{(\d)\}/g, (_, i) => datos[i]);
+}
+
 // Mete una plantilla en la pantalla. "datos" son los valores que Mustache
 // pone en los {{huecos}} de la plantilla (por defecto, ninguno)
 function pintar(nombre, datos = {}) {
-    $("#contenedor").html(Mustache.render(plantillas[nombre], datos));
+    // Context pone los textos por debajo de los datos: se ven desde cualquier sitio de la plantilla.
+    // Mezclarlos con {...datos, t} rompería el listado, porque sus datos son un array
+    $("#contenedor").html(Mustache.render(plantillas[nombre], new Mustache.Context({t: textos}).push(datos)));
     // El hero de portada solo se ve con el listado de relojes
     $("#portada").prop("hidden", nombre !== "listado_productos");
 }
@@ -190,7 +208,7 @@ function mostrarDetalles(id) {
         crearCarrusel("#carrusel_reloj", imagenes);
         // Si venías de abajo del listado, subo para que se vea el carrusel
         window.scrollTo({top: 0});
-    }).fail(() => avisar("Ese reloj no existe", "error"));
+    }).fail(() => avisar(texto("aviso_reloj_no_existe"), "error"));
 }
 
 // Pide el resumen del pedido y le añade subtotales y total. Lo usan los pasos 2 y 3
@@ -230,7 +248,7 @@ function mostrar_login() {
                 avatar_login = partes[2] === "1"
                 pintarSesion()
                 // Aprovechamos y listamos los productos
-                avisar("Hola, " + nombre_login + ". Ya puedes añadir relojes al carrito")
+                avisar(texto("aviso_hola", nombre_login))
                 mostrarRelojes()
             })
         }
@@ -292,8 +310,8 @@ function cerrarSesion() {
 
 // Provisional: devuelve una función que solo muestra un aviso.
 // Sirve para las opciones del menú que aún no están hechas
-function pendiente(texto) {
-    return () => avisar(texto + ": todavía no está disponible");
+function pendiente(clave) {
+    return () => avisar(texto("aviso_no_disponible", texto(clave)));
 }
 
 // ----- 3. Menú: data-accion → función -----
@@ -306,8 +324,8 @@ const acciones = {
     registrarme: () => pintar("registro_usuario"),
     identificarme: mostrar_login,   // antes: () => pintar("identificar_usuario"),
     carrito: mostrar_productos_carrito,
-    pedidos: pendiente("Mostrar mis pedidos"),
-    mis_datos: pendiente("Mostrar mis datos"),
+    pedidos: pendiente("menu_mis_pedidos"),
+    mis_datos: pendiente("menu_mis_datos"),
     cerrar_sesion: cerrarSesion,
 };
 
@@ -338,7 +356,7 @@ $("#contenedor")
         const idProducto = $(this).data("carrito")
         const cantidad = Number($("#cantidad_" + idProducto).val()) || 1
         if (nombre_login == "") {
-            avisar("Identifícate para añadir relojes al carrito", "error")
+            avisar(texto("aviso_identificate_anadir"), "error")
             return
         }
         // alert("Agregar producto de id " + idProducto + " al carrito de " + nombre_login)
@@ -351,7 +369,7 @@ $("#contenedor")
                 avisar(res, "error")
                 return
             }
-            avisar("Producto añadido al carrito")
+            avisar(texto("aviso_anadido"))
         })
     })
 
@@ -371,7 +389,7 @@ $("#contenedor")
     // Borrar un reloj del carrito: data-borrar lleva su nombre para la pregunta ------------ BORRAR
     .on("click", "[data-borrar]", function (e) {
         e.preventDefault();
-        if (!confirm("¿Quitar " + $(this).data("borrar") + " del carrito?")) {
+        if (!confirm(texto("confirmar_quitar", $(this).data("borrar")))) {
             return;
         }
         $.post("restCarrito/borrarProducto", {id: $(this).closest("[data-reloj]").data("reloj")}).done(function (res) {
@@ -503,7 +521,7 @@ $("#contenedor")
 // subtotales, total y qué botones − y + hay que desactivar
 function mostrar_productos_carrito() {
     if (nombre_login == "") {
-        avisar("Identifícate para ver tu carrito", "error")
+        avisar(texto("aviso_identificate_ver"), "error")
         return
     }
     $.get("restCarrito/obtenerProductos").done(
@@ -537,11 +555,11 @@ function cambiarCantidad(id, cantidad) {
 // Cualquier petición ($.get, $.post, $.getJSON, $.ajax) que falle (404, 500, sin red) avisa aquí,
 // en vez de quedarse la pantalla vacía sin explicación
 $(document).on("ajaxError", function (e, xhr, ajax) {
-    avisar("Error " + xhr.status + " al pedir " + ajax.url, "error")
+    avisar(texto("aviso_error_peticion", xhr.status, ajax.url), "error")
 })
 
 // ----- 5. Arranque -----
-// Descargo todas las plantillas y, cuando terminan, muestro el listado de relojes.
+// Descargo las plantillas y los textos y, cuando terminan, muestro el listado de relojes.
 // A la vez pregunto al servidor si ya había una sesión abierta para pintar el header
-cargarPlantillas().done(mostrarRelojes);
+$.when(cargarPlantillas(), cargarTextos()).done(mostrarRelojes);
 comprobarSesion();
