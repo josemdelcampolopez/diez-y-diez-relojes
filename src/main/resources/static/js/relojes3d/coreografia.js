@@ -59,6 +59,18 @@ export function horaPantalla(avance) {
     return `${String(horas).padStart(2, "0")}:${String(minutos % 60).padStart(2, "0")}`;
 }
 
+// Avisa una sola vez si los primeros fotogramas duran de media más de 40 ms.
+// Una duración enorme no cuenta: es que la pestaña estaba oculta, no que el dispositivo vaya lento
+export function vigilarFotogramas(alIrLento, muestras = 30, limite = 40) {
+    let suma = 0, contados = 0;
+    return (duracion) => {
+        if (contados >= muestras || duracion > 250) return;
+        suma += duracion;
+        contados++;
+        if (contados === muestras && suma / muestras > limite) alIrLento();
+    };
+}
+
 // Qué nombre de pieza se muestra ahora; -1 fuera del momento cumbre
 export function piezaVisible(avance, total) {
     if (avance < TRAMOS.despiece || avance >= TRAMOS.remontaje) return -1;

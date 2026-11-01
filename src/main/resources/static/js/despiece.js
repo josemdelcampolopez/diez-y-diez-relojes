@@ -1,7 +1,7 @@
 // ===== despiece.js · reloj del hero que se despieza al bajar =====
 // Elige un reloj al azar y enseña su foto. Si el dispositivo puede, carga el 3D y lo pone encima.
 // Si algo falla, se queda la foto: la portada vuelve a su altura normal y la tienda sigue igual.
-import {avanceDesdeScroll, fase, piezaVisible} from "./relojes3d/coreografia.js";
+import {avanceDesdeScroll, fase, piezaVisible, vigilarFotogramas} from "./relojes3d/coreografia.js";
 import {elegirReloj, buscarProducto} from "./relojes3d/catalogo.js";
 
 const portada = document.getElementById("portada");
@@ -18,11 +18,13 @@ const hayWebgl = Boolean(document.createElement("canvas").getContext("webgl2"));
 
 // ----- Sin 3D: se queda la foto -----
 function quedarseConFoto() {
-    // Si ya había bajado, compenso lo que encoge la portada para que la página no salte
-    const antes = portada.offsetHeight;
+    // Si ya había bajado, la tienda debe quedarse donde estaba. Mido su sitio en vez de lo que encoge
+    // la portada porque muchos navegadores ya compensan solos el encogido
+    const tienda = document.getElementById("contenedor");
+    const antes = tienda.getBoundingClientRect().top;
     portada.classList.remove("con-3d", "listo-3d");
     portada.removeAttribute("data-fase");
-    window.scrollBy(0, portada.offsetHeight - antes);
+    window.scrollBy(0, tienda.getBoundingClientRect().top - antes);
 }
 
 // ----- Cierre: si el reloj no está a la venta o falla la petición, solo queda "Ver relojes" -----
@@ -49,13 +51,31 @@ async function iniciar3d() {
     const $nombre = $("#nombre_pieza");
     $("#lista_piezas").append(modelo.nombres.map(nombre => $("<li>").text(nombre)));
 
-    let avance = -1, pedido = false, visible = true;
+    let avance = -1, pedido = false, visible = true, activo = true;
+    const vigilar = vigilarFotogramas(() => escena.bajarResolucion());
 
     function dibujar() {
         pedido = false;
-        if (!visible) return;
-        escena.dibujar(avance);
-        portada.classList.add("listo-3d");
+        if (!visible || !activo) return;
+        const inicio = performance.now();
+        try {
+            escena.dibujar(avance);
+            portada.classList.add("listo-3d");
+            // El fotograma acaba cuando el navegador puede dar el siguiente, con la gráfica ya libre
+            requestAnimationFrame(() => vigilar(performance.now() - inicio));
+        } catch (error) {
+            console.error("No se pudo dibujar el reloj 3D:", error);
+            apagar();
+        }
+    }
+
+    // Ante cualquier fallo, deja de escuchar y vuelve a la foto
+    function apagar() {
+        activo = false;
+        tamano.disconnect();
+        vista.disconnect();
+        $(window).off("scroll", medir);
+        quedarseConFoto();
     }
 
     function pedirDibujo() {
@@ -79,21 +99,24 @@ async function iniciar3d() {
     }
 
     // Al cambiar de tamaño (girar el móvil) hay que volver a encuadrar aunque no cambie el avance
-    new ResizeObserver(() => {
+    const tamano = new ResizeObserver(() => {
         escena.ajustar();
         avance = -1;
         medir();
-    }).observe(lienzo);
+    });
+    tamano.observe(lienzo);
 
     // Con la portada fuera de la vista u oculta no se dibuja nada
-    new IntersectionObserver(([entrada]) => {
+    const vista = new IntersectionObserver(([entrada]) => {
         visible = entrada.isIntersecting;
         if (visible) {
             avance = -1;
             medir();
         }
-    }).observe(portada);
+    });
+    vista.observe(portada);
 
+    lienzo.addEventListener("webglcontextlost", apagar);
     $(window).on("scroll", medir);
     escena.ajustar();
     medir();

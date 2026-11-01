@@ -125,8 +125,9 @@ export function slab(shape, z0, z1, mat, { bevel = 1, segs = 6, curve = 48 } = {
   geo.translate(0, 0, z0 + bevel); return new THREE.Mesh(geo, mat);
 }
 export function rrectShape(w, h, r, path = new THREE.Shape()) {
-  const a = w / 2, b = h / 2; path.moveTo(-a + r, -b); path.lineTo(a - r, -b); path.absarc(a - r, -b + r, r, -Math.PI / 2, 0); path.lineTo(a, b - r);
-  path.absarc(a - r, b - r, r, 0, Math.PI / 2); path.lineTo(-a + r, b); path.absarc(-a + r, b - r, r, Math.PI / 2, Math.PI); path.lineTo(-a, -b + r);
+  // Sin lineTo: absarc ya une con el arco anterior. Con él quedaba un tramo casi nulo que el chaflán convertía en un bulto
+  const a = w / 2, b = h / 2; path.absarc(a - r, -b + r, r, -Math.PI / 2, 0);
+  path.absarc(a - r, b - r, r, 0, Math.PI / 2); path.absarc(-a + r, b - r, r, Math.PI / 2, Math.PI);
   path.absarc(-a + r, -b + r, r, Math.PI, Math.PI * 1.5); return path;
 }
 export function polyShape(pts, path = new THREE.Shape()) { path.moveTo(...pts[0]); for (const p of pts.slice(1)) path.lineTo(...p); path.closePath(); return path; }

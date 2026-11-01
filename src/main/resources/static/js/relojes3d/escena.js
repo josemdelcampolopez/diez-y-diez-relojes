@@ -19,7 +19,8 @@ const NOMBRES = {
 const ORDEN_EXTERIOR = ['cristal', 'bisel', 'segundero', 'minutero', 'horaria', 'indices', 'esfera', 'corona', 'caja', 'fondo', 'correa'];
 const HUECO = 13;           // milímetros entre piezas separadas
 const HUECO_INTERIOR = 22;  // las capas del interior son anchas: más juntas se taparían
-const CAMPO = 20;           // ángulo de visión de la cámara, como en las fotos
+const LARGO_MINIMO = 230;   // milímetros que se encuadran como poco al abrir el reloj
+const CAMPO = 20;          // ángulo de visión de la cámara, como en las fotos
 const ALTO_POR_DISTANCIA = 2 * Math.tan(CAMPO / 2 * Math.PI / 180);
 const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -114,7 +115,9 @@ export function crearEscena(lienzo, { movil }) {
             * (1 - suave(Math.min(1, Math.max(0, (avance - TRAMOS.remontaje) / (TRAMOS.cierre - TRAMOS.remontaje)))));
         // Reloj en su hueco: al lado del texto en el ordenador, encima en el móvil
         const enHueco = 1 - suave(Math.min(1, avance / TRAMOS.despiece)) + suave(Math.min(1, Math.max(0, (avance - TRAMOS.remontaje) / (TRAMOS.cierre - TRAMOS.remontaje))));
-        const lejos = tumbado ? distanciaPara(modelo.longitud * .55, modelo.longitud + 50) : distanciaPara(modelo.longitud * .72 + 90, modelo.longitud * .5);
+        // Con pocas capas manda la correa, no la longitud del despiece: por eso el mínimo
+        const largo = Math.max(modelo.longitud, LARGO_MINIMO);
+        const lejos = tumbado ? distanciaPara(largo * .55, largo + 50) : distanciaPara(largo * .72 + 90, largo * .5);
         const cerca = tumbado ? distanciaPara(105, 190) : distanciaPara(190, 112);
         const distancia = lerp(cerca, lejos, abierto);
         const altoVisible = distancia * ALTO_POR_DISTANCIA, anchoVisible = altoVisible * camera.aspect;
@@ -132,6 +135,7 @@ export function crearEscena(lienzo, { movil }) {
     return {
         renderer,
         ajustar,
+        bajarResolucion() { renderer.setPixelRatio(renderer.getPixelRatio() * .7); ajustar(); },
         poner(nuevo) { modelo = nuevo; scene.add(modelo.reloj); },
         dibujar(avance) {
             aplicarAvance(modelo, avance);

@@ -1,10 +1,28 @@
 // Pruebas de los cálculos del despiece. Se lanzan con: node --test src/test/js/
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { avanceDesdeScroll, fase, separacion, giroAgujas, giroTren, horaPantalla, piezaVisible } from '../../main/resources/static/js/relojes3d/coreografia.js';
+import { avanceDesdeScroll, fase, separacion, giroAgujas, giroTren, horaPantalla, piezaVisible, vigilarFotogramas } from '../../main/resources/static/js/relojes3d/coreografia.js';
 import { RELOJES, elegirReloj, buscarProducto } from '../../main/resources/static/js/relojes3d/catalogo.js';
 
 const TAU = Math.PI * 2;
+
+test('avisa una sola vez si los primeros fotogramas van lentos', () => {
+  let avisos = 0;
+  const vigilar = vigilarFotogramas(() => avisos++);
+  for (let i = 0; i < 29; i++) vigilar(50);
+  assert.equal(avisos, 0);
+  vigilar(50);
+  assert.equal(avisos, 1);
+  for (let i = 0; i < 60; i++) vigilar(50);
+  assert.equal(avisos, 1);
+});
+test('no avisa si van fluidos, y la pestaña oculta no cuenta', () => {
+  let avisos = 0;
+  const vigilar = vigilarFotogramas(() => avisos++);
+  for (let i = 0; i < 40; i++) vigilar(5000);
+  for (let i = 0; i < 40; i++) vigilar(16);
+  assert.equal(avisos, 0);
+});
 
 test('avance limitado', () => {
   assert.equal(avanceDesdeScroll(-50, 1000), 0);

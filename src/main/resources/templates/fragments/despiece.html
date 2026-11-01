@@ -53,7 +53,8 @@
         min-height: calc(100svh - 4rem);
     }
 
-    @media (min-width: 48rem) {
+    /* Un móvil apaisado usa la misma distribución que el ordenador: en una columna no cabe */
+    @media (min-width: 48rem), (orientation: landscape) {
         .portada-rejilla {
             padding-inline: 2rem;
             grid-template-columns: 1fr 1fr;
@@ -70,7 +71,7 @@
         aspect-ratio: 1;
     }
 
-    @media (min-width: 48rem) {
+    @media (min-width: 48rem), (orientation: landscape) {
         .despiece-hueco {
             order: 0;
             max-width: min(30rem, 52svh);
@@ -167,7 +168,7 @@
         min-height: 2.75rem;
     }
 
-    @media (min-width: 48rem) {
+    @media (min-width: 48rem), (orientation: landscape) {
         .portada-cierre {
             align-items: center;
             padding-block-end: 0;
@@ -176,6 +177,17 @@
 
         .portada-cierre .portada-acciones {
             justify-content: flex-start;
+        }
+    }
+
+    /* Pantalla muy baja: sin la explicación y con un título menor, para que quepan los botones */
+    @media (max-height: 30rem) {
+        .portada-explicacion {
+            display: none;
+        }
+
+        .portada-titulo {
+            font-size: 2rem;
         }
     }
 </style>
