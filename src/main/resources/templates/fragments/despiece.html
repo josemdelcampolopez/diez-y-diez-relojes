@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- ===== CSS DEL DESPIECE 3D (hero de index.html; lo mueve js/despiece.js) =====
+     CSS normal, sin @apply: al no estar en ninguna capa gana a las reglas viejas de
+     fragments/tienda.html, que se podrán borrar cuando esta rama se una con master. -->
+<style th:fragment="estilos">
+    /* Sin 3D, la portada mide lo normal. Con 3D, unas 5 pantallas de recorrido */
+    .portada {
+        height: auto;
+    }
+
+    .portada.con-3d {
+        height: 500svh;
+        /* Hasta los bordes de la ventana: anula el margen lateral de .cuerpo-tienda */
+        margin-inline: -1rem;
+    }
+
+    @media (min-width: 48rem) {
+        .portada.con-3d {
+            margin-inline: -1.5rem;
+        }
+    }
+
+    @media (min-width: 64rem) {
+        .portada.con-3d {
+            margin-inline: -2rem;
+        }
+    }
+
+    /* Lo que se queda quieto bajo el header mientras se recorre la portada */
+    .portada-fija {
+        position: relative;
+        display: block;
+        min-height: calc(100svh - 4rem);
+        max-width: none;
+        padding: 0;
+    }
+
+    .con-3d .portada-fija {
+        position: sticky;
+        top: 4rem;
+        height: calc(100svh - 4rem);
+        overflow: clip;
+    }
+
+    .portada-rejilla {
+        /* Devuelve al texto el margen que .portada.con-3d le quita al ir hasta los bordes */
+        padding-inline: 1rem;
+        display: grid;
+        align-items: center;
+        gap: 2rem;
+        min-height: calc(100svh - 4rem);
+    }
+
+    /* Dos columnas solo en apaisado: es la misma condición con la que escena.js coloca el reloj */
+    @media (orientation: landscape) {
+        .portada-rejilla {
+            padding-inline: 2rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+        }
+    }
+
+    /* El reloj va arriba en el móvil y a la derecha en el ordenador */
+    .despiece-hueco {
+        order: -1;
+        margin-inline: auto;
+        width: 100%;
+        max-width: 34svh;
+        aspect-ratio: 1;
+    }
+
+    @media (orientation: landscape) {
+        .despiece-hueco {
+            order: 0;
+            max-width: min(30rem, 52svh);
+        }
+    }
+
+    .despiece-foto {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: .5rem;
+        transition: opacity .3s ease-out;
+    }
+
+    /* El lienzo ocupa todo el ancho, por encima de la rejilla, y no capta clics */
+    #lienzo_despiece {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .3s ease-out;
+    }
+
+    .listo-3d #lienzo_despiece {
+        opacity: 1;
+    }
+
+    .listo-3d .despiece-foto {
+        opacity: 0;
+    }
+
+    /* El texto se va antes de que el reloj empiece a abrirse */
+    .con-3d .portada-texto {
+        opacity: clamp(0, calc(1 - (var(--avance, 0) - .03) * 13), 1);
+    }
+
+    /* Con [data-fase]: mientras carga el 3D aún no hay fase y el texto debe verse */
+    .con-3d[data-fase]:not([data-fase="portada"]) .portada-texto {
+        visibility: hidden;
+    }
+
+    /* Nombre de la pieza que está pasando */
+    #nombre_pieza {
+        position: absolute;
+        left: 50%;
+        bottom: clamp(1.25rem, 6svh, 3.5rem);
+        margin: 0;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-family: var(--font-serif, serif);
+        font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+        color: var(--color-principal);
+        pointer-events: none;
+    }
+
+    #nombre_pieza:empty,
+    .portada:not(.con-3d) #nombre_pieza {
+        display: none;
+    }
+
+    /* Cierre: abajo en el móvil y en la columna del texto en el ordenador. Oculto, sus botones no reciben foco */
+    .portada-cierre {
+        position: absolute;
+        inset: 0;
+        margin-inline: auto;
+        align-items: end;
+        padding-block-end: clamp(1rem, 4svh, 2.5rem);
+        text-align: center;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .3s ease-out, visibility .3s;
+    }
+
+    .con-3d[data-fase="cierre"] .portada-cierre {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .portada-cierre-texto {
+        pointer-events: auto;
+    }
+
+    .portada-cierre .portada-acciones {
+        justify-content: center;
+    }
+
+    .portada-cierre .precio {
+        margin-top: .5rem;
+    }
+
+    .portada-cierre .btn {
+        min-height: 2.75rem;
+    }
+
+    @media (orientation: landscape) {
+        .portada-cierre {
+            align-items: center;
+            padding-block-end: 0;
+            text-align: left;
+        }
+
+        .portada-cierre .portada-acciones {
+            justify-content: flex-start;
+        }
+    }
+
+    /* Pantalla baja: sin la explicación y con un título menor, para que quepan los botones.
+       En vertical el reloj y el texto van uno encima del otro, y hace falta más alto */
+    @media (max-height: 30rem), (orientation: portrait) and (max-height: 42rem) {
+        .portada-explicacion {
+            display: none;
+        }
+
+        .portada-titulo {
+            font-size: 2rem;
+        }
+    }
+</style>
+</body>
+</html>
