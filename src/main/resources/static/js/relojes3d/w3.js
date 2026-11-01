@@ -1,5 +1,5 @@
 // 3 · Casio G-Shock GA-2100: bisel octogonal de resina, analógico-digital, correa de resina.
-import { THREE, X, M, ANG, TAU, caseback, dialMaterial, addHand, buildStrap, pusher, slab, polyShape, ticks, radial, hub, dots } from './common.js';
+import { THREE, X, M, ANG, TAU, caseback, dialMaterial, addHand, buildStrap, pusher, slab, polyShape, ticks, radial, hub, dots, pantallaHora } from './common.js';
 
 function paint(g, R) {
   radial(g, R, '#232426', '#0e0f10', -2, -4);
@@ -8,7 +8,6 @@ function paint(g, R) {
   X.text(g, 'SHOCK RESIST', 0, -3.6, 0.75, { weight: 600, color: '#ff7a1a', spacing: 0.25 });
   g.fillStyle = '#2b2d30'; g.beginPath(); g.roundRect(-5.3, 5.3, 10.6, 4.7, 0.6); g.fill();
   g.fillStyle = '#121413'; g.beginPath(); g.roundRect(-4.8, 5.8, 9.6, 3.7, 0.4); g.fill();
-  X.segText(g, '10:09', -4.1, 6.35, 2.6, { color: '#dfe3dc', ghost: 'rgba(255,255,255,0.05)', w: 1.35, t: 0.3, gap: 0.35 });
 }
 export default {
   name: 'Casio G-Shock GA-2100',
@@ -40,6 +39,8 @@ export default {
     back.rotation.y = Math.PI; back.position.z = bot - 0.46; g.add(X.marcar(back, 'fondo'));
     for (let i = 0; i < 4; i++) { const a = Math.PI / 4 + i * Math.PI / 2, s = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.4, 32), backSteel); s.rotation.x = Math.PI / 2; s.position.set(13 * Math.cos(a), 13 * Math.sin(a), bot - 0.55); g.add(X.marcar(s, 'fondo')); }
     g.userData = { R: 21, barZ: -2.6 };
+    g.userData.pantalla = pantallaHora(g, { x: -4.8, y: 5.8, ancho: 9.6, alto: 3.7, z: z + 0.03, densidad: 50,
+      dibujar: (c, hora) => X.segText(c, hora, -4.1, 6.35, 2.6, { color: '#dfe3dc', ghost: 'rgba(255,255,255,0.05)', w: 1.35, t: 0.3, gap: 0.35 }) });
     g.add(buildStrap({ kind: 'rubber', W: 22, We: 20, th: 4.4, r: 1.6, startY: 25.0, z0: -2.6, k: 1.05, base: '#19191b', metal: M.steel(0.15), holeD: 2.0, clearcoat: 0.1,
       grooves: (L, part) => part === 'loop' ? [3.5, 6.5, 9.5, L - 12.5, L - 9.5, L - 6.5] : (part === 'top' || part === 'bottom') ? [3.5, 6.5, 9.5] : [] }, g.userData, pose));
     return g;

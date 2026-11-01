@@ -2,7 +2,7 @@
 // Elige un reloj al azar y enseña su foto. Si el dispositivo puede, carga el 3D y lo pone encima.
 // Si algo falla, se queda la foto: la portada vuelve a su altura normal y la tienda sigue igual.
 import {avanceDesdeScroll, fase, piezaVisible} from "./relojes3d/coreografia.js";
-import {elegirReloj} from "./relojes3d/catalogo.js";
+import {elegirReloj, buscarProducto} from "./relojes3d/catalogo.js";
 
 const portada = document.getElementById("portada");
 const fija = portada.querySelector(".portada-fija");
@@ -25,6 +25,18 @@ function quedarseConFoto() {
     window.scrollBy(0, portada.offsetHeight - antes);
 }
 
+// ----- Cierre: si el reloj no está a la venta o falla la petición, solo queda "Ver relojes" -----
+function prepararCierre() {
+    $("#cierre_marca").text(reloj.marca);
+    $("#cierre_modelo").text(reloj.modelo);
+    $.getJSON("restRelojes/listar").done(lista => {
+        const producto = buscarProducto(lista, reloj);
+        if (!producto) return;
+        $("#cierre_precio").text(`${producto.PRECIO} €`).prop("hidden", false);
+        $("#cierre_ver").prop("hidden", false).on("click", () => mostrarDetalles(producto.ID));
+    });
+}
+
 // ----- Con 3D -----
 async function iniciar3d() {
     const {crearEscena, montarModelo} = await import("./relojes3d/escena.js");
@@ -32,6 +44,7 @@ async function iniciar3d() {
     const escena = crearEscena(lienzo, {movil});
     const modelo = montarModelo(reloj);
     escena.poner(modelo);
+    prepararCierre();
 
     const $nombre = $("#nombre_pieza");
     $("#lista_piezas").append(modelo.nombres.map(nombre => $("<li>").text(nombre)));

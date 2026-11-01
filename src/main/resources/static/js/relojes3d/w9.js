@@ -1,5 +1,5 @@
 // 9 · Apple Watch Series 10: caja rectangular de aluminio, pantalla encendida, corona digital, correa deportiva.
-import { THREE, X, M, buildStrap, slab, rrectShape, faceTex } from './common.js';
+import { THREE, X, M, buildStrap, slab, rrectShape, faceTex, pantallaHora } from './common.js';
 
 export function screenMat(map, glow = 1.0) {
   return new THREE.MeshPhysicalMaterial({ color: 0x000000, map, emissive: 0xffffff, emissiveMap: map, emissiveIntensity: glow, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.03 });
@@ -13,7 +13,6 @@ function screen(g, w, h) {
   const gr = g.createLinearGradient(0, -h / 2, 0, h / 2); gr.addColorStop(0, '#1d2c47'); gr.addColorStop(0.55, '#0a0f19'); gr.addColorStop(1, '#030407');
   g.fillStyle = gr; g.beginPath(); g.roundRect(-w / 2 + 1.6, -h / 2 + 1.6, w - 3.2, h - 3.2, 8.2); g.fill();
   X.text(g, 'MIÉ 7 OCT', -12.4, -13.4, 2.4, { weight: 700, color: '#5fd3c7', align: 'left', spacing: 0.1 });
-  X.text(g, '10:09', 0, -3.2, 11.8, { weight: 300, color: '#ffffff', spacing: -0.2 });
   g.fillStyle = 'rgba(255,255,255,0.18)'; g.fillRect(-12.4, 4.4, 24.8, 0.12);
   ringStat(g, -10.2, 11.2, 3.9, 0.74, '#5fd3c7'); X.text(g, '6,4k', -10.2, 10.7, 1.8, { weight: 700, color: '#fff' }); X.text(g, 'PASOS', -10.2, 12.7, 0.7, { weight: 600, color: '#9aa4b2' });
   ringStat(g, 0, 11.2, 3.9, 1, '#7a6a3e', 'rgba(0,0,0,0)');
@@ -42,6 +41,8 @@ export default {
     const s = new THREE.Mesh(new THREE.CircleGeometry(6.6, 96), new THREE.MeshPhysicalMaterial({ map: X.dialTex(6.6, sensor), roughness: 0.08, clearcoat: 1 }));
     s.rotation.y = Math.PI; s.position.z = -7.27; g.add(X.marcar(s, 'fondo'));
     g.userData = { R: 21, barZ: -2.0 };
+    g.userData.pantalla = pantallaHora(g, { x: -15, y: -10.5, ancho: 30, alto: 14.6, z: 3.03, densidad: 24,
+      dibujar: (c, hora) => X.text(c, hora, 0, -3.2, 11.8, { weight: 300, color: '#ffffff', spacing: -0.2 }) });
     g.add(buildStrap({ kind: 'sport', W: 24, We: 22, th: 3.0, r: 1.3, startY: 21.8, z0: -2.0, base: '#e6ddcb', edge: '#d8ceb8', sheen: 0xfff6e8, buckle: false, holeD: 1.9,
       loopHoles: (L) => [0.56, 0.6, 0.64, 0.68, 0.72, 0.76].map(f => [L * f, 1.9]) }, g.userData, pose));
     return g;

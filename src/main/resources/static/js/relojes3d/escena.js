@@ -3,7 +3,7 @@
 // se separan en horizontal en el ordenador y en vertical en el móvil, según el hueco que hay.
 // Luces y entorno adaptados del estudio con el que se hicieron las fotos de producto.
 import * as THREE from 'three';
-import { TRAMOS, suave, separacion, giroAgujas, giroTren } from './coreografia.js';
+import { TRAMOS, suave, separacion, giroAgujas, giroTren, horaPantalla } from './coreografia.js';
 import { CALIDAD } from './parts.js';
 import { agrupar } from './common.js';
 import { WATCHES } from './watches.js';
@@ -44,7 +44,7 @@ function crearEntorno(renderer) {
 export function montarModelo(datos) {
     const modelo = agrupar(WATCHES[datos.id].build('loop'));
     const medida = new THREE.Box3().setFromObject(modelo.piezas.get('esfera')).getSize(new THREE.Vector3());
-    const { piezas: interior } = crearMovimiento(datos.tipo, Math.min(medida.x, medida.y) / 2);
+    const { piezas: interior } = crearMovimiento(datos.tipo, modelo.reloj.userData.radioInterior ?? Math.min(medida.x, medida.y) / 2);
     const capasInterior = [...new Set(interior.map(p => p.capa))].sort((a, b) => a - b).map(capa => {
         const grupo = new THREE.Group();
         grupo.add(...interior.filter(p => p.capa === capa).map(p => p.objeto));
@@ -77,6 +77,7 @@ export function aplicarAvance(modelo, avance) {
     for (const k of ['h', 'm', 's']) if (agujas[k]) agujas[k].rotation.z = -giros[k];
     const tren = giroTren(avance);
     for (const { objeto, giro } of ruedas) objeto.rotation.z = SENTIDO[giro] * tren[giro];
+    modelo.reloj.userData.pantalla?.pintar(horaPantalla(avance));
 }
 
 export function crearEscena(lienzo, { movil }) {

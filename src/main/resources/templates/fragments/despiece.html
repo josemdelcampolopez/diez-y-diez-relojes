@@ -131,6 +131,53 @@
     .portada:not(.con-3d) #nombre_pieza {
         display: none;
     }
+
+    /* Cierre: abajo en el móvil y en la columna del texto en el ordenador. Oculto, sus botones no reciben foco */
+    .portada-cierre {
+        position: absolute;
+        inset: 0;
+        margin-inline: auto;
+        align-items: end;
+        padding-block-end: clamp(1rem, 4svh, 2.5rem);
+        text-align: center;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .3s ease-out, visibility .3s;
+    }
+
+    .con-3d[data-fase="cierre"] .portada-cierre {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .portada-cierre-texto {
+        pointer-events: auto;
+    }
+
+    .portada-cierre .portada-acciones {
+        justify-content: center;
+    }
+
+    .portada-cierre .precio {
+        margin-top: .5rem;
+    }
+
+    .portada-cierre .btn {
+        min-height: 2.75rem;
+    }
+
+    @media (min-width: 48rem) {
+        .portada-cierre {
+            align-items: center;
+            padding-block-end: 0;
+            text-align: left;
+        }
+
+        .portada-cierre .portada-acciones {
+            justify-content: flex-start;
+        }
+    }
 </style>
 </body>
 </html>

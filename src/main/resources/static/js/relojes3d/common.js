@@ -70,6 +70,33 @@ export function agrupar(g) {
   return { reloj, piezas, agujas: { h: piezas.get('horaria'), m: piezas.get('minutero'), s: piezas.get('segundero') } };
 }
 
+// Hora de las pantallas: un plano con su propio lienzo pequeño encima de la esfera ya pintada, para no
+// volver a subir la textura grande con cada minuto. x, y, ancho y alto son mm de la esfera, con la y hacia abajo
+export function pantallaHora(g, { x, y, ancho, alto, z, densidad = 30, dibujar }) {
+  const px = densidad * X.CALIDAD.textura;
+  let lienzo, actual = null, ultimo = 0;
+  const textura = X.canvasTex(Math.round(ancho * px), Math.round(alto * px), (c) => { lienzo = c; c.scale(px, px); c.translate(-x, -y); });
+  const plano = new THREE.Mesh(new THREE.PlaneGeometry(ancho, alto), new THREE.MeshBasicMaterial({ map: textura, transparent: true, depthWrite: false }));
+  plano.position.set(x + ancho / 2, -(y + alto / 2), z);
+  g.add(X.marcar(plano, 'esfera'));
+  const pantalla = {
+    pintar(hora) {
+      if (hora === actual) return;
+      // shortcut: subir el lienzo tira fotogramas en gráficas integradas, así que como mucho cada 120 ms;
+      // a media portada la hora puede ir unos minutos tarde al parar. Las 10:10 de los extremos siempre salen exactas
+      const ahora = performance.now();
+      if (hora !== '10:10' && ahora - ultimo < 120) return;
+      ultimo = ahora;
+      actual = hora;
+      lienzo.clearRect(x, y, ancho, alto);
+      dibujar(lienzo, hora);
+      textura.needsUpdate = true;
+    }
+  };
+  pantalla.pintar('10:10');
+  return pantalla;
+}
+
 export function ticks(g, r0, r1, { n = 60, skip = () => false, color = '#888', w = 0.1, major = null } = {}) {
   g.lineCap = 'butt';
   for (let i = 0; i < n; i++) {

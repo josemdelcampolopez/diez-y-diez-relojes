@@ -1,5 +1,5 @@
 // 4 · Timex Ironman Classic 30: digital, caja de resina negra, botones y correa turquesa.
-import { THREE, X, M, caseback, buildStrap, slab, rrectShape, faceTex } from './common.js';
+import { THREE, X, M, caseback, buildStrap, slab, rrectShape, faceTex, pantallaHora } from './common.js';
 
 function face(g, w, h) {
   g.fillStyle = '#16171a'; g.fillRect(-w / 2, -h / 2, w, h);
@@ -14,8 +14,7 @@ function lcd(g, w, h) {
   X.text(g, 'MI', -7.4, -4.9, 2.3, { weight: 700, family: 'Consolas, monospace', color: ink });
   X.segText(g, '7-10', 2.6, -6.2, 2.3, { color: ink, ghost, w: 1.15, t: 0.3, gap: 0.3 });
   g.fillStyle = ink; g.fillRect(-8.6, -3.0, 17.2, 0.3);
-  X.segText(g, '10:09', -8.6, -1.6, 6.4, { color: ink, ghost, w: 3.0, t: 0.75, gap: 0.6 });
-  X.segText(g, '37', 5.6, 1.6, 3.2, { color: ink, ghost, w: 1.4, t: 0.38, gap: 0.3 });
+  X.segText(g, '37', 7.0, 1.6, 3.2, { color: ink, ghost, w: 1.4, t: 0.38, gap: 0.3 });
 }
 export default {
   name: 'Timex Ironman Classic 30',
@@ -36,7 +35,10 @@ export default {
     g.add(X.marcar(X.lathe([[0, bot - 0.4], [13, bot - 0.4], [13.8, bot - 0.15], [14, bot + 0.3]], backSteel), 'fondo'));
     const back = new THREE.Mesh(new THREE.CircleGeometry(12.9, 192), caseback(12.9, { top: 'STAINLESS STEEL BACK', bottom: 'WATER RESISTANT 100M', center: ['30 LAP', 'No. 4123 / 0030'] }));
     back.rotation.y = Math.PI; back.position.z = bot - 0.41; g.add(X.marcar(back, 'fondo'));
-    g.userData = { R: 20, barZ: -2.6 };
+    // Su "esfera" es solo el LCD: el interior se mide con la caja, no con ella
+    g.userData = { R: 20, barZ: -2.6, radioInterior: 15 };
+    g.userData.pantalla = pantallaHora(g, { x: -9.8, y: -2.2, ancho: 19.6, alto: 7.6, z: 1.93,
+      dibujar: (c, hora) => X.segText(c, hora, -8.6, -1.6, 6.4, { color: '#1c211c', ghost: 'rgba(30,40,30,0.07)', w: 3.0, t: 0.75, gap: 0.6 }) });
     g.add(buildStrap({ kind: 'rubber', W: 20, We: 18, th: 3.4, r: 1.3, startY: 22.4, z0: -2.6, base: '#23a89c', edge: '#1b8f84', grooveColor: 'rgba(0,40,36,0.45)', metal: M.steel(0.15), holeD: 2.0,
       grooves: (L, part) => part === 'loop' ? [3, 6, L - 9, L - 6] : (part === 'top' || part === 'bottom') ? [3, 6] : [],
       loopHoles: (L) => [L - 22, L - 29, L - 36, L - 43].map(x => [x, 2.0]) }, g.userData, pose));
