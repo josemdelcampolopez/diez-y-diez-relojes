@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general :: head('Reloj guardado')}"></head>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head(#{adm_reloj_guardado})}"></head>
 <body class="pagina">
 <main class="contenedor">
 
-    <header th:replace="~{fragments/general :: cabecera('Nuevo reloj', null)}"></header>
+    <header th:replace="~{fragments/general :: cabecera(#{adm_rel_nuevo}, null)}"></header>
 
     <section class="panel">
         <nav th:replace="~{fragments/general :: menu('relojes')}"></nav>
@@ -15,9 +15,9 @@
                 <circle cx="12" cy="12" r="10"/>
                 <path d="m9 12 2 2 4-4"/>
             </svg>
-            <h2 class="titulo-seccion mt-4">Reloj guardado</h2>
-            <p class="texto-ayuda">Ya está en el catálogo.</p>
-            <a href="gestionarRelojes" class="btn btn-secundario mt-6">Volver a relojes</a>
+            <h2 class="titulo-seccion mt-4" th:text="#{adm_reloj_guardado}"></h2>
+            <p class="texto-ayuda" th:text="#{adm_reloj_catalogo}"></p>
+            <a href="gestionarRelojes" class="btn btn-secundario mt-6" th:text="#{adm_volver_relojes}"></a>
         </div>
     </section>
 </main>

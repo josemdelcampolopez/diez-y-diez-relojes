@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general :: head('Categorías')}"></head>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head(#{adm_categorias})}"></head>
 <body class="pagina">
 <main class="contenedor">
 
     <div class="bloque-cabecera items-center">
-        <header th:replace="~{fragments/general :: cabecera('Categorías', null)}"></header>
-        <a href="registrarCategoria" class="btn btn-primario shrink-0">Nueva categoría</a>
+        <header th:replace="~{fragments/general :: cabecera(#{adm_categorias}, null)}"></header>
+        <a href="registrarCategoria" class="btn btn-primario shrink-0" th:text="#{adm_cat_nueva}"></a>
     </div>
 
     <section class="panel">
@@ -14,16 +14,16 @@
 
         <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
         <p th:if="${error}" th:text="${error}" class="aviso-error"></p>
-        <p th:if="${#lists.isEmpty(categorias)}" class="vacio">Todavía no hay categorías.</p>
+        <p th:if="${#lists.isEmpty(categorias)}" class="vacio" th:text="#{adm_cat_vacio}"></p>
 
         <div th:unless="${#lists.isEmpty(categorias)}" class="mt-4 overflow-x-auto">
             <table class="tabla">
                 <thead>
                 <tr>
-                    <th scope="col">Categoría</th>
-                    <th scope="col" class="hidden md:table-cell">Descripción</th>
-                    <th scope="col" class="derecha">Relojes</th>
-                    <th scope="col"><span class="sr-only">Acciones</span></th>
+                    <th scope="col" th:text="#{adm_categoria}"></th>
+                    <th scope="col" class="hidden md:table-cell" th:text="#{adm_descripcion}"></th>
+                    <th scope="col" class="derecha" th:text="#{nav_relojes}"></th>
+                    <th scope="col"><span class="sr-only" th:text="#{adm_acciones}"></span></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -38,9 +38,9 @@
                     <td class="derecha" th:text="${#lists.size(c.relojes)}">0</td>
                     <td>
                         <div class="acciones-fila">
-                            <a th:href="@{editarCategoria(id=${c.id})}" th:aria-label="|Editar ${c.nombre}|">Editar</a>
-                            <a th:href="@{borrarCategoria(id=${c.id})}" th:aria-label="|Borrar ${c.nombre}|"
-                               class="borrar" onclick="return confirm('¿Borrar esta categoría?')">Borrar</a>
+                            <a th:href="@{editarCategoria(id=${c.id})}" th:aria-label="|${#messages.msg('adm_editar')}: ${c.nombre}|" th:text="#{adm_editar}"></a>
+                            <a th:href="@{borrarCategoria(id=${c.id})}" th:aria-label="|${#messages.msg('borrar')}: ${c.nombre}|" th:text="#{borrar}"
+                               class="borrar" th:data-confirmar="#{adm_cat_confirmar}" onclick="return confirm(this.dataset.confirmar)"></a>
                         </div>
                     </td>
                 </tr>

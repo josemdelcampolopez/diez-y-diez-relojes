@@ -4,6 +4,7 @@ import com.chema.tienda.relojes.model.Usuario;
 import com.chema.tienda.relojes.servicios.ServicioCarrito;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,9 @@ public class CarritoREST {
     @Autowired
     private ServicioCarrito servicioCarrito;
 
+    @Autowired
+    private MessageSourceAccessor mensajes;
+
     @RequestMapping("agregarProducto")
     public String agregarProducto (
             @RequestParam("id") Long id,
@@ -28,7 +32,7 @@ public class CarritoREST {
         // La información del user está en una variable de sesión -> UsuariosREST / identificarUsuario
         Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
         if (u == null) {
-            return "Identificate primero";
+            return mensajes.getMessage("err_identificate");
         }
 
         return servicioCarrito.agregarProducto(u.getId(), id, cantidad);
@@ -48,7 +52,7 @@ public class CarritoREST {
     public String borrarProducto(@RequestParam("id") Long id, HttpServletRequest request) {
         Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
         if (u == null) {
-            return "Identifícate primero";
+            return mensajes.getMessage("err_identificate");
         }
         servicioCarrito.borrarProducto(u.getId(), id);
         return "OK";
@@ -61,7 +65,7 @@ public class CarritoREST {
             HttpServletRequest request) {
         Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
         if (u == null) {
-            return "Identifícate primero";
+            return mensajes.getMessage("err_identificate");
         }
         return servicioCarrito.cambiarCantidad(u.getId(), id, cantidad);
     }

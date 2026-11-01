@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general :: head('Acceso a administración')}"></head>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head(#{nav_admin})}"></head>
 <body class="pagina login">
 <main class="w-full max-w-sm">
     <p class="lateral-marca mb-4 flex justify-center">
@@ -8,14 +8,14 @@
         Diez y Diez
     </p>
     <form action="admin/inicioAdmin" method="post" class="hoja grid gap-5">
-        <h1 class="titulo-bloque">Administración</h1>
-        <p th:if="${param.error}" class="aviso-error mt-0" role="alert">Contraseña incorrecta.</p>
+        <h1 class="titulo-bloque" th:text="#{adm_administracion}"></h1>
+        <p th:if="${param.error}" class="aviso-error mt-0" role="alert" th:text="#{adm_contrasena_incorrecta}"></p>
         <div class="grupo">
-            <label for="pass-login-admin" class="etiqueta">Contraseña</label>
+            <label for="pass-login-admin" class="etiqueta" th:text="#{contrasena}"></label>
             <input id="pass-login-admin" type="password" name="pass-login-admin" autocomplete="current-password" required autofocus class="campo">
         </div>
-        <button type="submit" class="btn btn-primario w-full">Entrar</button>
-        <a href="/" class="enlace-bloque inline-flex min-h-11 items-center justify-self-center">Volver a la tienda</a>
+        <button type="submit" class="btn btn-primario w-full" th:text="#{adm_entrar}"></button>
+        <a href="/" class="enlace-bloque inline-flex min-h-11 items-center justify-self-center" th:text="#{adm_volver_tienda}"></a>
     </form>
     <div class="mt-4 flex justify-center text-fondo">
         <div th:replace="~{fragments/tienda :: idiomas}"></div>

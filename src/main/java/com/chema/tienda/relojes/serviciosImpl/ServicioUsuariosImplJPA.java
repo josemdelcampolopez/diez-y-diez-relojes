@@ -10,6 +10,8 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.hibernate.query.sql.internal.NativeQueryImpl;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +36,9 @@ public class ServicioUsuariosImplJPA implements ServicioUsuarios {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private MessageSourceAccessor mensajes;
 
 
     @Override
@@ -78,7 +83,7 @@ public class ServicioUsuariosImplJPA implements ServicioUsuarios {
         Usuario usuarioABorrar = entityManager.find(Usuario.class, id);
 
         if (usuarioABorrar == null) {
-            throw new Exception("id no encontrada");
+            throw new Exception(mensajes.getMessage("err_id_no_encontrada"));
         }
 
         // Los pedidos son historial: si tiene alguno, el cliente no se borra
@@ -88,8 +93,8 @@ public class ServicioUsuariosImplJPA implements ServicioUsuarios {
                 .setParameter("estado", EstadosPedidos.EnProceso.name())
                 .getSingleResult();
         if (pedidos > 0) {
-            throw new Exception("No se puede borrar a " + usuarioABorrar.getNombre() + " " + usuarioABorrar.getApellidos()
-                    + ": tiene pedidos a su nombre (" + pedidos + ")");
+            throw new Exception(mensajes.getMessage("err_borrar_cliente",
+                    new Object[]{usuarioABorrar.getNombre(), usuarioABorrar.getApellidos(), pedidos}));
         }
 
         // El carrito y los pedidos sin terminar no son historial: se borran con el cliente
@@ -115,21 +120,21 @@ public class ServicioUsuariosImplJPA implements ServicioUsuarios {
         }
 
         if (archivo.getSize() > TAMANO_MAXIMO_AVATAR) {
-            return "La foto supera los 5 MB";
+            return mensajes.getMessage("err_foto_grande");
         }
 
         String tipo = archivo.getContentType();
         if (tipo == null || !TIPOS_AVATAR.contains(tipo)) {
-            return "La foto tiene que ser jpg o png";
+            return mensajes.getMessage("err_foto_tipo");
         }
 
         // Compruebo que Java puede leerla; si no, el recorte fallaría después
         try (InputStream is = archivo.getInputStream()) {
             if (ImageIO.read(is) == null) {
-                return "La foto no se puede leer como imagen";
+                return mensajes.getMessage("err_foto_ilegible");
             }
         } catch (IOException e) {
-            return "No se pudo leer la foto";
+            return mensajes.getMessage("err_foto_no_leida");
         }
 
         return null;

@@ -3,7 +3,7 @@
 <!-- Cabecera del admin: mismos recursos y tema que la tienda, más los estilos propios del panel -->
 <head th:fragment="head(titulo)">
     <th:block th:replace="~{fragments/base :: recursos(${titulo})}"></th:block>
-    <title th:text="|${titulo} · Administración · Diez y Diez|">Administración · Diez y Diez</title>
+    <title th:text="${titulo} + ' · ' + #{adm_administracion} + ' · Diez y Diez'">Diez y Diez</title>
     <th:block th:replace="~{fragments/tienda :: tema}"></th:block>
 
     <style type="text/tailwindcss">
@@ -339,8 +339,8 @@
      Va en position: fixed, así que da igual en qué punto de la página se inserte.
      #contenido marca dónde empieza la página para el enlace de saltar -->
 <th:block th:fragment="menu(activa)">
-    <nav class="lateral" aria-label="Administración">
-        <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <nav class="lateral" th:aria-label="#{adm_administracion}">
+        <a class="saltar" href="#contenido" th:text="#{saltar_contenido}"></a>
         <a href="inicioAdmin" class="lateral-marca">
             <svg th:replace="~{fragments/tienda :: logo}"></svg>
             Diez y Diez
@@ -348,28 +348,28 @@
         <div class="lateral-nav">
             <a href="inicioAdmin" class="lateral-enlace" th:aria-current="${activa == 'inicio'} ? 'page'">
                 <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                Inicio
+                [[#{adm_inicio}]]
             </a>
             <a href="gestionarPedidos" class="lateral-enlace" th:aria-current="${activa == 'pedidos'} ? 'page'">
                 <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
-                Pedidos
+                [[#{adm_pedidos}]]
             </a>
             <a href="gestionarRelojes" class="lateral-enlace" th:aria-current="${activa == 'relojes'} ? 'page'">
                 <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><polyline points="12 10 12 12 13 13"/><path d="m16.13 7.66-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05"/><path d="m7.88 16.36.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.81-4.05"/></svg>
-                Relojes
+                [[#{nav_relojes}]]
             </a>
             <a href="gestionarUsuarios" class="lateral-enlace" th:aria-current="${activa == 'clientes'} ? 'page'">
                 <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                Clientes
+                [[#{adm_clientes}]]
             </a>
             <a href="gestionarCategorias" class="lateral-enlace" th:aria-current="${activa == 'categorias'} ? 'page'">
                 <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
-                Categorías
+                [[#{adm_categorias}]]
             </a>
         </div>
         <a href="../" class="lateral-volver">
             <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-            <span class="sr-only md:not-sr-only">Volver a la tienda</span>
+            <span class="sr-only md:not-sr-only" th:text="#{adm_volver_tienda}"></span>
         </a>
         <div class="lateral-idiomas">
             <div th:replace="~{fragments/tienda :: idiomas}"></div>

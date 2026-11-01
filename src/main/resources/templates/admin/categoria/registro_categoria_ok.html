@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general :: head('Categoría creada')}"></head>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head(#{adm_cat_creada})}"></head>
 <body class="pagina">
 <main class="contenedor">
 
-    <header th:replace="~{fragments/general :: cabecera('Nueva categoría', null)}"></header>
+    <header th:replace="~{fragments/general :: cabecera(#{adm_cat_nueva}, null)}"></header>
 
     <section class="panel">
         <nav th:replace="~{fragments/general :: menu('categorias')}"></nav>
@@ -15,9 +15,9 @@
                 <circle cx="12" cy="12" r="10"/>
                 <path d="m9 12 2 2 4-4"/>
             </svg>
-            <h2 class="titulo-seccion mt-4">Categoría registrada correctamente</h2>
-            <h2 class="titulo-seccion mt-4">Categoría creada</h2>
-            <p class="texto-ayuda">Ya puedes asignarla a tus relojes.</p>
+            <h2 class="titulo-seccion mt-4" th:text="#{adm_cat_registrada}"></h2>
+            <h2 class="titulo-seccion mt-4" th:text="#{adm_cat_creada}"></h2>
+            <p class="texto-ayuda" th:text="#{adm_cat_asignar}"></p>
         </div>
     </section>
 </main>

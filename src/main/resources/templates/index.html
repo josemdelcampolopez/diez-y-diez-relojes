@@ -107,7 +107,7 @@
             <canvas id="lienzo_despiece" aria-hidden="true"></canvas>
             <p id="nombre_pieza" aria-hidden="true"></p>
             <!-- Para lectores de pantalla: las piezas, sin depender del scroll -->
-            <ol id="lista_piezas" class="sr-only" aria-label="Piezas del reloj"></ol>
+            <ol id="lista_piezas" class="sr-only" th:aria-label="#{portada_piezas}"></ol>
 
             <!-- Cierre: el reloj que acabas de desmontar. Precio y botón solo si está a la venta (despiece.js) -->
             <div class="contenedor portada-rejilla portada-cierre">
@@ -116,7 +116,7 @@
                     <h2 id="cierre_modelo" class="portada-titulo"></h2>
                     <p id="cierre_precio" class="precio" hidden></p>
                     <div class="portada-acciones">
-                        <button id="cierre_ver" type="button" class="btn btn-primario" hidden>Ver este reloj</button>
+                        <button id="cierre_ver" type="button" class="btn btn-primario" th:text="#{portada_ver_reloj}" hidden></button>
                         <a href="#contenedor" class="btn btn-secundario" th:text="#{ver_relojes}"></a>
                     </div>
                 </div>
@@ -163,7 +163,7 @@
             </address>
         </div>
     </div>
-    <p class="contenedor pie-legal">© 2026 Diez y Diez · Tienda ficticia, proyecto de clase.</p>
+    <p class="contenedor pie-legal" th:text="#{pie_legal}"></p>
 </footer>
 
 <script src="librerias_js/jquery.js"></script>

@@ -12,34 +12,34 @@ import jakarta.validation.constraints.Size;
 @Table(name = "tabla_usuarios")
 public class Usuario{
 
-    @NotNull(message = "El email es obligatorio")
-    @Size(min = 3, max = 40, message = "El email es obligatorio y debe tener entre 3 y 40 caracteres")
+    @NotNull(message = "{val_email_obligatorio}")
+    @Size(min = 3, max = 40, message = "{val_email_tamano}")
     @Pattern(regexp = "^[a-zA-Z\\-@.0-9]+$",
-            message = "Email solo puede tener letras y números")
+            message = "{val_email_formato}")
     @Email
     @Column(unique = true)
     private String email;
 
-    @NotNull(message = "La contraseña es obligatoria")
-    @Size(min = 1, max = 40, message = "La contraseña es obligatoria y debe tener entre 10 y 40 caracteres")
+    @NotNull(message = "{val_pass_obligatoria}")
+    @Size(min = 1, max = 40, message = "{val_pass_tamano}")
     @Pattern(regexp = "^[a-zA-Z\\-@.0-9!#$%&'*+/=?^_{|}~]+$",
-            message = "La contraseña solo puede tener letras, números y símbolos permitidos")
+            message = "{val_pass_formato}")
     private String pass;
 
-    @NotNull(message = "El nombre es obligatorio")
-    @Size(min = 2, max = 40, message = "El nombre es obligatorio y debe tener entre 2 y 40 caracteres")
+    @NotNull(message = "{val_nombre_obligatorio}")
+    @Size(min = 2, max = 40, message = "{val_nombre_tamano}")
     @Pattern(regexp = "^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\\- ]+$",
-            message = "El nombre solo puede tener letras, espacios y guiones")
+            message = "{val_nombre_formato}")
     private String nombre;
 
-    @NotNull(message = "Los apellidos son obligatorios")
+    @NotNull(message = "{val_apellidos_obligatorios}")
     @Pattern(regexp = "^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\\- ]{2,60}$",
-            message = "Los apellidos solo pueden tener letras, espacios y guiones (2 a 60)")
+            message = "{val_apellidos_formato}")
     private String apellidos;
 
-    @NotNull(message = "El teléfono es obligatorio")
+    @NotNull(message = "{val_telefono_obligatorio}")
     @Pattern(regexp = "^\\+?[0-9]{8,15}$",
-            message = "El teléfono solo puede contener dígitos y un + opcional al inicio (8 a 15 dígitos). Sin espacios.")
+            message = "{val_telefono_formato}")
     private String telefono;
 
     @OneToOne

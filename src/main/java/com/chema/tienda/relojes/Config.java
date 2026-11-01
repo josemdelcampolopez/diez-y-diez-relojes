@@ -2,7 +2,9 @@ package com.chema.tienda.relojes;
 
 import com.chema.tienda.relojes.interceptores.InterceptorAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -35,6 +37,14 @@ public class Config implements WebMvcConfigurer {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
         localeResolver.setDefaultLocale(Locale.forLanguageTag("es"));
         return localeResolver;
+    }
+
+
+    //Da los textos de messages_*.properties en el idioma de la petición actual.
+    //Lo usan los REST y los servicios para sus mensajes: mensajes.getMessage("clave")
+    @Bean
+    public MessageSourceAccessor mensajes(MessageSource messageSource) {
+        return new MessageSourceAccessor(messageSource);
     }
 
 

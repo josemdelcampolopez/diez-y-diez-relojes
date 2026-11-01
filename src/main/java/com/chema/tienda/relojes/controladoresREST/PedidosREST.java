@@ -5,6 +5,7 @@ import com.chema.tienda.relojes.responseData.ResumenPedido;
 import com.chema.tienda.relojes.servicios.ServicioPedidos;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,9 @@ public class PedidosREST {
 
     @Autowired
     private ServicioPedidos servicioPedidos;
+
+    @Autowired
+    private MessageSourceAccessor mensajes;
 
     @RequestMapping("paso1")
     public String paso1 (
@@ -32,12 +36,12 @@ public class PedidosREST {
         Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
 
         if (u == null) {
-            return "Identificate primero";
+            return mensajes.getMessage("err_identificate");
         }
 
         if (nombre.isBlank() || direccion.isBlank() || provincia.isBlank() ||
         email.isBlank() || telefono.isBlank() || codigoPostal.isBlank()) {
-            return "Rellena todos los campos";
+            return mensajes.getMessage("err_rellena");
         }
 
         servicioPedidos.procesarPaso1(nombre, direccion, provincia, email, telefono, codigoPostal, u.getId());
@@ -55,10 +59,10 @@ public class PedidosREST {
 
         Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
         if (u == null) {
-            return "Identificate primero";
+            return mensajes.getMessage("err_identificate");
         }
         if (titular.isBlank() || numero.isBlank() || tipoTarjeta.isBlank() || caducidad.isBlank()) {
-            return "Rellena todos los campos";
+            return mensajes.getMessage("err_rellena");
         }
         servicioPedidos.procesarPaso2(titular, numero, tipoTarjeta, caducidad, u.getId());
         return "OK";
@@ -69,10 +73,10 @@ public class PedidosREST {
     public String paso3(@RequestParam("motivo") String motivo, HttpServletRequest request){
         Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
         if (u == null) {
-            return "Identificate primero";
+            return mensajes.getMessage("err_identificate");
         }
         if (motivo.isBlank()) {
-            return "Elige una opción";
+            return mensajes.getMessage("err_elige_opcion");
         }
         servicioPedidos.procesarPaso3(motivo, u.getId());
         return "OK";
@@ -94,7 +98,7 @@ public class PedidosREST {
 
         Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
         if (u == null) {
-            return "Identificate primero";
+            return mensajes.getMessage("err_identificate");
         }
         return servicioPedidos.confirmarPedido(u.getId());
     }

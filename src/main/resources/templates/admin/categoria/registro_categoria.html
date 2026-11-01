@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general :: head('Nueva categoría')}"></head>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head(#{adm_cat_nueva})}"></head>
 <body class="pagina">
 <main class="contenedor">
 
-    <header th:replace="~{fragments/general :: cabecera('Nueva categoría', null)}"></header>
+    <header th:replace="~{fragments/general :: cabecera(#{adm_cat_nueva}, null)}"></header>
 
     <section class="panel">
         <nav th:replace="~{fragments/general :: menu('categorias')}"></nav>
@@ -14,20 +14,20 @@
             <form th:action="@{/admin/guardarCategoria}" th:object="${nuevaCategoria}" method="post" class="formulario">
 
                 <div class="grupo md:col-span-2">
-                    <label for="nombre" class="etiqueta">Nombre</label>
+                    <label for="nombre" class="etiqueta" th:text="#{adm_nombre}"></label>
                     <input type="text" th:field="*{nombre}" aria-describedby="error_nombre" class="campo">
                     <span id="error_nombre" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></span>
                 </div>
 
                 <div class="grupo md:col-span-2">
-                    <label for="descripcion" class="etiqueta">Descripción</label>
+                    <label for="descripcion" class="etiqueta" th:text="#{adm_descripcion}"></label>
                     <textarea th:field="*{descripcion}" rows="4" aria-describedby="error_descripcion" class="campo"></textarea>
                     <span id="error_descripcion" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}" class="error"></span>
                 </div>
 
                 <div class="flex flex-wrap justify-end gap-3 border-t border-borde pt-5 md:col-span-2">
-                    <a th:href="@{/admin/gestionarCategorias}" class="btn btn-neutro">Cancelar</a>
-                    <button type="submit" class="btn btn-primario">Crear categoría</button>
+                    <a th:href="@{/admin/gestionarCategorias}" class="btn btn-neutro" th:text="#{adm_cancelar}"></a>
+                    <button type="submit" class="btn btn-primario" th:text="#{adm_cat_crear}"></button>
                 </div>
             </form>
         </div>

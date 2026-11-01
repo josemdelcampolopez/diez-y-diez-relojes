@@ -5,6 +5,8 @@ import com.chema.tienda.relojes.servicios.ServicioCategorias;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +17,9 @@ public class ServicioCategoriasImplJPA implements ServicioCategorias {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private MessageSourceAccessor mensajes;
 
 
     @Override
@@ -43,14 +48,13 @@ public class ServicioCategoriasImplJPA implements ServicioCategorias {
         Categoria categoriaAborrar = entityManager.find(Categoria.class, id);
 
         if (categoriaAborrar == null) {
-            throw new Exception("id no encontrada");
+            throw new Exception(mensajes.getMessage("err_id_no_encontrada"));
         }
 
         // Si tiene relojes asignados no se borra
         if (!categoriaAborrar.getRelojes().isEmpty()) {
-            throw new Exception("No se puede borrar la categoría " + categoriaAborrar.getNombre()
-                    + " tiene " + categoriaAborrar.getRelojes().size()
-                    + " relojes. Reasígnalos a otra categoría antes");
+            throw new Exception(mensajes.getMessage("err_borrar_categoria",
+                    new Object[]{categoriaAborrar.getNombre(), categoriaAborrar.getRelojes().size()}));
         }
 
         entityManager.remove(categoriaAborrar);

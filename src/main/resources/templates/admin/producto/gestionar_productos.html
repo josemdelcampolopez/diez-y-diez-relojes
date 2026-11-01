@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/general :: head('Relojes')}"></head>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/general :: head(#{nav_relojes})}"></head>
 <body class="pagina">
 <main class="contenedor">
 
     <div class="bloque-cabecera items-center">
-        <header th:replace="~{fragments/general :: cabecera('Relojes', null)}"></header>
-        <a href="registrarReloj" class="btn btn-primario shrink-0">Nuevo reloj</a>
+        <header th:replace="~{fragments/general :: cabecera(#{nav_relojes}, null)}"></header>
+        <a href="registrarReloj" class="btn btn-primario shrink-0" th:text="#{adm_rel_nuevo}"></a>
     </div>
 
     <section class="panel">
@@ -14,17 +14,17 @@
 
         <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
         <p th:if="${error}" th:text="${error}" class="aviso-error"></p>
-        <p th:if="${#lists.isEmpty(relojes)}" class="vacio">No hay relojes todavía.</p>
+        <p th:if="${#lists.isEmpty(relojes)}" class="vacio" th:text="#{adm_rel_vacio}"></p>
 
         <div th:unless="${#lists.isEmpty(relojes)}" class="mt-4 overflow-x-auto">
             <table class="tabla">
                 <thead>
                 <tr>
-                    <th scope="col">Reloj</th>
-                    <th scope="col" class="hidden md:table-cell">Categoría</th>
-                    <th scope="col" class="derecha hidden sm:table-cell">Precio</th>
-                    <th scope="col" class="derecha">Stock</th>
-                    <th scope="col"><span class="sr-only">Acciones</span></th>
+                    <th scope="col" th:text="#{adm_reloj}"></th>
+                    <th scope="col" class="hidden md:table-cell" th:text="#{adm_categoria}"></th>
+                    <th scope="col" class="derecha hidden sm:table-cell" th:text="#{adm_precio}"></th>
+                    <th scope="col" class="derecha" th:text="#{adm_stock}"></th>
+                    <th scope="col"><span class="sr-only" th:text="#{adm_acciones}"></span></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -46,13 +46,13 @@
                     <!-- Stock bajo: el mismo límite de 5 que el panel de inicio -->
                     <td class="derecha">
                         <span th:classappend="${r.stock le 5} ? 'resolver-urgente'"
-                              th:text="${r.stock == 0 ? 'Agotado' : r.stock}">0</span>
+                              th:text="${r.stock == 0} ? #{adm_agotado} : ${r.stock}">0</span>
                     </td>
                     <td>
                         <div class="acciones-fila">
-                            <a th:href="@{editarReloj(id=${r.id})}" th:aria-label="|Editar ${r.marca} ${r.modelo}|">Editar</a>
-                            <a th:href="@{borrarReloj(id=${r.id})}" th:aria-label="|Borrar ${r.marca} ${r.modelo}|"
-                               class="borrar" onclick="return confirm('¿Borrar este reloj?')">Borrar</a>
+                            <a th:href="@{editarReloj(id=${r.id})}" th:aria-label="|${#messages.msg('adm_editar')}: ${r.marca} ${r.modelo}|" th:text="#{adm_editar}"></a>
+                            <a th:href="@{borrarReloj(id=${r.id})}" th:aria-label="|${#messages.msg('borrar')}: ${r.marca} ${r.modelo}|" th:text="#{borrar}"
+                               class="borrar" th:data-confirmar="#{adm_rel_confirmar}" onclick="return confirm(this.dataset.confirmar)"></a>
                         </div>
                     </td>
                 </tr>

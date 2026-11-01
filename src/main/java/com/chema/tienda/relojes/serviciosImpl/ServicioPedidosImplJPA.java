@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.hibernate.query.sql.internal.NativeQueryImpl;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,9 @@ public class ServicioPedidosImplJPA implements ServicioPedidos {
 
     @Autowired // Tambien se usa @Resource
     private ServicioCarrito servicioCarrito;
+
+    @Autowired
+    private MessageSourceAccessor mensajes;
 
     @Override
     public List<Pedido> obtenerPedidos() {
@@ -135,7 +139,7 @@ public class ServicioPedidosImplJPA implements ServicioPedidos {
         Pedido p = obtenerPedidoActual(idUsuario);
         // Los pasos 1, 2 y 3 tienen que estar hechos
         if (p.getNombreCompleto() == null || p.getTitularTarjeta() == null || p.getMotivoCompra() == null) {
-            return "Completa todos los pasos del pedido antes de confirmar";
+            return mensajes.getMessage("err_completa_pasos");
         }
 
         // getSingleResult lanzaría excepción si el usuario no tiene carrito
@@ -144,7 +148,7 @@ public class ServicioPedidosImplJPA implements ServicioPedidos {
                 .setParameter("idUsuario", idUsuario)
                 .getResultList();
         if (carritos.isEmpty() || carritos.get(0).getProductosCarrito().isEmpty()) {
-            return "Tu carrito está vacío";
+            return mensajes.getMessage("carrito_vacio");
         }
         Carrito c = carritos.get(0);
 
@@ -152,7 +156,7 @@ public class ServicioPedidosImplJPA implements ServicioPedidos {
         for (ProductoCarrito pc : c.getProductosCarrito()) {
             Reloj r = pc.getReloj();
             if (pc.getCantidad() > r.getStock()) {
-                return "Solo quedan " + r.getStock() + " unidades de " + r.getMarca() + " " + r.getModelo();
+                return mensajes.getMessage("err_quedan_de", new Object[]{r.getStock(), r.getMarca(), r.getModelo()});
             }
         }
 

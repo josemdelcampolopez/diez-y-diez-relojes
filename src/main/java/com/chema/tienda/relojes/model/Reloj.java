@@ -9,42 +9,42 @@ import java.util.List;
 @Table(name = "tabla_relojes")
 public class Reloj {
 
-    @Size(min = 3, max = 40, message = "La marca es obligatoria y debe tener entre 3 y 40 caracteres")
+    @Size(min = 3, max = 40, message = "{val_marca_tamano}")
     @Pattern(regexp = "[a-záéíóúñA-ZÁÉÍÓÚÑ\\- 0-9]*",
-            message = "Marca solo puede tener letras, números y espacios")
+            message = "{val_marca_formato}")
     @Column(name = "marca_reloj", length = 300)
     private String marca;
 
-    @Size(min = 3, max = 40, message = "El modelo es obligatorio y debe tener entre 3 y 40 caracteres")
+    @Size(min = 3, max = 40, message = "{val_modelo_tamano}")
     @Pattern(regexp = "[a-záéíóúñA-ZÁÉÍÓÚÑ\\- 0-9]*",
-            message = "Modelo solo puede tener letras, números y espacios")
+            message = "{val_modelo_formato}")
     private String modelo;
 
-    @Min(value = 1, message = "Precio mínimo 1 euro")
-    @Max(value = 99999, message = "El precio máximo es 99999 euros")
+    @Min(value = 1, message = "{val_precio_min}")
+    @Max(value = 99999, message = "{val_precio_max}")
     private double precio;
 
-    @Min(value = 0, message = "El stock no puede ser negativo")
-    @Max(value = 999, message = "El stock máximo es 999 unidades")
+    @Min(value = 0, message = "{val_stock_min}")
+    @Max(value = 999, message = "{val_stock_max}")
     private int stock;
 
-    @Size(min = 3, max = 40, message = "El tipo de movimiento es obligatorio y debe tener entre 3 y 40 caracteres")
+    @Size(min = 3, max = 40, message = "{val_movimiento_tamano}")
     @Pattern(regexp = "[a-záéíóúñA-ZÁÉÍÓÚÑ 0-9]*",
-            message = "Tipo de movimiento solo puede tener letras, números y espacios")
+            message = "{val_movimiento_formato}")
     private String tipoMovimiento;
 
-    @Min(value = 1, message = "Resistencia agua mínimo 1 atm")
-    @Max(value = 1000, message = "La resistencia al agua máxima es de 1000 atm")
+    @Min(value = 1, message = "{val_agua_min}")
+    @Max(value = 1000, message = "{val_agua_max}")
     private int resistenciaAgua;
 
-    @Size(min = 3, max = 40, message = "El género es obligatorio y debe tener entre 3 y 40 caracteres")
+    @Size(min = 3, max = 40, message = "{val_genero_tamano}")
     @Pattern(regexp = "[a-záéíóúñA-ZÁÉÍÓÚÑ ]*",
-            message = "Género solo puede tener letras y espacios")
+            message = "{val_genero_formato}")
     private String genero;
 
-    @Size(min = 9, max = 9, message = "El SKU debe tener exactamente 9 caracteres")
+    @Size(min = 9, max = 9, message = "{val_sku_tamano}")
     @Pattern(regexp = "[A-Z]{6}[0-9]{3}",
-            message = "El SKU debe tener 6 letras mayúsculas y 3 números, por ejemplo TISEVE001")
+            message = "{val_sku_formato}")
     private String sku;
 
     @Id

@@ -6,55 +6,55 @@
 <th:block th:fragment="campos">
 
     <div class="grupo">
-        <label for="marca" class="etiqueta">Marca</label>
+        <label for="marca" class="etiqueta" th:text="#{adm_marca}"></label>
         <input type="text" th:field="*{marca}" aria-describedby="error_marca" th:attr="aria-invalid=${#fields.hasErrors('marca')}" class="campo">
         <span id="error_marca" th:if="${#fields.hasErrors('marca')}" th:errors="*{marca}" class="error"></span>
     </div>
 
     <div class="grupo">
-        <label for="modelo" class="etiqueta">Modelo</label>
+        <label for="modelo" class="etiqueta" th:text="#{adm_modelo}"></label>
         <input type="text" th:field="*{modelo}" aria-describedby="error_modelo" th:attr="aria-invalid=${#fields.hasErrors('modelo')}" class="campo">
         <span id="error_modelo" th:if="${#fields.hasErrors('modelo')}" th:errors="*{modelo}" class="error"></span>
     </div>
 
     <div class="grupo">
-        <label for="precio" class="etiqueta">Precio (€)</label>
+        <label for="precio" class="etiqueta" th:text="#{adm_precio_euros}"></label>
         <input type="number" step="0.01" th:field="*{precio}" aria-describedby="error_precio" th:attr="aria-invalid=${#fields.hasErrors('precio')}" class="campo">
     </div>
 
     <div class="grupo">
-        <label for="idCategoria" class="etiqueta">Categoría</label>
+        <label for="idCategoria" class="etiqueta" th:text="#{adm_categoria}"></label>
         <select th:field="*{idCategoria}" class="campo">
             <option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.nombre}"></option>
         </select>
     </div>
 
     <div class="grupo">
-        <label for="stock" class="etiqueta">Stock (unidades)</label>
+        <label for="stock" class="etiqueta" th:text="#{adm_stock_unidades}"></label>
         <input type="number" th:field="*{stock}" aria-describedby="error_stock" th:attr="aria-invalid=${#fields.hasErrors('stock')}" class="campo">
         <span id="error_stock" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}" class="error"></span>
     </div>
 
     <div class="grupo">
-        <label for="tipoMovimiento" class="etiqueta">Tipo de movimiento</label>
+        <label for="tipoMovimiento" class="etiqueta" th:text="#{adm_tipo_movimiento}"></label>
         <input type="text" th:field="*{tipoMovimiento}" aria-describedby="error_tipoMovimiento" th:attr="aria-invalid=${#fields.hasErrors('tipoMovimiento')}" class="campo">
         <span id="error_tipoMovimiento" th:if="${#fields.hasErrors('tipoMovimiento')}" th:errors="*{tipoMovimiento}" class="error"></span>
     </div>
 
     <div class="grupo">
-        <label for="resistenciaAgua" class="etiqueta">Resistencia al agua (atm)</label>
+        <label for="resistenciaAgua" class="etiqueta" th:text="#{adm_resistencia_atm}"></label>
         <input type="number" th:field="*{resistenciaAgua}" aria-describedby="error_resistenciaAgua" th:attr="aria-invalid=${#fields.hasErrors('resistenciaAgua')}" class="campo">
         <span id="error_resistenciaAgua" th:if="${#fields.hasErrors('resistenciaAgua')}" th:errors="*{resistenciaAgua}" class="error"></span>
     </div>
 
     <div class="grupo">
-        <label for="genero" class="etiqueta">Género</label>
+        <label for="genero" class="etiqueta" th:text="#{ficha_genero}"></label>
         <input type="text" th:field="*{genero}" aria-describedby="error_genero" th:attr="aria-invalid=${#fields.hasErrors('genero')}" class="campo">
         <span id="error_genero" th:if="${#fields.hasErrors('genero')}" th:errors="*{genero}" class="error"></span>
     </div>
 
     <div class="grupo md:col-span-2">
-        <label for="fotoSubida" class="etiqueta">Portada</label>
+        <label for="fotoSubida" class="etiqueta" th:text="#{adm_portada}"></label>
         <input type="file" th:field="*{fotoSubida}" accept="image/jpeg,image/png,image/webp" aria-describedby="error_fotoSubida" th:attr="aria-invalid=${#fields.hasErrors('fotoSubida')}" class="campo-archivo">
         <span id="error_fotoSubida" th:if="${#fields.hasErrors('fotoSubida')}" th:errors="*{fotoSubida}" class="error"></span>
     </div>

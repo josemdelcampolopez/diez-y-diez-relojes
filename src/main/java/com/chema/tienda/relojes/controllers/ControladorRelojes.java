@@ -177,7 +177,7 @@ public class ControladorRelojes {
                 }
             }
             if (yaGuardadas + nuevas > 4) {
-                resultadoValidacion.rejectValue("fotosExtra", "fotosExtra.maximo",
+                resultadoValidacion.rejectValue("fotosExtra", "fotosExtra.maximo", new Object[]{yaGuardadas},
                         "Máximo 4 imágenes adicionales (5 con la principal). Ya tiene " + yaGuardadas);
             }
         }

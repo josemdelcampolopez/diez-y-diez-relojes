@@ -9,6 +9,8 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.hibernate.query.sql.internal.NativeQueryImpl;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,15 +23,18 @@ public class ServicioCarritoImplJPA implements ServicioCarrito {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private MessageSourceAccessor mensajes;
+
     @Override
     public String agregarProducto(long idUsuario, long idProducto, int cantidad) {
         Reloj reloj = entityManager.find(Reloj.class, idProducto);
         if (reloj == null) {
-            return "Ese reloj no existe";
+            return mensajes.getMessage("aviso_reloj_no_existe");
         }
         // El navegador manda siempre 1, pero el servidor lo comprueba igualmente
         if (cantidad < 1 || cantidad > reloj.getStock()) {
-            return "La cantidad debe estar entre 1 y " + reloj.getStock();
+            return mensajes.getMessage("err_cantidad_rango", new Object[]{reloj.getStock()});
         }
 
         Usuario uBaseDatos =
@@ -53,8 +58,7 @@ public class ServicioCarritoImplJPA implements ServicioCarrito {
         for (ProductoCarrito pc : c.getProductosCarrito()) {
             if (pc.getReloj().getId() == idProducto) {
                 if (pc.getCantidad() + cantidad > reloj.getStock()) {
-                    return "Solo quedan " + reloj.getStock() + " unidades y ya tienes "
-                            + pc.getCantidad() + " en el carrito";
+                    return mensajes.getMessage("err_quedan_ya_tienes", new Object[]{reloj.getStock(), pc.getCantidad()});
                 }
                 pc.setCantidad(pc.getCantidad() + cantidad);
                 entityManager.merge(pc);
@@ -116,12 +120,12 @@ public class ServicioCarritoImplJPA implements ServicioCarrito {
     public String cambiarCantidad(long idUsuario, long idProducto, int cantidad) {
         ProductoCarrito pc = buscarProductoCarrito(idUsuario, idProducto);
         if (pc == null) {
-            return "Ese reloj ya no está en tu carrito";
+            return mensajes.getMessage("err_ya_no_en_carrito");
         }
         // El navegador ya lo limita, pero el servidor lo comprueba siempre
         int stock = pc.getReloj().getStock();
         if (cantidad < 1 || cantidad > stock) {
-            return "La cantidad debe estar entre 1 y " + stock;
+            return mensajes.getMessage("err_cantidad_rango", new Object[]{stock});
         }
         // pc lo controla el EntityManager: al terminar la transacción se guarda solo
         pc.setCantidad(cantidad);

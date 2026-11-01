@@ -11,6 +11,8 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.hibernate.query.sql.internal.NativeQueryImpl;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +39,9 @@ public class ServicioRelojesImplJPA implements ServicioRelojes {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private MessageSourceAccessor mensajes;
 
     @Override
     public void registrarReloj(Reloj r) {
@@ -80,7 +85,7 @@ public class ServicioRelojesImplJPA implements ServicioRelojes {
 
         Reloj relojAborrar = entityManager.find(Reloj.class, id);
         if (relojAborrar == null) {
-            throw new Exception("id no encontrada");
+            throw new Exception(mensajes.getMessage("err_id_no_encontrada"));
         }
 
         // Los pedidos son historial: si está en alguno, el reloj no se borra
@@ -89,8 +94,8 @@ public class ServicioRelojesImplJPA implements ServicioRelojes {
                 .setParameter("id", id)
                 .getSingleResult();
         if (enPedidos > 0) {
-            throw new Exception("No se puede borrar " + relojAborrar.getMarca() + " " + relojAborrar.getModelo()
-                    + ": está en " + enPedidos + " líneas de pedido. Ponle stock 0 para que no se pueda comprar");
+            throw new Exception(mensajes.getMessage("err_borrar_reloj",
+                    new Object[]{relojAborrar.getMarca(), relojAborrar.getModelo(), enPedidos}));
         }
 
         // Los carritos no son historial: se quita de los carritos que lo tengan
@@ -207,27 +212,27 @@ public class ServicioRelojesImplJPA implements ServicioRelojes {
         String nombre = archivo.getOriginalFilename();
 
         if (archivo.getSize() > TAMANO_MAXIMO) {
-            return "La imagen " + nombre + " supera los 20 MB";
+            return mensajes.getMessage("err_imagen_grande", new Object[]{nombre});
         }
 
         String tipo = archivo.getContentType();
 
         if (tipo == null || !TIPOS_PERMITIDOS.contains(tipo)) {
-            return "La imagen " + nombre + " no es válida, solo se permiten jpg, png o webp (no gif)";
+            return mensajes.getMessage("err_imagen_tipo", new Object[]{nombre});
         }
 
         if (esPrincipal) {
             //De la principal sale la miniatura
             if (tipo.equals("image/webp")){
-                return "La imagen principal no puede ser webp, usa jpg o png";
+                return mensajes.getMessage("err_principal_webp");
             }
             // Comprobamos que Java puede decodificar la imagen principal; si no, la miniatura fallaría más tarde
             try (InputStream is = archivo.getInputStream()) {
                 if (ImageIO.read(is) == null) {
-                    return "La imagen principal " + nombre + " no se puede leer como imagen";
+                    return mensajes.getMessage("err_principal_ilegible", new Object[]{nombre});
                 }
             } catch (IOException e) {
-                return "No se pudo leer la imagen " + nombre;
+                return mensajes.getMessage("err_imagen_no_leida", new Object[]{nombre});
             }
         }
 

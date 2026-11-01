@@ -94,7 +94,7 @@ function prepararFotosTarjetas() {
 
         // Un punto por foto; el primero marcado como el actual
         const puntos = lista.map((_, k) =>
-            `<button type="button" class="punto-foto" data-ir="${k}" aria-label="Foto ${k + 1} de ${lista.length}"></button>`
+            `<button type="button" class="punto-foto" data-ir="${k}" aria-label="${texto("foto_de", k + 1, lista.length)}"></button>`
         ).join("");
         $marco.find(".puntos-foto").html(puntos);
         $marco.find(".punto-foto").first().attr("aria-current", "true");
@@ -561,5 +561,7 @@ $(document).on("ajaxError", function (e, xhr, ajax) {
 // ----- 5. Arranque -----
 // Descargo las plantillas y los textos y, cuando terminan, muestro el listado de relojes.
 // A la vez pregunto al servidor si ya había una sesión abierta para pintar el header
-$.when(cargarPlantillas(), cargarTextos()).done(mostrarRelojes);
+// despiece.js también espera a los textos para poner los nombres de las piezas
+const textosCargados = cargarTextos();
+$.when(cargarPlantillas(), textosCargados).done(mostrarRelojes);
 comprobarSesion();

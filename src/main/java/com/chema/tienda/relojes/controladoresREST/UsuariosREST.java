@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,9 @@ public class UsuariosREST {
     @Autowired
     private Validator validator;
 
+    @Autowired
+    private MessageSourceAccessor mensajes;
+
     @RequestMapping("registrarUsuario")
     public String registrarUsuario(@RequestParam(value = "nombre", defaultValue = "") String nombre,
                                    @RequestParam(value = "apellidos", defaultValue = "") String apellidos,
@@ -46,7 +50,7 @@ public class UsuariosREST {
             return errores.iterator().next().getMessage();
         }
         if (servicioUsuarios.obtenerUsuarioPorEmail(email) != null) {
-            return "Ese email ya está registrado";
+            return mensajes.getMessage("email.duplicado");
         }
 
         // El avatar es opcional. Si viene, lo valido y guardo la versión recortada
@@ -58,14 +62,14 @@ public class UsuariosREST {
             try {
                 u.setImagenAvatar(servicioUsuarios.generarAvatar(avatar.getBytes()));
             } catch (IOException e) {
-                return "No se pudo leer la foto";
+                return mensajes.getMessage("err_foto_no_leida");
             }
         }
 
         servicioUsuarios.registrarUsuario(u);
 
         // Empieza por "OK," para que tienda.js sepa que ha ido bien
-        return "OK,Te has registrado correctamente, ya puedes identificarte";
+        return "OK," + mensajes.getMessage("ok_registrado");
     }
 
 
@@ -86,7 +90,7 @@ public class UsuariosREST {
             // "OK,Nombre,1" si tiene foto de avatar; "OK,Nombre,0" si no
             respuesta = "OK," + u.getNombre() + "," + (u.getImagenAvatar() != null ? "1" : "0");
         }else{
-            respuesta = "Email o contraseña incorrectos";
+            respuesta = mensajes.getMessage("err_credenciales");
         }
 
         return respuesta;

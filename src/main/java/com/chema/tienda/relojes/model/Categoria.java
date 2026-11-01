@@ -13,14 +13,14 @@ import java.util.List;
 @Entity
 public class Categoria {
 
-    @Size(min = 3 , max = 40, message = "El nombre de la categoría es obligatorio y debe tener entre 3 y 40 carácteres")
+    @Size(min = 3 , max = 40, message = "{val_cat_nombre_tamano}")
     @Pattern(regexp = "[a-záéíóúñA-ZÁÉÍÓÚÑ\\- 0-9]*",
-            message = "El nombre de categoría solo puede tener letras, números y espacios")
+            message = "{val_cat_nombre_formato}")
     private String nombre;
 
-    @Size(min = 5 , max = 200, message = "La descripción de la categoría es obligatoria y debe tener entre 5 y 200 carácteres")
+    @Size(min = 5 , max = 200, message = "{val_cat_desc_tamano}")
     @Pattern(regexp = "[a-záéíóúñA-ZÁÉÍÓÚÑ\\-., 0-9]*",
-            message = "La descripción de categoría solo puede tener letras, números y espacios")
+            message = "{val_cat_desc_formato}")
     private String descripcion;
 
     @OneToMany(mappedBy = "categoria")
