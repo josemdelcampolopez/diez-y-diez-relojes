@@ -53,8 +53,8 @@
         min-height: calc(100svh - 4rem);
     }
 
-    /* Un móvil apaisado usa la misma distribución que el ordenador: en una columna no cabe */
-    @media (min-width: 48rem), (orientation: landscape) {
+    /* Dos columnas solo en apaisado: es la misma condición con la que escena.js coloca el reloj */
+    @media (orientation: landscape) {
         .portada-rejilla {
             padding-inline: 2rem;
             grid-template-columns: 1fr 1fr;
@@ -71,7 +71,7 @@
         aspect-ratio: 1;
     }
 
-    @media (min-width: 48rem), (orientation: landscape) {
+    @media (orientation: landscape) {
         .despiece-hueco {
             order: 0;
             max-width: min(30rem, 52svh);
@@ -110,7 +110,8 @@
         opacity: clamp(0, calc(1 - (var(--avance, 0) - .03) * 13), 1);
     }
 
-    .con-3d:not([data-fase="portada"]) .portada-texto {
+    /* Con [data-fase]: mientras carga el 3D aún no hay fase y el texto debe verse */
+    .con-3d[data-fase]:not([data-fase="portada"]) .portada-texto {
         visibility: hidden;
     }
 
@@ -168,7 +169,7 @@
         min-height: 2.75rem;
     }
 
-    @media (min-width: 48rem), (orientation: landscape) {
+    @media (orientation: landscape) {
         .portada-cierre {
             align-items: center;
             padding-block-end: 0;
@@ -180,8 +181,9 @@
         }
     }
 
-    /* Pantalla muy baja: sin la explicación y con un título menor, para que quepan los botones */
-    @media (max-height: 30rem) {
+    /* Pantalla baja: sin la explicación y con un título menor, para que quepan los botones.
+       En vertical el reloj y el texto van uno encima del otro, y hace falta más alto */
+    @media (max-height: 30rem), (orientation: portrait) and (max-height: 42rem) {
         .portada-explicacion {
             display: none;
         }

@@ -16,6 +16,12 @@ test('avisa una sola vez si los primeros fotogramas van lentos', () => {
   for (let i = 0; i < 60; i++) vigilar(50);
   assert.equal(avisos, 1);
 });
+test('un dispositivo muy lento también avisa', () => {
+  let avisos = 0;
+  const vigilar = vigilarFotogramas(() => avisos++);
+  for (let i = 0; i < 30; i++) vigilar(300);
+  assert.equal(avisos, 1);
+});
 test('no avisa si van fluidos, y la pestaña oculta no cuenta', () => {
   let avisos = 0;
   const vigilar = vigilarFotogramas(() => avisos++);

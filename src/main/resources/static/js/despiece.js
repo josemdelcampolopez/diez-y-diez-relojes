@@ -52,11 +52,15 @@ async function iniciar3d() {
     $("#lista_piezas").append(modelo.nombres.map(nombre => $("<li>").text(nombre)));
 
     let avance = -1, pedido = false, visible = true, activo = true;
-    const vigilar = vigilarFotogramas(() => escena.bajarResolucion());
+    // Cambiar el tamaño del lienzo lo vacía: se dibuja al momento para que el reloj no desaparezca
+    const vigilar = vigilarFotogramas(() => {
+        escena.bajarResolucion();
+        dibujar();
+    });
 
     function dibujar() {
         pedido = false;
-        if (!visible || !activo) return;
+        if (!visible || !activo || avance < 0) return;
         const inicio = performance.now();
         try {
             escena.dibujar(avance);
@@ -103,6 +107,7 @@ async function iniciar3d() {
         escena.ajustar();
         avance = -1;
         medir();
+        dibujar();
     });
     tamano.observe(lienzo);
 

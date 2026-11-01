@@ -64,7 +64,7 @@ export function horaPantalla(avance) {
 export function vigilarFotogramas(alIrLento, muestras = 30, limite = 40) {
     let suma = 0, contados = 0;
     return (duracion) => {
-        if (contados >= muestras || duracion > 250) return;
+        if (contados >= muestras || duracion > 1000) return;
         suma += duracion;
         contados++;
         if (contados === muestras && suma / muestras > limite) alIrLento();

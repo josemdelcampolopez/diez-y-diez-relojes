@@ -59,9 +59,11 @@ export function montarModelo(datos) {
     modelo.nombres = [...new Set([...antes.map(c => c.nombre), ...interior.map(p => p.nombre), ...despues.map(c => c.nombre)])];
     modelo.ruedas = interior.filter(p => p.giro);
     let z = 0;
-    modelo.capas.forEach((capa, i) => { capa.orden = i; capa.z = z; z -= capa.interior ? HUECO_INTERIOR : HUECO; });
+    modelo.capas.forEach(capa => { capa.z = z; z -= capa.interior ? HUECO_INTERIOR : HUECO; });
     const ultima = modelo.capas.at(-1).z;
     modelo.capas.forEach(capa => { capa.z -= ultima / 2; });
+    // Al volver, primero las del centro: si no, las de fuera atravesarían a las que siguen separadas
+    [...modelo.capas].sort((a, b) => Math.abs(a.z) - Math.abs(b.z)).forEach((capa, i) => { capa.orden = i; });
     modelo.longitud = -z;
     return modelo;
 }
@@ -104,7 +106,7 @@ export function crearEscena(lienzo, { movil }) {
         renderer.setSize(ancho, alto, false);
         camera.aspect = ancho / alto;
         camera.updateProjectionMatrix();
-        tumbado = camera.aspect < 1;
+        tumbado = window.matchMedia('(orientation: portrait)').matches; // la misma condición que el CSS de la portada
     }
 
     // Distancia para que quepan "ancho × alto" milímetros en el lienzo
@@ -117,7 +119,7 @@ export function crearEscena(lienzo, { movil }) {
         const enHueco = 1 - suave(Math.min(1, avance / TRAMOS.despiece)) + suave(Math.min(1, Math.max(0, (avance - TRAMOS.remontaje) / (TRAMOS.cierre - TRAMOS.remontaje))));
         // Con pocas capas manda la correa, no la longitud del despiece: por eso el mínimo
         const largo = Math.max(modelo.longitud, LARGO_MINIMO);
-        const lejos = tumbado ? distanciaPara(largo * .55, largo + 50) : distanciaPara(largo * .72 + 90, largo * .5);
+        const lejos = tumbado ? distanciaPara(largo * .55, largo + 70) : distanciaPara(largo * .72 + 90, largo * .5);
         const cerca = tumbado ? distanciaPara(105, 190) : distanciaPara(190, 112);
         const distancia = lerp(cerca, lejos, abierto);
         const altoVisible = distancia * ALTO_POR_DISTANCIA, anchoVisible = altoVisible * camera.aspect;
