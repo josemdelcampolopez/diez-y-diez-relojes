@@ -30,11 +30,11 @@ async function iniciar3d() {
     const {crearEscena, montarModelo} = await import("./relojes3d/escena.js");
     const movil = window.matchMedia("(pointer: coarse), (max-width: 767px)").matches;
     const escena = crearEscena(lienzo, {movil});
-    const modelo = montarModelo(reloj.id);
+    const modelo = montarModelo(reloj);
     escena.poner(modelo);
 
     const $nombre = $("#nombre_pieza");
-    $("#lista_piezas").append(modelo.capas.map(capa => $("<li>").text(capa.nombre)));
+    $("#lista_piezas").append(modelo.nombres.map(nombre => $("<li>").text(nombre)));
 
     let avance = -1, pedido = false, visible = true;
 
@@ -60,8 +60,8 @@ async function iniciar3d() {
         avance = nuevo;
         portada.style.setProperty("--avance", avance.toFixed(4));
         portada.dataset.fase = fase(avance);
-        const i = piezaVisible(avance, modelo.capas.length);
-        $nombre.text(i < 0 ? "" : modelo.capas[i].nombre);
+        const i = piezaVisible(avance, modelo.nombres.length);
+        $nombre.text(i < 0 ? "" : modelo.nombres[i]);
         pedirDibujo();
     }
 

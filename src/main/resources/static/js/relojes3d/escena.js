@@ -3,10 +3,14 @@
 // se separan en horizontal en el ordenador y en vertical en el móvil, según el hueco que hay.
 // Luces y entorno adaptados del estudio con el que se hicieron las fotos de producto.
 import * as THREE from 'three';
-import { TRAMOS, suave, separacion, giroAgujas } from './coreografia.js';
+import { TRAMOS, suave, separacion, giroAgujas, giroTren } from './coreografia.js';
 import { CALIDAD } from './parts.js';
 import { agrupar } from './common.js';
 import { WATCHES } from './watches.js';
+import { crearMovimiento } from './movimientos.js';
+
+// Dos ruedas que engranan giran en sentidos contrarios
+const SENTIDO = { barrilete: 1, centro: -1, tercera: 1, cuarta: -1, volante: 1 };
 
 const NOMBRES = {
     cristal: 'Cristal', bisel: 'Bisel', segundero: 'Segundero', minutero: 'Minutero', horaria: 'Aguja horaria',
@@ -14,6 +18,7 @@ const NOMBRES = {
 };
 const ORDEN_EXTERIOR = ['cristal', 'bisel', 'segundero', 'minutero', 'horaria', 'indices', 'esfera', 'corona', 'caja', 'fondo', 'correa'];
 const HUECO = 13;           // milímetros entre piezas separadas
+const HUECO_INTERIOR = 22;  // las capas del interior son anchas: más juntas se taparían
 const CAMPO = 20;           // ángulo de visión de la cámara, como en las fotos
 const ALTO_POR_DISTANCIA = 2 * Math.tan(CAMPO / 2 * Math.PI / 180);
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -34,22 +39,44 @@ function crearEntorno(renderer) {
     return new THREE.PMREMGenerator(renderer).fromScene(sala, 0.03).texture;
 }
 
-// Prepara el reloj elegido: un grupo por pieza y, para cada una, su distancia al separarse
-export function montarModelo(id) {
-    const modelo = agrupar(WATCHES[id].build('loop'));
-    modelo.capas = ORDEN_EXTERIOR.filter(n => modelo.piezas.has(n)).map(n => ({ grupo: modelo.piezas.get(n), nombre: NOMBRES[n] }));
-    const centro = (modelo.capas.length - 1) / 2;
-    modelo.capas.forEach((capa, i) => { capa.orden = i; capa.z = (centro - i) * HUECO; });
-    modelo.longitud = modelo.capas.length * HUECO;
+// Prepara el reloj elegido: un grupo por pieza y, para cada una, su distancia al separarse.
+// El interior va entre la esfera y la corona, con el tamaño de la esfera de ese reloj
+export function montarModelo(datos) {
+    const modelo = agrupar(WATCHES[datos.id].build('loop'));
+    const medida = new THREE.Box3().setFromObject(modelo.piezas.get('esfera')).getSize(new THREE.Vector3());
+    const { piezas: interior } = crearMovimiento(datos.tipo, Math.min(medida.x, medida.y) / 2);
+    const capasInterior = [...new Set(interior.map(p => p.capa))].sort((a, b) => a - b).map(capa => {
+        const grupo = new THREE.Group();
+        grupo.add(...interior.filter(p => p.capa === capa).map(p => p.objeto));
+        modelo.reloj.add(grupo);
+        return { grupo, interior: true };
+    });
+    const exterior = lista => lista.filter(n => modelo.piezas.has(n)).map(n => ({ grupo: modelo.piezas.get(n), nombre: NOMBRES[n] }));
+    const corte = ORDEN_EXTERIOR.indexOf('corona');
+    const antes = exterior(ORDEN_EXTERIOR.slice(0, corte)), despues = exterior(ORDEN_EXTERIOR.slice(corte));
+    modelo.capas = [...antes, ...capasInterior, ...despues];
+    modelo.nombres = [...new Set([...antes.map(c => c.nombre), ...interior.map(p => p.nombre), ...despues.map(c => c.nombre)])];
+    modelo.ruedas = interior.filter(p => p.giro);
+    let z = 0;
+    modelo.capas.forEach((capa, i) => { capa.orden = i; capa.z = z; z -= capa.interior ? HUECO_INTERIOR : HUECO; });
+    const ultima = modelo.capas.at(-1).z;
+    modelo.capas.forEach(capa => { capa.z -= ultima / 2; });
+    modelo.longitud = -z;
     return modelo;
 }
 
 // Todo sale de "avance": mismo avance, misma imagen, vengas de donde vengas
 export function aplicarAvance(modelo, avance) {
-    const { capas, agujas } = modelo;
-    for (const capa of capas) capa.grupo.position.z = capa.z * separacion(avance, capa.orden, capas.length);
+    const { capas, agujas, ruedas } = modelo;
+    for (const capa of capas) {
+        const abierta = separacion(avance, capa.orden, capas.length);
+        capa.grupo.position.z = capa.z * abierta;
+        if (capa.interior) capa.grupo.visible = abierta > 0;
+    }
     const giros = giroAgujas(avance);
     for (const k of ['h', 'm', 's']) if (agujas[k]) agujas[k].rotation.z = -giros[k];
+    const tren = giroTren(avance);
+    for (const { objeto, giro } of ruedas) objeto.rotation.z = SENTIDO[giro] * tren[giro];
 }
 
 export function crearEscena(lienzo, { movil }) {
