@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- CSS de la tienda · 4. PRODUCTOS: tarjeta, rejilla, pila de fotos y carrusel de la ficha.
+     Lo incluye fragments/tienda.html dentro de "tema", en orden: el orden importa. -->
+<style th:fragment="estilos" type="text/tailwindcss">
+    @layer components {
+        /* ===== PRODUCTOS ===== */
+        .tarjeta {
+            @apply hover:border-terciario hover:bg-superficie-elevada;
+        }
+
+        .tarjeta:hover {
+            box-shadow: none;
+        }
+
+        .marco-imagen {
+            @apply bg-foto;
+            background-image: none;
+        }
+
+        .marca {
+            @apply text-secundario;
+        }
+
+        .precio {
+            @apply font-serif text-[1.75rem] font-medium italic text-acento;
+        }
+
+        .pie-tarjeta {
+            @apply flex flex-wrap items-center justify-between gap-3 border-t border-borde bg-fondo/50 px-4 py-3 sm:px-5;
+        }
+
+        .ficha {
+            @apply mt-5 grid grid-cols-2 gap-4;
+        }
+
+        .ficha dt {
+            @apply text-xs font-semibold uppercase tracking-[0.18em] text-texto-atenuado;
+        }
+
+        .ficha dd {
+            @apply mt-1 text-base font-medium text-texto;
+        }
+
+        /* ===== LISTADO EN REJILLA (plantillas_html/listado_productos.html) ===== */
+        /* 1 columna en el móvil, 2 desde sm y 3 desde lg */
+        .rejilla-productos {
+            @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
+        }
+
+        /* En el listado, #contenedor pierde el marco del panel: las tarjetas ya llevan el suyo.
+           :has() = "si dentro tiene...". El login, el registro y la ficha siguen igual */
+        #contenedor:has(.rejilla-productos) {
+            @apply border-0 bg-transparent p-0;
+        }
+
+        /* Tarjeta vertical: foto arriba, datos y pie abajo. flex-col + flex-1 en los datos
+           hace que todas las tarjetas de una fila midan lo mismo y los botones queden alineados */
+        .tarjeta-producto {
+            @apply flex flex-col;
+        }
+
+        /* La foto va en absoluto dentro de un cuadrado: así nunca estira la tarjeta */
+        .tarjeta-foto {
+            @apply relative aspect-square overflow-hidden rounded-none bg-superficie p-0;
+        }
+
+        /* ===== PILA DE FOTOS (la mueve cambiarFoto en js/tienda/listado.js) =====
+           Cada foto es una carta. data-pos dice dónde está: 0 delante, 1 y 2 detrás,
+           "cae" ya ha caído por abajo y "fondo" espera escondida detrás de todas */
+        .pila-fotos {
+            @apply absolute inset-0;
+            perspective: 700px;
+            perspective-origin: 50% 0%; /* las de detrás se alejan hacia arriba y asoman */
+        }
+
+        .carta {
+            @apply absolute overflow-hidden rounded-md bg-foto;
+            inset: 20% 15% 10%; /* cuadrada, un poco baja para que asomen las de detrás */
+            transition: transform 700ms cubic-bezier(.2, .7, .3, 1), opacity 400ms ease-out;
+        }
+
+        /* Luz: oscurece y tiñe las cartas de detrás con los colores del tema */
+        .carta::after {
+            content: "";
+            @apply pointer-events-none absolute inset-0 opacity-0;
+            background: radial-gradient(ellipse at 50% 110%, transparent 25%, var(--tinte) 95%);
+            transition: opacity 700ms ease-out;
+        }
+
+        .carta:nth-child(3n+1) {
+            --tinte: var(--color-principal);
+        }
+
+        .carta:nth-child(3n+2) {
+            --tinte: var(--color-secundario);
+        }
+
+        .carta:nth-child(3n) {
+            --tinte: var(--color-terciario);
+        }
+
+        .carta[data-pos="0"] {
+            z-index: 3;
+            box-shadow: 0 18px 30px -18px rgb(24 36 31 / .45);
+        }
+
+        .carta[data-pos="1"] {
+            z-index: 2;
+            transform: translate3d(0, -11%, -70px);
+        }
+
+        .carta[data-pos="1"]::after {
+            opacity: .55;
+        }
+
+        .carta[data-pos="2"] {
+            z-index: 1;
+            transform: translate3d(0, -22%, -140px);
+        }
+
+        .carta[data-pos="2"]::after {
+            opacity: .85;
+        }
+
+        .carta[data-pos="fondo"] {
+            transform: translate3d(0, -33%, -210px);
+            opacity: 0;
+        }
+
+        /* La de delante cae: primero sube un poco y luego se va abajo (como back.in de GSAP) */
+        .carta[data-pos="cae"] {
+            z-index: 4;
+            transform: translate3d(0, 115%, 40px) rotateX(-12deg);
+            opacity: 0;
+            transition: transform 700ms cubic-bezier(.6, -.55, .75, .05), opacity 120ms linear 580ms;
+        }
+
+        /* Con solo 2 fotos, la tercera repetiría la de delante */
+        .pila-fotos[data-total="2"] .carta[data-pos="2"] {
+            opacity: 0;
+        }
+
+        .carta.sin-transicion,
+        .carta.sin-transicion::after {
+            transition: none;
+        }
+
+        .carta img {
+            @apply absolute inset-0 h-full w-full object-contain p-5;
+            transition: transform 300ms ease-out;
+        }
+
+        .tarjeta-producto:hover .carta[data-pos="0"] img {
+            transform: scale(1.03);
+        }
+
+        .tarjeta-datos {
+            @apply flex flex-1 flex-col px-4 pt-4 pb-5 sm:px-5;
+        }
+
+        .tarjeta-resumen {
+            @apply mt-2 text-sm text-texto-atenuado;
+        }
+
+        /* Los dos botones del pie se reparten el ancho sin partir el texto */
+        .tarjeta-producto .pie-tarjeta {
+            @apply gap-2;
+        }
+
+        .tarjeta-producto .pie-tarjeta .btn {
+            @apply flex-1 whitespace-nowrap px-2;
+        }
+
+        /* ===== FOTOS DE LA TARJETA: flechas y puntos (los mueve js/tienda/listado.js) ===== */
+        .puntos-foto {
+            @apply absolute inset-x-0 bottom-2 z-10 flex justify-center;
+        }
+
+        /* El botón mide 24 px para que sea fácil de pulsar; el punto que se ve es el ::before */
+        .punto-foto {
+            @apply inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-principal;
+        }
+
+        .punto-foto::before {
+            content: "";
+            @apply h-2 w-2 rounded-full bg-principal/30 transition-colors duration-200 ease-out;
+        }
+
+        .punto-foto:hover::before {
+            @apply bg-principal/60;
+        }
+
+        /* El punto de la foto que se ve: aria-current="true" lo pone js/tienda/listado.js */
+        .punto-foto[aria-current="true"]::before {
+            @apply bg-acento;
+        }
+
+        /* Sin zoom si el usuario ha pedido en su sistema que se reduzcan las animaciones */
+        @media (prefers-reduced-motion: reduce) {
+            .tarjeta-producto:hover .carta[data-pos="0"] img {
+                transform: none;
+            }
+        }
+
+        /* ===== CARRUSEL DE LA FICHA (lo monta js/carrusel.js) ===== */
+        .carrusel {
+            @apply relative overflow-hidden bg-principal;
+            container-type: size; /* cqw y cqh pasan a ser % del ancho y del alto de la banda */
+            height: clamp(22rem, 60vh, 34rem);
+        }
+
+        .carrusel-pista {
+            @apply pointer-events-none absolute inset-0;
+        }
+
+        .carrusel-baldosa {
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        .carrusel-tira {
+            @apply absolute top-0 overflow-hidden bg-foto;
+        }
+
+        .carrusel-tira:first-child {
+            @apply rounded-l-lg;
+        }
+
+        .carrusel-tira:last-child {
+            @apply rounded-r-lg;
+        }
+
+        .carrusel-tira img {
+            @apply absolute top-0 max-w-none object-cover;
+        }
+
+        /* Marca y modelo encima de la banda, en claro sobre el verde */
+        .carrusel-titulo {
+            @apply relative z-10 px-6 pt-7 text-center text-fondo;
+        }
+
+        .carrusel-titulo .marca {
+            @apply text-fondo;
+        }
+    }
+</style>
+</body>
+</html>

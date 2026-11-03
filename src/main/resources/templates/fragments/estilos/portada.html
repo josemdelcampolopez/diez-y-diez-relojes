@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- CSS de la tienda · 5. PORTADA: hero, aviso flotante y pie (index.html).
+     El despiece 3D tiene su propio CSS en fragments/despiece.html, que gana a este.
+     Lo incluye fragments/tienda.html dentro de "tema", en orden: el orden importa. -->
+<style th:fragment="estilos" type="text/tailwindcss">
+    @layer components {
+        /* ===== HERO DE PORTADA (index.html; el despiece lo controla js/despiece.js) ===== */
+        /* El alto, la rejilla y el sticky los pone fragments/despiece.html */
+        .portada {
+            @apply mb-14;
+        }
+
+        /* Sin 3D (despiece.html la deja en position: relative), top-16 la baja 4rem */
+        .portada-fija {
+            @apply top-16;
+        }
+
+        /* Antetítulo con una raya roja corta delante */
+        .portada-antetitulo {
+            @apply flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-texto-atenuado;
+        }
+
+        .portada-antetitulo::before {
+            content: "";
+            @apply h-0.5 w-8 bg-acento;
+        }
+
+        .portada-titulo {
+            @apply mt-4 font-serif font-medium leading-[0.95] tracking-[-0.02em] text-texto;
+            font-size: clamp(2.75rem, 6vw, 4.75rem);
+        }
+
+        .portada-titulo em {
+            @apply italic text-principal;
+        }
+
+        .portada-explicacion {
+            @apply mt-5 max-w-lg text-base leading-relaxed text-texto-atenuado;
+        }
+
+        .portada-acciones {
+            @apply mt-7;
+        }
+
+        /* "Ver relojes" baja a #contenedor: que el header fijo no lo tape al llegar */
+        #contenedor {
+            scroll-margin-top: 6rem;
+        }
+
+        /* ===== AVISO FLOTANTE (index.html; lo rellena avisar() en js/tienda/nucleo.js) ===== */
+        /* Abajo en el centro, encima de todo. Verde si ha ido bien, rojo si es un error */
+        .aviso {
+            @apply fixed bottom-6 left-1/2 z-50 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-md border-l-4 border-terciario bg-principal px-5 py-3 text-base font-medium text-fondo shadow-lg;
+        }
+
+        .aviso:empty {
+            display: none;
+        }
+
+        .aviso[data-tipo="error"] {
+            @apply border-white/50 bg-error text-white;
+        }
+
+        /* ===== PIE DE PÁGINA (index.html) ===== */
+        /* Verde como la cabecera: la página cierra como empieza */
+        .pie-tienda {
+            @apply bg-principal px-4 pt-12 pb-6 text-fondo md:px-6 lg:px-8;
+        }
+
+        /* 1 columna en el móvil; desde md, la marca ocupa el doble que las otras dos */
+        .pie-fila {
+            @apply grid gap-10 md:grid-cols-[2fr_1fr_1fr];
+        }
+
+        .pie-texto {
+            @apply mt-4 max-w-sm text-base leading-relaxed text-fondo/80;
+        }
+
+        .pie-titulo {
+            @apply font-serif text-xl font-medium text-fondo;
+        }
+
+        .pie-lista {
+            @apply mt-3 grid gap-1 text-base text-fondo/80;
+        }
+
+        /* min-h-11: 44 px de alto, fácil de pulsar con el dedo */
+        .pie-enlace {
+            @apply inline-flex min-h-11 items-center rounded-sm text-fondo/80 transition-colors duration-200 ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo;
+        }
+
+        /* Raya fina encima del copyright */
+        .pie-legal {
+            @apply mt-10 border-t border-white/15 pt-5 text-sm text-fondo/70;
+        }
+    }
+</style>
+</body>
+</html>

@@ -1,4 +1,4 @@
-<!-- Carrito de la compra: se inserta dentro de #contenedor (estilos en fragments/tienda.html, apartado CARRITO).
+<!-- Carrito de la compra: se inserta dentro de #contenedor (estilos en fragments/estilos/compra.html).
      Mustache repite la línea por cada producto. Las claves van en mayúsculas, como las devuelve H2. -->
 <div class="barra-seccion">
     <div>
@@ -26,7 +26,7 @@
             {{/VARIOS}}
         </div>
 
-        <!-- ===== ACCIONES (eventos en tienda.js) ===== -->
+        <!-- ===== ACCIONES (eventos en js/tienda/carrito.js) ===== -->
         <div class="linea-carrito-acciones">
             <div class="selector-cantidad">
                 <button type="button" data-sumar="-1" {{#EN_MINIMO}}disabled{{/EN_MINIMO}} aria-label="{{t.carrito_quitar_uno}}: {{MARCA_RELOJ}} {{MODELO}}">

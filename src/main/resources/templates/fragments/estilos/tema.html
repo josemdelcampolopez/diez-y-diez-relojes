@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- CSS de la tienda · 1. TEMA: colores (@theme). Lo leen todos los demás ficheros de estilos/.
+     Lo incluye fragments/tienda.html dentro de "tema", en orden: el orden importa. -->
+<style th:fragment="estilos" type="text/tailwindcss">
+    /* ===== TEMA «VERDE INGLÉS Y SEGUNDERO» (solo parte pública) =====
+       Paleta complementaria dividida con la regla 60-30-10:
+       60 % fondo, 30 % principal, 10 % acento y dos secundarios para detalles.
+       Este bloque se lee después del de base.html, así que lo que redefino aquí gana. */
+
+    @theme {
+        /* Base (60 %): mismos nombres que en base.html, valores nuevos */
+        --color-fondo: #edf0eb;
+        --color-superficie: #f7f8f5;
+        --color-superficie-elevada: #ffffff;
+        --color-borde: #b7c4ba;
+        --color-borde-campo: #7a8f81;   /* más oscuro para que los campos se distingan (contraste 3:1) */
+        --color-foto: #e7e8ec;          /* el gris de estudio de las fotos de producto */
+        /* Texto */
+        --color-texto: #18241f;
+        --color-texto-atenuado: #4e5e56;
+
+        /* Principal (30 %): verde inglés */
+        --color-principal: #1f4a3c;
+        --color-principal-hover: #2a5e4d;
+
+        /* Acento (10 %): rojo segundero, solo para el precio y la acción principal */
+        --color-acento: #c3362b;
+        --color-acento-hover: #a52a21;
+
+        /* Secundarios */
+        --color-secundario: #5c3a5c;    /* berenjena: marca del reloj */
+        --color-terciario: #93a89a;     /* salvia: subrayados y bordes activos */
+        /* Estados, más oscuros para leerse sobre fondo claro */
+        --color-exito: #2e7550;
+        --color-error: #b3261e;
+        --color-aviso: #8a5a00;
+        --color-info: #2e5e8c;
+    }
+</style>
+</body>
+</html>

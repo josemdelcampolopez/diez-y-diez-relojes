@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- CSS de la tienda · 2. COMUNES: estructura, botones, formularios, logo e idiomas.
+     Lo incluye fragments/tienda.html dentro de "tema", en orden: el orden importa. -->
+<style th:fragment="estilos" type="text/tailwindcss">
+    @layer components {
+        /* ===== ESTRUCTURA ===== */
+        .pagina {
+            @apply p-0;
+            background-image: none;
+            color-scheme: light;
+        }
+
+        /* To do lo que va debajo del header lleva los márgenes laterales */
+        .cuerpo-tienda {
+            @apply px-4 pt-8 pb-12 md:px-6 lg:px-8;
+        }
+
+        /* ===== BOTONES (mismas clases que en base.html, colores del tema) ===== */
+        .btn {
+            @apply focus-visible:outline-principal;
+        }
+
+        .btn-primario {
+            @apply border-acento bg-acento text-white;
+            background-image: none;
+        }
+
+        .btn-primario:hover:not(:disabled) {
+            @apply border-acento-hover bg-acento-hover;
+            box-shadow: none;
+        }
+
+        .btn-primario:active:not(:disabled) {
+            box-shadow: none;
+        }
+
+        .btn-secundario {
+            @apply border-principal text-principal hover:bg-principal hover:text-fondo;
+        }
+
+        .btn-neutro {
+            @apply hover:border-principal hover:text-principal;
+        }
+
+        .btn-claro {
+            @apply border-fondo bg-transparent text-fondo hover:bg-fondo hover:text-principal;
+        }
+
+        /* ===== FORMULARIOS ===== */
+        .campo {
+            @apply border-borde-campo bg-superficie-elevada focus:border-principal focus:ring-principal/25;
+            color-scheme: light;
+        }
+
+        .campo-archivo {
+            @apply border-borde-campo bg-superficie-elevada hover:border-principal file:bg-principal file:text-fondo hover:file:bg-principal-hover;
+            color-scheme: light;
+        }
+
+        /* Vista previa del avatar en el registro: círculo punteado vacío, línea continua con foto */
+        .vista-previa-avatar {
+            @apply flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-borde-campo bg-superficie-elevada;
+        }
+
+        .vista-previa-avatar:has(img:not([hidden])) {
+            @apply border-solid border-principal;
+        }
+
+        .vista-previa-avatar img {
+            @apply h-full w-full object-cover;
+        }
+
+        /* ===== LOGO ===== */
+        .logo-reloj {
+            @apply h-9 w-9 shrink-0;
+        }
+
+        /* ===== SELECTOR DE IDIOMA (toma el color del texto que lo rodea) ===== */
+        .selector-idioma {
+            @apply flex items-center gap-1;
+        }
+
+        .idioma {
+            @apply inline-flex min-h-11 items-center gap-1 rounded-sm px-1 text-sm font-medium text-current opacity-75 transition-opacity duration-200 ease-out hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current;
+        }
+
+        .idioma[aria-current="true"] {
+            @apply font-semibold underline underline-offset-4 opacity-100;
+        }
+
+        .bandera {
+            @apply h-3 w-4.5 shrink-0 rounded-[1px];
+        }
+    }
+</style>
+</body>
+</html>

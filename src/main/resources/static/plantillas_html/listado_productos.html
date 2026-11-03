@@ -1,4 +1,4 @@
-<!-- Rejilla del listado: 1, 2 o 3 columnas según el ancho (estilos en fragments/tienda.html).
+<!-- Rejilla del listado: 1, 2 o 3 columnas según el ancho (estilos en fragments/estilos/productos.html).
      Mustache repite la tarjeta por cada elemento del array. Las claves van en mayúsculas, como las devuelve H2. -->
 <div class="rejilla-productos">
     {{#.}}
@@ -6,11 +6,11 @@
 
         <!-- ===== FOTOS =====
              data-fotos lleva los id de las fotos extra ("11,12,13") o nada si no tiene.
-             Con ellos tienda.js monta la lista de fotos y los puntos (prepararFotosTarjetas) -->
+             Con ellos js/tienda/listado.js monta la lista de fotos y los puntos (prepararFotosTarjetas) -->
         <div class="marco-imagen tarjeta-foto" data-fotos="{{FOTOS_EXTRA}}">
             <!-- La foto también abre la ficha. tabindex="-1" y aria-hidden para que el teclado y los lectores
                   de pantalla no pasen dos veces por el mismo enlace (ya está en el título).
-                  Cada foto es una carta de la pila; si hay fotos extra, tienda.js añade las demás -->
+                  Cada foto es una carta de la pila; si hay fotos extra, js/tienda/listado.js añade las demás -->
             <a href="#" data-detalles="{{ID}}" tabindex="-1" aria-hidden="true" class="pila-fotos">
                 <span class="carta" data-pos="0">
                     <img src="mostrar_miniatura?id={{ID}}" alt="" width="400" height="400" loading="lazy">

@@ -9,7 +9,7 @@
    class="sr-only rounded-sm bg-fondo px-4 py-3 font-semibold text-principal focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-principal"></a>
 
 <!-- ===== CABECERA FIJA =====
-     Aspecto: fragments/tienda.html · Abrir, cerrar y compactar: js/cabecera.js
+     Aspecto: fragments/estilos/cabecera.html · Abrir, cerrar y compactar: js/cabecera.js
      Cada data-accion tiene su función en js/tienda.js -->
 <header id="cabecera" class="cabecera-tienda">
     <div class="contenedor cabecera-fila">
@@ -83,7 +83,7 @@
 
 <div class="cuerpo-tienda">
 
-    <!-- ===== HERO DE PORTADA (solo se ve con el listado: lo oculta pintar() en tienda.js) ===== -->
+    <!-- ===== HERO DE PORTADA (solo se ve con el listado: lo oculta pintar() en js/tienda/nucleo.js) ===== -->
     <!-- #portada es alta; .portada-fija se queda quieta mientras la recorres y el reloj se despieza.
          Reloj, azar y scroll: js/despiece.js · CSS: fragments/despiece.html -->
     <section id="portada" class="portada">
@@ -127,11 +127,11 @@
     </main>
 </div>
 
-<!-- Aviso flotante: lo rellena avisar() en tienda.js y se vacía solo. Vacío no se ve.
+<!-- Aviso flotante: lo rellena avisar() en js/tienda/nucleo.js y se vacía solo. Vacío no se ve.
      role="status" hace que el lector de pantalla lea cada mensaje nuevo -->
 <p id="aviso" class="aviso" role="status"></p>
 
-<!-- ===== PIE DE PÁGINA (estilos en fragments/tienda.html)
+<!-- ===== PIE DE PÁGINA (estilos en fragments/estilos/portada.html)
      Los data-accion funcionan igual que en la cabecera: los recoge el mismo evento de tienda.js -->
 <footer id="pie" class="pie-tienda">
     <div class="contenedor pie-fila">
@@ -168,6 +168,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.2.0/dist/confetti.min.js"></script>
 <script src="js/cabecera.js"></script>
 <script src="js/carrusel.js"></script>
+<!-- La tienda, por pantallas (js/tienda/). nucleo.js primero; tienda.js al final, porque
+     su "acciones" nombra funciones de todos los demás al crearse -->
+<script src="js/tienda/nucleo.js"></script>
+<script src="js/tienda/listado.js"></script>
+<script src="js/tienda/sesion.js"></script>
+<script src="js/tienda/carrito.js"></script>
+<script src="js/tienda/pedido.js"></script>
+<script src="js/mis_pedidos.js"></script>
+<script src="js/mis_datos.js"></script>
 <script src="js/tienda.js"></script>
 <!-- Three.js solo se descarga si despiece.js decide usar el 3D -->
 <script type="importmap">
