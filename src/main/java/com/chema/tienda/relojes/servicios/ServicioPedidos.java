@@ -30,6 +30,7 @@ public interface ServicioPedidos {
 
     ResumenPedido obtenerResumenPedido(long idUsuario);
     String confirmarPedido(long idUsuario);
+    List<Map<String, Object>> obtenerMisPedidos(long idUsuario);
 
 
 

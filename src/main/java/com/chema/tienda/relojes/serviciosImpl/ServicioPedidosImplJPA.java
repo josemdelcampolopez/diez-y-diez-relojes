@@ -80,6 +80,13 @@ public class ServicioPedidosImplJPA implements ServicioPedidos {
                 .setTupleTransformer(AliasToEntityMapResultTransformer.INSTANCE).getResultList();
     }
 
+    @Override
+    public List<Map<String, Object>> obtenerMisPedidos(long idUsuario) {
+        return ((NativeQueryImpl) entityManager.createNativeQuery(ConstantesSQL.SQL_MIS_PEDIDOS))
+                .setParameter("usuario_id", idUsuario)
+                .setTupleTransformer(AliasToEntityMapResultTransformer.INSTANCE).getResultList();
+    }
+
     // OPERACIONES CON LA PARTE PÚBLICA
 
     @Override

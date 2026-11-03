@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("restPedidos/")
 public class PedidosREST {
@@ -91,7 +94,14 @@ public class PedidosREST {
         return servicioPedidos.obtenerResumenPedido(u.getId());
     }
 
-
+    @RequestMapping("misPedidos")
+    public List<Map<String, Object>> misPedidos(HttpServletRequest request) {
+        Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
+        if (u == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        return servicioPedidos.obtenerMisPedidos(u.getId());
+    }
 
     @RequestMapping("confirmar")
     public String confirmar(HttpServletRequest request){
