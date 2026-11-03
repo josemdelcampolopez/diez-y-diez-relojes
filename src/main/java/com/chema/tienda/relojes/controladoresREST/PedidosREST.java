@@ -103,6 +103,19 @@ public class PedidosREST {
         return servicioPedidos.obtenerMisPedidos(u.getId());
     }
 
+    @RequestMapping("repetir")
+    public List<String> repetir(@RequestParam("id") Long id, HttpServletRequest request) {
+        Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
+        if (u == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        List<String> avisos = servicioPedidos.repetirPedido(u.getId(), id);
+        if (avisos == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return avisos;
+    }
+
     @RequestMapping("confirmar")
     public String confirmar(HttpServletRequest request){
 

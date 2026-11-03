@@ -17,6 +17,7 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +86,25 @@ public class ServicioPedidosImplJPA implements ServicioPedidos {
         return ((NativeQueryImpl) entityManager.createNativeQuery(ConstantesSQL.SQL_MIS_PEDIDOS))
                 .setParameter("usuario_id", idUsuario)
                 .setTupleTransformer(AliasToEntityMapResultTransformer.INSTANCE).getResultList();
+    }
+
+    @Override
+    public List<String> repetirPedido(long idUsuario, long idPedido) {
+        Pedido p = entityManager.find(Pedido.class, idPedido);
+        // Si no existe, no es suyo o es un carrito a medias, se trata como si no existiera
+        if (p == null || p.getUsuario().getId() != idUsuario
+                || EstadosPedidos.EnProceso.name().equals(p.getEstado())) {
+            return null;
+        }
+        List<String> avisos = new ArrayList<>();
+        for (ProductoPedido pp : p.getProductosPedido()) {
+            Reloj r = pp.getReloj();
+            String respuesta = servicioCarrito.agregarProducto(idUsuario, r.getId(), pp.getCantidad());
+            if (!respuesta.equals("OK")) {
+                avisos.add(r.getMarca() + " " + r.getModelo() + ": " + respuesta);
+            }
+        }
+        return avisos;
     }
 
     // OPERACIONES CON LA PARTE PÚBLICA
