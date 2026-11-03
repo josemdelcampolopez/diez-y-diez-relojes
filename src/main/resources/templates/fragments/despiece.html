@@ -5,13 +5,13 @@
      CSS normal, sin @apply: al no estar en ninguna capa gana a las reglas viejas de
      fragments/tienda.html, que se podrán borrar cuando esta rama se una con master. -->
 <style th:fragment="estilos">
-    /* Sin 3D, la portada mide lo normal. Con 3D, unas 5 pantallas de recorrido */
+    /* Sin 3D, la portada mide lo normal. Con 3D, unas 3,5 pantallas de recorrido */
     .portada {
         height: auto;
     }
 
     .portada.con-3d {
-        height: 500svh;
+        height: 350svh;
         /* Hasta los bordes de la ventana: anula el margen lateral de .cuerpo-tienda */
         margin-inline: -1rem;
     }

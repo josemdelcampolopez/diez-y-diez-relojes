@@ -4,7 +4,7 @@
 
 const TAU = Math.PI * 2;
 
-export const TRAMOS = {apertura: .12, despiece: .30, remontaje: .70, cierre: .92};
+export const TRAMOS = {apertura: .15, despiece: .375, remontaje: .625, cierre: .90};
 
 const limitar = (x) => Math.min(1, Math.max(0, x));
 

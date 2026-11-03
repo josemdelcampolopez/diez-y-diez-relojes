@@ -1,7 +1,7 @@
 // Pruebas de los cálculos del despiece. Se lanzan con: node --test src/test/js/
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { avanceDesdeScroll, fase, separacion, giroAgujas, giroTren, horaPantalla, vigilarFotogramas } from '../../main/resources/static/js/relojes3d/coreografia.js';
+import { TRAMOS, avanceDesdeScroll, fase, separacion, giroAgujas, giroTren, horaPantalla, vigilarFotogramas } from '../../main/resources/static/js/relojes3d/coreografia.js';
 import { RELOJES, elegirReloj, buscarProducto } from '../../main/resources/static/js/relojes3d/catalogo.js';
 
 const TAU = Math.PI * 2;
@@ -61,7 +61,7 @@ test('12 vueltas de minutero por 1 de horario', () => {
 
 test('10:10 al empezar y al terminar', () => {
   for (const a of [0, .12, .92, 1]) assert.equal(horaPantalla(a), '10:10');
-  assert.equal(horaPantalla(.52), '04:10');
+  assert.equal(horaPantalla((TRAMOS.apertura + TRAMOS.cierre) / 2), '04:10');
   for (const a of [0, 1]) assert.ok(Math.abs(Math.sin(giroAgujas(a).s / 2)) < 1e-9);
 });
 
