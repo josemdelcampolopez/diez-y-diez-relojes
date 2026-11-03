@@ -32,14 +32,13 @@ function mostrarMisPedidos() {
         })
         pintar("mis_pedidos", {pedidos, vacio: pedidos.length === 0})
         window.scrollTo({top: 0})
-    }).fail(function () {
-        avisar(texto("err_identificate"), "error")
     })
 }
 
 
 // Delegado: los botones se crean al pintar la plantilla, así que se escucha en #contenedor
 $("#contenedor").on("click", "[data-repetir]", function () {
+    $(this).prop("disabled", true)   // evita que un doble clic sume el pedido dos veces
     $.post("restPedidos/repetir", {id: $(this).data("repetir")}).done(function (avisos) {
         if (avisos.length === 0) {
             avisar(texto("mp_repetido"))
@@ -47,7 +46,5 @@ $("#contenedor").on("click", "[data-repetir]", function () {
             avisar(texto("mp_repetido_parcial") + " " + avisos.join(" · "), "error")
         }
         mostrar_productos_carrito()
-    }).fail(function () {
-        avisar(texto("err_identificate"), "error")
     })
 })
