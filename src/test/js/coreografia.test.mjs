@@ -1,7 +1,7 @@
 // Pruebas de los cálculos del despiece. Se lanzan con: node --test src/test/js/
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { avanceDesdeScroll, fase, separacion, giroAgujas, giroTren, horaPantalla, piezaVisible, vigilarFotogramas } from '../../main/resources/static/js/relojes3d/coreografia.js';
+import { avanceDesdeScroll, fase, separacion, giroAgujas, giroTren, horaPantalla, vigilarFotogramas } from '../../main/resources/static/js/relojes3d/coreografia.js';
 import { RELOJES, elegirReloj, buscarProducto } from '../../main/resources/static/js/relojes3d/catalogo.js';
 
 const TAU = Math.PI * 2;
@@ -63,13 +63,6 @@ test('10:10 al empezar y al terminar', () => {
   for (const a of [0, .12, .92, 1]) assert.equal(horaPantalla(a), '10:10');
   assert.equal(horaPantalla(.52), '04:10');
   for (const a of [0, 1]) assert.ok(Math.abs(Math.sin(giroAgujas(a).s / 2)) < 1e-9);
-});
-
-test('el nombre de pieza solo aparece durante el despiece', () => {
-  assert.equal(piezaVisible(.1, 30), -1);
-  assert.equal(piezaVisible(.95, 30), -1);
-  assert.equal(piezaVisible(.3, 30), 0);
-  assert.equal(piezaVisible(.6999, 30), 29);
 });
 
 test('azar dentro de los 10', () => {

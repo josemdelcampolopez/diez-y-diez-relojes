@@ -126,23 +126,23 @@ function rotor() {
   );
 }
 
-function poner(piezas, nombre, capa, objeto, x = 0, y = 0, { z = 0, giro } = {}) {
+function poner(piezas, capa, objeto, x = 0, y = 0, { z = 0, giro } = {}) {
   objeto.position.set(x, y, z);
-  piezas.push(giro ? { objeto, nombre, capa, giro } : { objeto, nombre, capa });
+  piezas.push(giro ? { objeto, capa, giro } : { objeto, capa });
 }
 
 // ----- Mecánico y automático: la energía sale de un muelle en el barrilete -----
 function mecanico(piezas) {
   const CENTRO = [0, 0], TERCERA = [7.33, -2.67], CUARTA = [6.29, -8.58], ESCAPE = [1.31, -9.02], BARRILETE = [-6.8, 6.8], VOLANTE = [-6.5, -7.5];
 
-  poner(piezas, 'Platina', 0, malla(disco(15.2, 1, [[9, 7, 2.6], [2, 11, 2], [-11.5, -1, 1.4]]), ACERO));
-  for (const punto of [CENTRO, TERCERA, CUARTA, ESCAPE]) poner(piezas, 'Rubí', 0, rubi(), ...punto);
+  poner(piezas, 0, malla(disco(15.2, 1, [[9, 7, 2.6], [2, 11, 2], [-11.5, -1, 1.4]]), ACERO)); // platina
+  for (const punto of [CENTRO, TERCERA, CUARTA, ESCAPE]) poner(piezas, 0, rubi(), ...punto); // rubí
 
-  poner(piezas, 'Rueda de centro', 1, rueda(4.6), ...CENTRO, { giro: 'centro' });
-  poner(piezas, 'Rueda tercera', 1, rueda(3.2), ...TERCERA, { giro: 'tercera' });
-  poner(piezas, 'Rueda cuarta', 1, rueda(2.8), ...CUARTA, { giro: 'cuarta' });
-  poner(piezas, 'Rueda de escape', 1, rueda(2.2, ACERO), ...ESCAPE, { giro: 'volante' });
-  poner(piezas, 'Barrilete', 1, malla(dentado(5.4, 1.8, 0), LATON), ...BARRILETE, { giro: 'barrilete' });
+  poner(piezas, 1, rueda(4.6), ...CENTRO, { giro: 'centro' }); // rueda de centro
+  poner(piezas, 1, rueda(3.2), ...TERCERA, { giro: 'tercera' }); // rueda tercera
+  poner(piezas, 1, rueda(2.8), ...CUARTA, { giro: 'cuarta' }); // rueda cuarta
+  poner(piezas, 1, rueda(2.2, ACERO), ...ESCAPE, { giro: 'volante' }); // rueda de escape
+  poner(piezas, 1, malla(dentado(5.4, 1.8, 0), LATON), ...BARRILETE, { giro: 'barrilete' }); // barrilete
 
   const ancla = plancha('ancora', 0.6, () => {
     const f = new THREE.Shape();
@@ -151,83 +151,85 @@ function mecanico(piezas) {
     f.closePath();
     return f;
   });
-  poner(piezas, 'Tapa del barrilete', 2, conjunto(malla(cilindro(4.5, 0.4), ACERO), malla(anillo(1.5, 0.8, 0.9), ACERO)), ...BARRILETE, { giro: 'barrilete' });
-  poner(piezas, 'Áncora', 2, malla(ancla, ACERO), -2.2, -9.6);
-  poner(piezas, 'Volante', 2, volante(), ...VOLANTE, { giro: 'volante' });
-  poner(piezas, 'Espiral', 2, espiral(), ...VOLANTE, { giro: 'volante' });
+  poner(piezas, 2, conjunto(malla(cilindro(4.5, 0.4), ACERO), malla(anillo(1.5, 0.8, 0.9), ACERO)), ...BARRILETE, { giro: 'barrilete' }); // tapa del barrilete
+  poner(piezas, 2, malla(ancla, ACERO), -2.2, -9.6); // áncora
+  poner(piezas, 2, volante(), ...VOLANTE, { giro: 'volante' }); // volante
+  poner(piezas, 2, espiral(), ...VOLANTE, { giro: 'volante' }); // espiral
 
-  poner(piezas, 'Puente del tren', 3, malla(capsula(8.8, -1.5, 0.5, -10.2, 3.4, 1), LATON));
-  poner(piezas, 'Puente del barrilete', 3, malla(capsula(-6.8, 6.8, -1, 1, 4.2, 1), LATON));
-  poner(piezas, 'Puente del volante', 3, malla(capsula(-6.5, -7.5, -12, -3, 2.4, 1), LATON));
-  for (const punto of [TERCERA, CUARTA, ESCAPE, VOLANTE]) poner(piezas, 'Rubí', 3, rubi(), ...punto);
-  for (const punto of [[9.6, -0.5], [-0.4, -11], [-10, 7.5], [-1.5, -1], [-12, -3], [-10, -4.6]]) poner(piezas, 'Tornillo', 3, tornillo(), ...punto);
-  poner(piezas, 'Trinquete', 3, malla(dentado(3.2, 1.6, 0), ACERO), ...BARRILETE, { giro: 'barrilete' });
+  poner(piezas, 3, malla(capsula(8.8, -1.5, 0.5, -10.2, 3.4, 1), LATON)); // puente del tren
+  poner(piezas, 3, malla(capsula(-6.8, 6.8, -1, 1, 4.2, 1), LATON)); // puente del barrilete
+  poner(piezas, 3, malla(capsula(-6.5, -7.5, -12, -3, 2.4, 1), LATON)); // puente del volante
+  for (const punto of [TERCERA, CUARTA, ESCAPE, VOLANTE]) poner(piezas, 3, rubi(), ...punto); // rubí
+  for (const punto of [[9.6, -0.5], [-0.4, -11], [-10, 7.5], [-1.5, -1], [-12, -3], [-10, -4.6]]) poner(piezas, 3, tornillo(), ...punto); // tornillo
+  poner(piezas, 3, malla(dentado(3.2, 1.6, 0), ACERO), ...BARRILETE, { giro: 'barrilete' }); // trinquete
 }
 
 // ----- Cuarzo: la pila alimenta un circuito que mueve el motor paso a paso -----
-function cuarzo(piezas, energia = 'Pila', material = ACERO) {
+function cuarzo(piezas, material = ACERO) {
   const MINUTOS = [0, 0], INTERMEDIA = [7.2, -3], SEGUNDOS = [7, -8.8], HORAS = [-7, 4.7], ROTOR = [1.7, -10];
 
-  poner(piezas, 'Platina', 0, malla(disco(15.2, 1, [[8.5, 7.5, 3], [-11, -3, 1.6]]), GRIS));
-  for (const punto of [MINUTOS, INTERMEDIA, SEGUNDOS, HORAS]) poner(piezas, 'Rubí', 0, rubi(), ...punto);
+  poner(piezas, 0, malla(disco(15.2, 1, [[8.5, 7.5, 3], [-11, -3, 1.6]]), GRIS)); // platina
+  for (const punto of [MINUTOS, INTERMEDIA, SEGUNDOS, HORAS]) poner(piezas, 0, rubi(), ...punto); // rubí
 
-  poner(piezas, 'Rueda de minutos', 1, rueda(4.5), ...MINUTOS, { giro: 'centro' });
-  poner(piezas, 'Rueda intermedia', 1, rueda(3.2), ...INTERMEDIA, { giro: 'tercera' });
-  poner(piezas, 'Rueda de segundos', 1, rueda(2.6), ...SEGUNDOS, { giro: 'cuarta' });
-  poner(piezas, 'Rueda de horas', 1, rueda(3.9), ...HORAS, { giro: 'barrilete' });
-  poner(piezas, 'Estátor', 1, malla(anillo(2.6, 1.8, 0.8), ACERO), ...ROTOR);
-  poner(piezas, 'Rotor paso a paso', 1, conjunto(malla(cilindro(1.5, 1.2), NEGRO), malla(cilindro(0.22, 2.6, 12), ACERO)), ...ROTOR, { giro: 'volante' });
-  poner(piezas, 'Núcleo de la bobina', 1, malla(bloque(10.5, 1.2, 0.7), ACERO), -6.3, -8.5);
-  poner(piezas, 'Bobina', 1, malla(cilindroX(1.5, 7), COBRE), -6.5, -8.5);
+  poner(piezas, 1, rueda(4.5), ...MINUTOS, { giro: 'centro' }); // rueda de minutos
+  poner(piezas, 1, rueda(3.2), ...INTERMEDIA, { giro: 'tercera' }); // rueda intermedia
+  poner(piezas, 1, rueda(2.6), ...SEGUNDOS, { giro: 'cuarta' }); // rueda de segundos
+  poner(piezas, 1, rueda(3.9), ...HORAS, { giro: 'barrilete' }); // rueda de horas
+  poner(piezas, 1, malla(anillo(2.6, 1.8, 0.8), ACERO), ...ROTOR); // estátor
+  poner(piezas, 1, conjunto(malla(cilindro(1.5, 1.2), NEGRO), malla(cilindro(0.22, 2.6, 12), ACERO)), ...ROTOR, { giro: 'volante' }); // rotor paso a paso
+  poner(piezas, 1, malla(bloque(10.5, 1.2, 0.7), ACERO), -6.3, -8.5); // núcleo de la bobina
+  poner(piezas, 1, malla(cilindroX(1.5, 7), COBRE), -6.5, -8.5); // bobina
 
-  poner(piezas, 'Puente', 2, malla(sector(14, 2, -0.7, 3.5, 1), ACERO));
+  poner(piezas, 2, malla(sector(14, 2, -0.7, 3.5, 1), ACERO)); // puente
   for (let i = 0; i < 6; i++) {
     const a = -0.5 + i / 5 * 3.8;
-    poner(piezas, 'Tornillo', 2, tornillo(), 12.4 * Math.cos(a), 12.4 * Math.sin(a));
+    poner(piezas, 2, tornillo(), 12.4 * Math.cos(a), 12.4 * Math.sin(a)); // tornillo
   }
 
-  poner(piezas, 'Circuito', 3, malla(disco(14.2, 0.5, [[0, 0, 1.2], [-9, -4, 1.5]]), PLACA));
-  poner(piezas, 'Chip', 3, malla(bloque(3.5, 3.5, 1), NEGRO), 3, -4);
-  poner(piezas, 'Cristal de cuarzo', 3, malla(cilindroX(0.9, 5), ACERO), 7, 3);
-  poner(piezas, 'Condensador', 3, malla(bloque(1.6, 0.9, 0.9), CERAMICA), -1, -8);
-  poner(piezas, 'Condensador', 3, malla(bloque(1.6, 0.9, 0.9), CERAMICA), -4, -6.5);
+  poner(piezas, 3, malla(disco(14.2, 0.5, [[0, 0, 1.2], [-9, -4, 1.5]]), PLACA)); // circuito
+  poner(piezas, 3, malla(bloque(3.5, 3.5, 1), NEGRO), 3, -4); // chip
+  poner(piezas, 3, malla(cilindroX(0.9, 5), ACERO), 7, 3); // cristal de cuarzo
+  poner(piezas, 3, malla(bloque(1.6, 0.9, 0.9), CERAMICA), -1, -8); // condensador
+  poner(piezas, 3, malla(bloque(1.6, 0.9, 0.9), CERAMICA), -4, -6.5); // condensador
 
-  poner(piezas, energia, 4, malla(cilindro(7, 2.2, 56), material), 4, 4);
-  poner(piezas, 'Pinza de la pila', 4, malla(capsula(-3, 8, 10, 0, 0.9, 0.3), LATON), 0, 0, { z: 1.3 });
+  poner(piezas, 4, malla(cilindro(7, 2.2, 56), material), 4, 4); // pila, o acumulador en el solar
+  poner(piezas, 4, malla(capsula(-3, 8, 10, 0, 0.9, 0.3), LATON), 0, 0, { z: 1.3 }); // pinza de la pila
 }
 
 // ----- Solar: como el de cuarzo, con una célula bajo la esfera y un acumulador -----
 function solar(piezas) {
-  cuarzo(piezas, 'Acumulador', LATON);
-  poner(piezas, 'Célula fotovoltaica', -1, malla(anillo(15, 1.2, 0.4), CELULA));
+  cuarzo(piezas, LATON);
+  poner(piezas, -1, malla(anillo(15, 1.2, 0.4), CELULA)); // célula fotovoltaica
 }
 
 // ----- Digital: pantalla y electrónica. Silueta redondeada para que quepa en cualquier caja -----
 function digital(piezas) {
-  poner(piezas, 'Módulo de pantalla', 0, malla(redondeado(25, 25, 9, 1), NEGRO));
-  poner(piezas, 'Marco', 0, malla(redondeado(26.4, 26.4, 9.5, 1.6, 24.6), ACERO));
+  poner(piezas, 0, malla(redondeado(25, 25, 9, 1), NEGRO)); // módulo de pantalla
+  poner(piezas, 0, malla(redondeado(26.4, 26.4, 9.5, 1.6, 24.6), ACERO)); // marco
 
-  poner(piezas, 'Batería', 1, malla(redondeado(15, 12, 1.5, 2.2), ACERO), -2, 3);
-  poner(piezas, 'Motor de vibración', 1, malla(cilindro(2.6, 2), ACERO), 8.6, 4.2);
-  poner(piezas, 'Altavoz', 1, malla(redondeado(9, 3.5, 1, 1.4), GRIS), -5, -7.5);
-  poner(piezas, 'Micrófono', 1, malla(cilindro(0.8, 1, 20), LATON), 2, -8);
-  poner(piezas, 'Encoder', 1, malla(dentado(2.4, 1.6, 0), ACERO), 8, -6);
-  poner(piezas, 'Antena', 1, malla(anillo(14.2, 13.6, 0.3), COBRE));
+  poner(piezas, 1, malla(redondeado(15, 12, 1.5, 2.2), ACERO), -2, 3); // batería
+  poner(piezas, 1, malla(cilindro(2.6, 2), ACERO), 8.6, 4.2); // motor de vibración
+  poner(piezas, 1, malla(redondeado(9, 3.5, 1, 1.4), GRIS), -5, -7.5); // altavoz
+  poner(piezas, 1, malla(cilindro(0.8, 1, 20), LATON), 2, -8); // micrófono
+  poner(piezas, 1, malla(dentado(2.4, 1.6, 0), ACERO), 8, -6); // encoder
+  poner(piezas, 1, malla(anillo(14.2, 13.6, 0.3), COBRE)); // antena
 
-  poner(piezas, 'Placa base', 2, malla(redondeado(24, 24, 8, 0.6), PLACA));
-  [['Procesador', -5, 5, 6.5, 5.5], ['Memoria', 3, 5.5, 4.5, 4.5], ['Chip de radio', -6, -3, 4, 4], ['Chip de energía', 1, -2.5, 5.5, 3.5], ['Chip de audio', 7, -3, 3, 3]]
-    .forEach(([nombre, x, y, ancho, alto]) => poner(piezas, nombre, 2, malla(bloque(ancho, alto, 1.2), NEGRO), x, y));
-  poner(piezas, 'Conector', 2, malla(bloque(4, 1.4, 1.2), LATON), -1, -9);
-  poner(piezas, 'Conector', 2, malla(bloque(3, 1.4, 1.2), LATON), 5, -8.5);
-  for (const punto of [[9.5, 9.5], [-9.5, 9.5], [9.5, -9.5], [-9.5, -9.5], [11, 0], [-11, 0]]) poner(piezas, 'Tornillo', 2, tornillo(), ...punto);
+  poner(piezas, 2, malla(redondeado(24, 24, 8, 0.6), PLACA)); // placa base
+  // Chips: procesador, memoria, radio, energía y audio
+  [[-5, 5, 6.5, 5.5], [3, 5.5, 4.5, 4.5], [-6, -3, 4, 4], [1, -2.5, 5.5, 3.5], [7, -3, 3, 3]]
+    .forEach(([x, y, ancho, alto]) => poner(piezas, 2, malla(bloque(ancho, alto, 1.2), NEGRO), x, y));
+  poner(piezas, 2, malla(bloque(4, 1.4, 1.2), LATON), -1, -9); // conector
+  poner(piezas, 2, malla(bloque(3, 1.4, 1.2), LATON), 5, -8.5); // conector
+  for (const punto of [[9.5, 9.5], [-9.5, 9.5], [9.5, -9.5], [-9.5, -9.5], [11, 0], [-11, 0]]) poner(piezas, 2, tornillo(), ...punto); // tornillo
 
-  [['Sensor de pulso', 3.2, 3.2], ['Sensor de oxígeno', -3.2, 3.2], ['Acelerómetro', -3.2, -3.2], ['Giroscopio', 3.2, -3.2]]
-    .forEach(([nombre, x, y]) => poner(piezas, nombre, 3, conjunto(malla(cilindro(2, 0.7), PLACA), malla(cilindro(1.2, 1.2), NEGRO)), x, y));
+  // Sensores: pulso, oxígeno, acelerómetro y giroscopio
+  [[3.2, 3.2], [-3.2, 3.2], [-3.2, -3.2], [3.2, -3.2]]
+    .forEach(([x, y]) => poner(piezas, 3, conjunto(malla(cilindro(2, 0.7), PLACA), malla(cilindro(1.2, 1.2), NEGRO)), x, y));
 }
 
 const INTERIORES = {
   mecanico,
-  automatico(piezas) { mecanico(piezas); poner(piezas, 'Rotor', 4, rotor(), 0, 0, { giro: 'barrilete' }); },
+  automatico(piezas) { mecanico(piezas); poner(piezas, 4, rotor(), 0, 0, { giro: 'barrilete' }); }, // rotor
   cuarzo,
   solar,
   digital

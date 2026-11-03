@@ -7,7 +7,7 @@ const { RELOJES } = await import('/js/relojes3d/catalogo.js');
 for (const tipo of ['cuarzo', 'automatico', 'mecanico', 'solar', 'digital']) {
   const { piezas } = crearMovimiento(tipo, 16);
   console.assert(piezas.length >= 25 && piezas.length <= 40, `${tipo}: ${piezas.length} piezas`);
-  console.assert(piezas.every(p => p.objeto && p.nombre), `${tipo}: pieza sin nombre`);
+  console.assert(piezas.every(p => p.objeto), `${tipo}: pieza sin objeto`);
 }
 for (const r of RELOJES) {
   let total = 0;

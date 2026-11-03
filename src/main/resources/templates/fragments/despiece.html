@@ -115,25 +115,6 @@
         visibility: hidden;
     }
 
-    /* Nombre de la pieza que está pasando */
-    #nombre_pieza {
-        position: absolute;
-        left: 50%;
-        bottom: clamp(1.25rem, 6svh, 3.5rem);
-        margin: 0;
-        transform: translateX(-50%);
-        white-space: nowrap;
-        font-family: var(--font-serif, serif);
-        font-size: clamp(1.5rem, 3.2vw, 2.5rem);
-        color: var(--color-principal);
-        pointer-events: none;
-    }
-
-    #nombre_pieza:empty,
-    .portada:not(.con-3d) #nombre_pieza {
-        display: none;
-    }
-
     /* Cierre: abajo en el móvil y en la columna del texto en el ordenador. Oculto, sus botones no reciben foco */
     .portada-cierre {
         position: absolute;

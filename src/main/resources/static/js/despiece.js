@@ -1,7 +1,7 @@
 // ===== despiece.js · reloj del hero que se despieza al bajar =====
 // Elige un reloj al azar y enseña su foto. Si el dispositivo puede, carga el 3D y lo pone encima.
 // Si algo falla, se queda la foto: la portada vuelve a su altura normal y la tienda sigue igual.
-import {avanceDesdeScroll, fase, piezaVisible, vigilarFotogramas} from "./relojes3d/coreografia.js";
+import {avanceDesdeScroll, fase, vigilarFotogramas} from "./relojes3d/coreografia.js";
 import {elegirReloj, buscarProducto} from "./relojes3d/catalogo.js";
 
 const portada = document.getElementById("portada");
@@ -15,13 +15,6 @@ foto.alt = `${reloj.marca} ${reloj.modelo}`;
 
 const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const hayWebgl = Boolean(document.createElement("canvas").getContext("webgl2"));
-
-// Los modelos nombran las piezas en español; la clave de messages_*.properties sale del nombre:
-// "Núcleo de la bobina" → pieza_nucleo_de_la_bobina
-function traducirPieza(nombre) {
-    const clave = nombre.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replaceAll(" ", "_");
-    return texto("pieza_" + clave);
-}
 
 // ----- Sin 3D: se queda la foto -----
 function quedarseConFoto() {
@@ -54,11 +47,6 @@ async function iniciar3d() {
     const modelo = montarModelo(reloj);
     escena.poner(modelo);
     prepararCierre();
-
-    await textosCargados;
-    const nombres = modelo.nombres.map(traducirPieza);
-    const $nombre = $("#nombre_pieza");
-    $("#lista_piezas").append(nombres.map(nombre => $("<li>").text(nombre)));
 
     let avance = -1, pedido = false, visible = true, activo = true;
     // Cambiar el tamaño del lienzo lo vacía: se dibuja al momento para que el reloj no desaparezca
@@ -106,8 +94,6 @@ async function iniciar3d() {
         avance = nuevo;
         portada.style.setProperty("--avance", avance.toFixed(4));
         portada.dataset.fase = fase(avance);
-        const i = piezaVisible(avance, nombres.length);
-        $nombre.text(i < 0 ? "" : nombres[i]);
         pedirDibujo();
     }
 

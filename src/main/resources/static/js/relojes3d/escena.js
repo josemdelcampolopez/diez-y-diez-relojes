@@ -12,10 +12,6 @@ import { crearMovimiento } from './movimientos.js';
 // Dos ruedas que engranan giran en sentidos contrarios
 const SENTIDO = { barrilete: 1, centro: -1, tercera: 1, cuarta: -1, volante: 1 };
 
-const NOMBRES = {
-    cristal: 'Cristal', bisel: 'Bisel', segundero: 'Segundero', minutero: 'Minutero', horaria: 'Aguja horaria',
-    indices: 'Índices', esfera: 'Esfera', corona: 'Corona', caja: 'Caja', fondo: 'Fondo de caja', correa: 'Correa'
-};
 const ORDEN_EXTERIOR = ['cristal', 'bisel', 'segundero', 'minutero', 'horaria', 'indices', 'esfera', 'corona', 'caja', 'fondo', 'correa'];
 const HUECO = 13;           // milímetros entre piezas separadas
 const HUECO_INTERIOR = 22;  // las capas del interior son anchas: más juntas se taparían
@@ -52,11 +48,9 @@ export function montarModelo(datos) {
         modelo.reloj.add(grupo);
         return { grupo, interior: true };
     });
-    const exterior = lista => lista.filter(n => modelo.piezas.has(n)).map(n => ({ grupo: modelo.piezas.get(n), nombre: NOMBRES[n] }));
+    const exterior = lista => lista.filter(n => modelo.piezas.has(n)).map(n => ({ grupo: modelo.piezas.get(n) }));
     const corte = ORDEN_EXTERIOR.indexOf('corona');
-    const antes = exterior(ORDEN_EXTERIOR.slice(0, corte)), despues = exterior(ORDEN_EXTERIOR.slice(corte));
-    modelo.capas = [...antes, ...capasInterior, ...despues];
-    modelo.nombres = [...new Set([...antes.map(c => c.nombre), ...interior.map(p => p.nombre), ...despues.map(c => c.nombre)])];
+    modelo.capas = [...exterior(ORDEN_EXTERIOR.slice(0, corte)), ...capasInterior, ...exterior(ORDEN_EXTERIOR.slice(corte))];
     modelo.ruedas = interior.filter(p => p.giro);
     let z = 0;
     modelo.capas.forEach(capa => { capa.z = z; z -= capa.interior ? HUECO_INTERIOR : HUECO; });

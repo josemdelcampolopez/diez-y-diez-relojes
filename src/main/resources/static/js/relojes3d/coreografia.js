@@ -70,10 +70,3 @@ export function vigilarFotogramas(alIrLento, muestras = 30, limite = 40) {
         if (contados === muestras && suma / muestras > limite) alIrLento();
     };
 }
-
-// Qué nombre de pieza se muestra ahora; -1 fuera del momento cumbre
-export function piezaVisible(avance, total) {
-    if (avance < TRAMOS.despiece || avance >= TRAMOS.remontaje) return -1;
-    const parte = (avance - TRAMOS.despiece) / (TRAMOS.remontaje - TRAMOS.despiece);
-    return Math.min(total - 1, Math.floor(parte * total));
-}
