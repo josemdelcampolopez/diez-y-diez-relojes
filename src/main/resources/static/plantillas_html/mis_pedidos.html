@@ -1,1 +1,48 @@
-<!-- Mis pedidos: se inserta dentro de #contenedor (estilos en fragments/estilos/mis_pedidos.html) -->
+<!-- Mis pedidos: se inserta dentro de #contenedor (estilos en fragments/estilos/mis_pedidos.html).
+     Un <details> por pedido: se abre y cierra solo, con teclado y lector de pantalla, sin JS. -->
+<div class="barra-seccion">
+    <div>
+        <h2 class="titulo-seccion">{{t.mp_titulo}}</h2>
+        <p class="texto-ayuda">{{t.mp_texto}}</p>
+    </div>
+</div>
+
+{{#vacio}}
+<div class="carrito-vacio">
+    <p class="texto-ayuda">{{t.mp_vacio}}</p>
+    <a href="#" data-accion="relojes" class="btn btn-primario mt-5">{{t.mp_ver_relojes}}</a>
+</div>
+{{/vacio}}
+
+<div class="lista-pedidos">
+    {{#pedidos}}
+    <details class="pedido">
+        <summary>
+            <span class="titulo-producto">{{TITULO}}</span>
+            <span class="texto-ayuda">{{FECHA_TEXTO}}</span>
+            <span class="chip-estado" data-estado="{{ESTADO}}">{{ESTADO_TEXTO}}</span>
+            <span class="precio">{{TOTAL}}&nbsp;€</span>
+        </summary>
+
+        <div class="lista-carrito">
+            {{#relojes}}
+            <article class="linea-pedido">
+                <div class="marco-imagen linea-carrito-foto">
+                    <img src="mostrar_miniatura?id={{RELOJ_ID}}" alt="" width="96" height="96" loading="lazy">
+                </div>
+                <div>
+                    <p class="marca">{{MARCA_RELOJ}}</p>
+                    <h3 class="titulo-producto">{{MODELO}}</h3>
+                    <p class="texto-ayuda text-sm">{{CANTIDAD}} × {{PRECIO}}&nbsp;€ = {{SUBTOTAL}}&nbsp;€</p>
+                </div>
+            </article>
+            {{/relojes}}
+        </div>
+
+        <p class="texto-ayuda mt-4"><strong>{{t.mp_envio}}:</strong>
+            {{NOMBRE_COMPLETO}}, {{DIRECCION}}, {{CODIGO_POSTAL}} {{PROVINCIA}}</p>
+
+        <button type="button" class="btn btn-primario mt-4" data-repetir="{{ID}}">{{t.mp_repetir}}</button>
+    </details>
+    {{/pedidos}}
+</div>

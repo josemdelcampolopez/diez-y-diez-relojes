@@ -2,7 +2,37 @@
 // Se carga antes de tienda.js porque "acciones" nombra mostrarMisPedidos al crearse.
 // Usa pintar, texto y avisar de js/tienda/nucleo.js (solo cuando se llama, ya están cargadas)
 
-// Provisional: lo sustituye la rama feature/mis-pedidos
+// Pantalla «Mis pedidos»: pide una fila por reloj, las agrupa por pedido y pinta la plantilla
 function mostrarMisPedidos() {
-    pendiente("menu_mis_pedidos")();
+    $.getJSON("restPedidos/misPedidos").done(function (filas) {
+        const pedidos = []
+        const porId = {}
+        filas.forEach(f => {
+            let p = porId[f.ID]
+            if (!p) {
+                p = porId[f.ID] = {
+                    ID: f.ID,
+                    TITULO: texto("mp_pedido", f.ID),
+                    // Los pedidos antiguos pueden no tener fecha
+                    FECHA_TEXTO: f.FECHA ? new Date(f.FECHA).toLocaleDateString() : "—",
+                    ESTADO: f.ESTADO,
+                    ESTADO_TEXTO: texto("estado_" + f.ESTADO),
+                    NOMBRE_COMPLETO: f.NOMBRE_COMPLETO,
+                    DIRECCION: f.DIRECCION,
+                    PROVINCIA: f.PROVINCIA,
+                    CODIGO_POSTAL: f.CODIGO_POSTAL,
+                    relojes: [],
+                    TOTAL: 0
+                }
+                pedidos.push(p)
+            }
+            f.SUBTOTAL = Math.round(f.PRECIO * f.CANTIDAD * 100) / 100
+            p.TOTAL = Math.round((p.TOTAL + f.SUBTOTAL) * 100) / 100
+            p.relojes.push(f)
+        })
+        pintar("mis_pedidos", {pedidos, vacio: pedidos.length === 0})
+        window.scrollTo({top: 0})
+    }).fail(function () {
+        avisar(texto("err_identificate"), "error")
+    })
 }
