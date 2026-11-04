@@ -232,7 +232,14 @@
         .carrusel {
             @apply relative overflow-hidden bg-principal;
             container-type: size; /* cqw y cqh pasan a ser % del ancho y del alto de la banda */
-            height: clamp(22rem, 60vh, 34rem);
+            /* En el móvil, más baja: así el precio y "Al carrito" caben en la primera pantalla */
+            height: clamp(18rem, 45vh, 34rem);
+        }
+
+        @media (width >= 48rem) {
+            .carrusel {
+                height: clamp(22rem, 60vh, 34rem);
+            }
         }
 
         .carrusel-pista {
@@ -270,9 +277,10 @@
         }
 
         /* Pausa del carrusel: abajo a la derecha, por encima de las fotos.
+           Fondo verde: sin él, el texto claro de btn-claro no se lee sobre una foto blanca.
            Con "reducir movimiento" el carrusel ya está quieto y el botón sobra */
         .carrusel-pausa {
-            @apply absolute bottom-4 right-4 z-10;
+            @apply absolute bottom-4 right-4 z-10 bg-principal;
         }
 
         @media (prefers-reduced-motion: reduce) {

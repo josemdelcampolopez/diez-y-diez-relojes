@@ -1,4 +1,14 @@
 <!-- Ficha de detalle renderizada con Mustache. Las claves van en mayúsculas, como las devuelve H2. -->
+
+<!-- Vuelve al listado en la misma página y con la misma búsqueda (data-accion: js/tienda.js) -->
+<a href="#" data-accion="ver_relojes" class="enlace-texto mb-3 gap-2">
+    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5M11 6l-6 6 6 6"/>
+    </svg>
+    {{t.volver_listado}}
+</a>
+
 <article class="tarjeta">
 
     <!-- ===== CARRUSEL: js/carrusel.js mete aquí la fila de fotos (portada + extra) ===== -->
@@ -12,26 +22,28 @@
                 data-pausar="{{t.pausar}}" data-reanudar="{{t.reanudar}}">{{t.pausar}}</button>
     </section>
 
-    <!-- ===== DATOS ===== -->
-    <div class="grid gap-8 p-5 sm:p-6 md:grid-cols-[1fr_auto] md:items-end">
+    <!-- ===== DATOS =====
+         Móvil: precio, acciones y ficha técnica, en este orden, para que "Al carrito" se vea sin bajar.
+         Desde md: precio y ficha a la izquierda; las acciones, a la derecha abajo -->
+    <div class="grid gap-6 p-5 sm:p-6 md:grid-cols-[1fr_auto] md:gap-x-8">
         <div>
             <p class="texto-ayuda">{{CATEGORIA}}</p>
             <p class="precio mt-2">{{PRECIO}}&nbsp;€</p>
-
-            <dl class="ficha border-t border-borde pt-5 sm:grid-cols-3">
-                <div><dt>{{t.ficha_movimiento}}</dt><dd>{{TIPO_MOVIMIENTO}}</dd></div>
-                <div><dt>{{t.ficha_resistencia}}</dt><dd>{{RESISTENCIA_AGUA}}&nbsp;atm</dd></div>
-                <div><dt>{{t.ficha_genero}}</dt><dd>{{GENERO}}</dd></div>
-            </dl>
         </div>
 
         <!-- ===== ACCIONES ===== -->
-        <div class="flex flex-wrap items-end gap-3">
+        <div class="flex flex-wrap items-end gap-3 md:col-start-2 md:row-span-2 md:row-start-1 md:self-end">
             <div class="grupo">
                 <label for="cantidad_{{ID}}" class="etiqueta">{{t.cantidad}}</label>
                 <input type="number" id="cantidad_{{ID}}" value="1" min="1" max="{{STOCK}}" class="campo w-20 text-center">
             </div>
             <button type="button" class="btn btn-primario" data-carrito="{{ID}}" aria-label="{{t.agregar_al_carrito}}: {{MARCA_RELOJ}} {{MODELO}}">{{t.al_carrito}}</button>
         </div>
+
+        <dl class="ficha mt-0 border-t border-borde pt-5 sm:grid-cols-3 md:col-start-1">
+            <div><dt>{{t.ficha_movimiento}}</dt><dd>{{TIPO_MOVIMIENTO}}</dd></div>
+            <div><dt>{{t.ficha_resistencia}}</dt><dd>{{RESISTENCIA_AGUA}}&nbsp;atm</dd></div>
+            <div><dt>{{t.ficha_genero}}</dt><dd>{{GENERO}}</dd></div>
+        </dl>
     </div>
 </article>
