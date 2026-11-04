@@ -31,4 +31,7 @@ public interface ServicioUsuarios {
     // Solo lee la columna del avatar (null si el usuario no tiene foto)
     byte[] obtenerAvatar(long id);
 
+    // Guarda el usuario tal cual, avatar incluido (guardarCambiosUsuario repone el original)
+    void actualizarUsuario(Usuario u);
+
 }
