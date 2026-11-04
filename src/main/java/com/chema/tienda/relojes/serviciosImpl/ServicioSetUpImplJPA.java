@@ -144,6 +144,19 @@ public class ServicioSetUpImplJPA implements ServicioSetUp {
 
             // Ya tenemos un pedido en bd :)
 
+            //Registrar 100 productos de prueba, para probar la paginacion
+            String marca = "Reloj";
+            double precio = 1;
+            String descripcion = "Prueba";
+            byte[] imagenGenerica = leerImagenInicial("http://localhost:8080/imagenes_productos_iniciales/relojGenerico.png");
+            for (int i = 0; i<100; i++) {
+                // SKU: 6 letras + 3 cifras -> PRUEBA000 ... PRUEBA099
+                Reloj rNuevo = new Reloj(marca + i, descripcion + " " + marca + " " + i, precio, 10,
+                        "Cuarzo", 50, "Unisex", "PRUEBA" + String.format("%03d", i));
+                rNuevo.setCategoria(cCasual);
+                rNuevo.setImagenPortada(imagenGenerica);
+                entityManager.persist(rNuevo);
+            }
 
             // Una vez realizados los registros iniciales
             // guardo en registro en la tabla Configuracion
