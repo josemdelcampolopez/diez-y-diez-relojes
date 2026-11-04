@@ -16,7 +16,7 @@ function mostrarRelojes(enfocar = false) {
         if (peticion !== ultima_peticion) {
             return;
         }
-        pintar("listado_productos", json.relojes);
+        pintar("listado_productos", json.relojes, false);
         $("#total_resultados").text(json.totalRelojes);
         // toggle y no hidden: la clase .btn pondría display y ganaría al atributo hidden
         $("#enlace_anterior").toggle(comienzo_relojes > 0);

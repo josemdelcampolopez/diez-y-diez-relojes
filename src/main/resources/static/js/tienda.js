@@ -38,5 +38,6 @@ $("#cabecera, #pie, #contenedor").on("click", "[data-accion]", function (e) {
 // A la vez pregunto al servidor si ya había una sesión abierta para pintar el header
 // despiece.js también espera a los textos para poner los nombres de las piezas
 const textosCargados = cargarTextos();
-$.when(cargarPlantillas(), textosCargados).done(mostrarRelojes);
+// Con () => y no .done(mostrarRelojes): $.when le pasaría sus resultados como "enfocar" y bajaría al buscador
+$.when(cargarPlantillas(), textosCargados).done(() => mostrarRelojes());
 comprobarSesion();

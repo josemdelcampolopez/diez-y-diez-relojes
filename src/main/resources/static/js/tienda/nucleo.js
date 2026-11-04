@@ -45,13 +45,33 @@ function texto(clave, ...datos) {
 }
 
 // Mete una plantilla en la pantalla. "datos" son los valores que Mustache
-// pone en los {{huecos}} de la plantilla (por defecto, ninguno)
-function pintar(nombre, datos = {}) {
+// pone en los {{huecos}} de la plantilla (por defecto, ninguno).
+// "enfocar" lleva el foco al título de la pantalla nueva: así el teclado y el lector de pantalla
+// siguen al cambio. El listado pasa false porque maneja su propio foco (buscador y páginas)
+function pintar(nombre, datos = {}, enfocar = true) {
     // Context pone los textos por debajo de los datos: se ven desde cualquier sitio de la plantilla.
     // Mezclarlos con {...datos, t} rompería el listado, porque sus datos son un array
     $("#contenedor").html(Mustache.render(plantillas[nombre], new Mustache.Context({t: textos}).push(datos)));
     // El hero de portada solo se ve con el listado de relojes
     $("#portada").prop("hidden", nombre !== "listado_productos");
+    if (enfocar) {
+        enfocarTitulo();
+    }
+}
+
+// Foco en el primer h1/h2 del contenedor. tabindex="-1": un título no recibe el foco si no.
+// Solo muevo la página si el título no se ve (la cabecera fija tapa los 80 px de arriba)
+function enfocarTitulo() {
+    const titulo = $("#contenedor").find("h1, h2").first().attr("tabindex", "-1")[0];
+    if (!titulo) {
+        return;
+    }
+    titulo.focus({preventScroll: true});
+    const arriba = titulo.getBoundingClientRect().top;
+    if (arriba < 80 || arriba > innerHeight) {
+        const suave = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+        $("#contenedor")[0].scrollIntoView({behavior: suave ? "smooth" : "auto"});   // su scroll-margin-top salva la cabecera
+    }
 }
 
 // ----- Avisos -----
@@ -74,6 +94,8 @@ function pendiente(clave) {
 
 // Cualquier petición ($.get, $.post, $.getJSON, $.ajax) que falle (404, 500, sin red) avisa aquí,
 // en vez de quedarse la pantalla vacía sin explicación
+// El cliente ve un mensaje sencillo; el código y la URL quedan en la consola (F12) para depurar
 $(document).on("ajaxError", function (e, xhr, ajax) {
-    avisar(texto("aviso_error_peticion", xhr.status, ajax.url), "error")
+    console.error(`Error ${xhr.status} al pedir ${ajax.url}`)
+    avisar(texto("aviso_error_peticion"), "error")
 })
