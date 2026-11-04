@@ -13,6 +13,13 @@
         <nav th:replace="~{fragments/general :: menu('relojes')}"></nav>
 
         <!-- ===== CONTENIDO DE LA PÁGINA ===== -->
+        <form action="gestionarRelojes" class="flex flex-wrap items-end gap-3">
+            <label class="grid gap-1">
+                <span th:text="#{adm_rel_buscar}"></span>
+                <input type="text" name="busqueda" th:value="${busqueda}" class="campo">
+            </label>
+            <input type="submit" th:value="#{adm_buscar}" class="btn btn-secundario">
+        </form>
         <p th:if="${error}" th:text="${error}" class="aviso-error"></p>
         <p th:if="${#lists.isEmpty(relojes)}" class="vacio" th:text="#{adm_rel_vacio}"></p>
 

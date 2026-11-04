@@ -70,6 +70,11 @@ public class ServicioRelojesImplJPA implements ServicioRelojes {
     }
 
     @Override
+    public List<Reloj> obtenerRelojesPorMarcaOModelo(String busqueda) {
+        return entityManager.createQuery("select r from Reloj r where lower(r.marca) like lower(:busqueda) or lower(r.modelo) like lower(:busqueda)").setParameter("busqueda", "%" + busqueda + "%").getResultList();
+    }
+
+    @Override
     public List<Map<String, Object>> obtenerRelojesStockBajo() {
         return ((NativeQueryImpl) entityManager.createNativeQuery(ConstantesSQL.SQL_STOCK_BAJO))
                 .setTupleTransformer(AliasToEntityMapResultTransformer.INSTANCE).getResultList();

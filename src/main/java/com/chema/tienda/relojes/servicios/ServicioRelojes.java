@@ -13,6 +13,8 @@ public interface ServicioRelojes {
 
     List<Reloj> obtenerRelojes();
 
+    List<Reloj> obtenerRelojesPorMarcaOModelo(String busqueda);
+
     Reloj obtenerRelojPorId(long id);
 
     void borrarReloj(long id) throws Exception;
