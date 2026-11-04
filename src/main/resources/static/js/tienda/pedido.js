@@ -18,7 +18,6 @@ $("#contenedor")
 
     // Botón "Realizar pedido" del carrito ------------------------------------------- PEDIDO
     .on("click", "#realizar_pedido", function (e) {
-        e.preventDefault();             // el enlace es href="#"
         pintar("check_out_1")
     })
 

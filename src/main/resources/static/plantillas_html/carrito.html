@@ -43,13 +43,13 @@
                     </svg>
                 </button>
             </div>
-            <a href="#" class="borrar-carrito" data-borrar="{{MARCA_RELOJ}} {{MODELO}}" aria-label="{{t.borrar}}: {{MARCA_RELOJ}} {{MODELO}}">
+            <button type="button" class="borrar-carrito" data-borrar="{{MARCA_RELOJ}} {{MODELO}}" aria-label="{{t.borrar}}: {{MARCA_RELOJ}} {{MODELO}}">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>
                 </svg>
                 {{t.borrar}}
-            </a>
+            </button>
         </div>
     </article>
     {{/productos}}
@@ -60,11 +60,11 @@
 <div class="carrito-vacio">
     <p class="titulo-producto">{{t.carrito_vacio}}</p>
     <p class="texto-ayuda">{{t.carrito_vacio_texto}}</p>
-    <a href="./" class="btn btn-secundario mt-5">{{t.ver_relojes}}</a>
+    <a href="#" data-accion="ver_relojes" class="btn btn-secundario mt-5">{{t.ver_relojes}}</a>
 </div>
 {{/productos}}
 
 <div class="pie-carrito">
     <p class="total-carrito">{{t.total}} <span class="precio">{{total}}&nbsp;€</span></p>
-    <a href="#" id="realizar_pedido" class="btn btn-primario">{{t.realizar_pedido}}</a>
+    <button type="button" id="realizar_pedido" class="btn btn-primario ml-auto">{{t.realizar_pedido}}</button>
 </div>
