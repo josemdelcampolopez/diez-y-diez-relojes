@@ -11,6 +11,11 @@ public class ConstantesSQL {
                     "FROM tabla_relojes AS tr\n" +
                     "LEFT JOIN categoria AS c ON tr.categoria_id = c.id";
 
+    // El listado de la tienda con buscador (marca o modelo) y paginado de 10 en 10
+    public static final String SQL_BUSCAR_RELOJES_JSON = SQL_OBTENER_RELOJES_JSON + "\n" +
+            "WHERE LOWER(tr.marca_reloj) LIKE :busqueda OR LOWER(tr.modelo) LIKE :busqueda\n" +
+            "ORDER BY tr.id OFFSET :comienzo ROWS FETCH NEXT 10 ROWS ONLY";
+
 
     // MARCA, MODELO, PRECIO, TIPOMOVIMIENTO, RESISTENCIAAGUA, GENERO
     public static final String SQL_OBTENER_RELOJ_JSON =

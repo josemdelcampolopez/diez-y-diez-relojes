@@ -211,6 +211,16 @@ public class ServicioRelojesImplJPA implements ServicioRelojes {
     }
 
     @Override
+    public List<Map<String, Object>> obtenerJSONrelojes(String busqueda, int comienzo) {
+        Query consulta = entityManager.createNativeQuery(ConstantesSQL.SQL_BUSCAR_RELOJES_JSON);
+        consulta.setParameter("busqueda", "%" + busqueda.toLowerCase() + "%");
+        consulta.setParameter("comienzo", comienzo);
+        NativeQueryImpl nativeQuery = (NativeQueryImpl) consulta;
+        nativeQuery.setTupleTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+        return nativeQuery.getResultList();
+    }
+
+    @Override
     public Map<String, Object> obtenerJSONRelojPorId(Long id) {
 
         List<Map<String, Object>> resultado = ((NativeQueryImpl) entityManager.createNativeQuery(ConstantesSQL.SQL_OBTENER_RELOJ_JSON)).setParameter("id", id).setTupleTransformer(AliasToEntityMapResultTransformer.INSTANCE).getResultList();

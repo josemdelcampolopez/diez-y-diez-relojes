@@ -1,10 +1,31 @@
 // ===== tienda/listado.js · listado de relojes, pila de fotos y ficha de un reloj =====
 
-// Pido la lista de relojes al servidor (JSON) y la pinto con la plantilla del listado.
-// Después preparo las fotos de cada tarjeta (flechas y puntos)
-function mostrarRelojes() {
-    return $.getJSON("restRelojes/listar").done(json => {
-        pintar("listado_productos", json);
+// Lo escrito en el buscador y el primer reloj de la página que se ve
+let busqueda_relojes = "";
+let comienzo_relojes = 0;
+let ultima_peticion = 0;
+
+// Pido una página de relojes al servidor (JSON) y la pinto con la plantilla del listado.
+// Después preparo las fotos de cada tarjeta (flechas y puntos).
+// "enfocar" vuelve a poner el cursor en el buscador: solo cuando se está escribiendo,
+// porque al entrar en la tienda haría bajar la página
+function mostrarRelojes(enfocar = false) {
+    const peticion = ++ultima_peticion;
+    return $.getJSON("restRelojes/buscar", {busqueda: busqueda_relojes, comienzo: comienzo_relojes}).done(json => {
+        // Si al escribir rápido llega tarde una respuesta antigua, no la pinto
+        if (peticion !== ultima_peticion) {
+            return;
+        }
+        pintar("listado_productos", json.relojes);
+        $("#total_resultados").text(json.totalRelojes);
+        // toggle y no hidden: la clase .btn pondría display y ganaría al atributo hidden
+        $("#enlace_anterior").toggle(comienzo_relojes > 0);
+        $("#enlace_siguiente").toggle(comienzo_relojes + 10 < json.totalRelojes);
+        // Para no perder lo escrito al volver a pintar
+        $("#titulo_buscador").val(busqueda_relojes);
+        if (enfocar) {
+            $("#titulo_buscador").focus();
+        }
         prepararFotosTarjetas();
         pasarFotosSolas();
     });
@@ -166,4 +187,21 @@ $("#contenedor")
     // Puntos: data-ir lleva la posición de la foto ----- FOTOS
     .on("click", "[data-ir]", function () {
         cambiarFoto($(this).closest(".tarjeta-foto"), $(this).data("ir"));
+    })
+
+    // Según se escribe, busco desde la primera página ----- BUSCADOR
+    .on("input", "#titulo_buscador", function () {
+        busqueda_relojes = $(this).val();
+        comienzo_relojes = 0;
+        mostrarRelojes(true);
+    })
+
+    // ----- PAGINACIÓN
+    .on("click", "#enlace_anterior", () => {
+        comienzo_relojes -= 10;
+        mostrarRelojes();
+    })
+    .on("click", "#enlace_siguiente", () => {
+        comienzo_relojes += 10;
+        mostrarRelojes();
     });
