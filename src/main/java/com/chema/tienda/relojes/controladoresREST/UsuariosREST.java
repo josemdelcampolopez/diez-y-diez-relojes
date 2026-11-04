@@ -11,12 +11,15 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -107,6 +110,95 @@ public class UsuariosREST {
         return "";
     }
 
+    // Datos para rellenar "Mis datos". Se leen de BD y se devuelven en un Map (nunca la entidad: lleva pass)
+    @RequestMapping("misDatos")
+    public Map<String, Object> misDatos(HttpServletRequest request) {
+        Usuario sesion = (Usuario) request.getSession().getAttribute("usuario_identificado");
+        if (sesion == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        Usuario u = servicioUsuarios.obtenerUsuarioPorId(sesion.getId());
+        return Map.of("nombre", u.getNombre(),
+                "apellidos", u.getApellidos(),
+                "email", u.getEmail(),
+                "telefono", u.getTelefono(),
+                "avatar", u.getImagenAvatar() != null);
+    }
+
+    // Orden fijo (validar todo y guardar al final) para no dejar nada guardado a medias
+    @RequestMapping("guardarMisDatos")
+    public String guardarMisDatos(@RequestParam(value = "nombre", defaultValue = "") String nombre,
+                                  @RequestParam(value = "apellidos", defaultValue = "") String apellidos,
+                                  @RequestParam(value = "telefono", defaultValue = "") String telefono,
+                                  @RequestParam(value = "avatar", required = false) MultipartFile avatar,
+                                  @RequestParam(value = "quitarAvatar", defaultValue = "false") boolean quitarAvatar,
+                                  HttpServletRequest request) {
+        Usuario sesion = (Usuario) request.getSession().getAttribute("usuario_identificado");
+        if (sesion == null) {
+            return mensajes.getMessage("err_identificate");
+        }
+
+        // Antes de tocar el usuario: llamar al servicio con el usuario ya modificado lo guardaría (flush)
+        String error = servicioUsuarios.validarAvatar(avatar);
+        if (error != null) {
+            return error;
+        }
+
+        Usuario u = servicioUsuarios.obtenerUsuarioPorId(sesion.getId());
+        u.setNombre(nombre);
+        u.setApellidos(apellidos);
+        u.setTelefono(telefono);
+
+        Set<ConstraintViolation<Usuario>> errores = validator.validate(u);
+        if (!errores.isEmpty()) {
+            return errores.iterator().next().getMessage();
+        }
+        if (quitarAvatar) {
+            u.setImagenAvatar(null);
+        } else if (avatar != null && !avatar.isEmpty()) {
+            try {
+                u.setImagenAvatar(servicioUsuarios.generarAvatar(avatar.getBytes()));
+            } catch (IOException e) {
+                return mensajes.getMessage("err_foto_no_leida");
+            }
+        }
+
+        servicioUsuarios.actualizarUsuario(u);
+        // La cabecera y el F5 leen de la sesión: la dejo con los datos nuevos
+        request.getSession().setAttribute("usuario_identificado", u);
+
+        return "OK," + u.getNombre() + "," + (u.getImagenAvatar() != null ? "1" : "0");
+    }
+
+    // Cambia la contraseña. Todo se comprueba antes de tocar el usuario (ver guardarMisDatos)
+    @RequestMapping("cambiarPass")
+    public String cambiarPass(@RequestParam(value = "actual", defaultValue = "") String actual,
+                              @RequestParam(value = "nueva", defaultValue = "") String nueva,
+                              @RequestParam(value = "repetir", defaultValue = "") String repetir,
+                              HttpServletRequest request) {
+        Usuario sesion = (Usuario) request.getSession().getAttribute("usuario_identificado");
+        if (sesion == null) {
+            return mensajes.getMessage("err_identificate");
+        }
+
+        Usuario u = servicioUsuarios.obtenerUsuarioPorId(sesion.getId());
+        if (!u.getPass().equals(actual)) {
+            return mensajes.getMessage("err_pass_actual");
+        }
+        if (!nueva.equals(repetir)) {
+            return mensajes.getMessage("err_pass_distintas");
+        }
+        // Aplica las anotaciones de "pass" sin crear un Usuario
+        Set<ConstraintViolation<Usuario>> errores = validator.validateValue(Usuario.class, "pass", nueva);
+        if (!errores.isEmpty()) {
+            return errores.iterator().next().getMessage();
+        }
+
+        u.setPass(nueva);
+        servicioUsuarios.actualizarUsuario(u);
+        request.getSession().setAttribute("usuario_identificado", u);
+        return "OK";
+    }
 
     // Cierra la sesión del usuario de la tienda. Solo borro su variable de sesión
     // (no invalido la sesión entera) para no cerrar también la del admin

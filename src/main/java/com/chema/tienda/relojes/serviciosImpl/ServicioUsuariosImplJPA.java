@@ -79,6 +79,11 @@ public class ServicioUsuariosImplJPA implements ServicioUsuarios {
     }
 
     @Override
+    public void actualizarUsuario(Usuario u) {
+        entityManager.merge(u);
+    }
+
+    @Override
     public void borrarUsuario(long id) throws Exception {
         Usuario usuarioABorrar = entityManager.find(Usuario.class, id);
 

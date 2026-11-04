@@ -1,1 +1,77 @@
 <!-- Mis datos: se inserta dentro de #contenedor (estilos en fragments/estilos/mis_datos.html) -->
+<div class="barra-seccion">
+    <div>
+        <h2 class="titulo-seccion">{{t.md_titulo}}</h2>
+        <p class="texto-ayuda">{{t.md_texto}}</p>
+    </div>
+</div>
+
+<form id="form_mis_datos" class="formulario">
+    <h3 class="etiqueta md:col-span-2">{{t.md_datos}}</h3>
+
+    <div class="grupo">
+        <label for="nombre" class="etiqueta">{{t.nombre}}</label>
+        <input type="text" id="nombre" name="nombre" value="{{nombre}}" autocomplete="given-name" class="campo">
+    </div>
+
+    <div class="grupo">
+        <label for="apellidos" class="etiqueta">{{t.apellidos}}</label>
+        <input type="text" id="apellidos" name="apellidos" value="{{apellidos}}" autocomplete="family-name" class="campo">
+    </div>
+
+    <div class="grupo">
+        <label for="email" class="etiqueta">{{t.email}}</label>
+        <input type="email" id="email" value="{{email}}" readonly aria-describedby="md_email_fijo" class="campo">
+        <p id="md_email_fijo" class="text-sm text-texto-atenuado">{{t.md_email_fijo}}</p>
+    </div>
+
+    <div class="grupo">
+        <label for="telefono" class="etiqueta">{{t.telefono}}</label>
+        <input type="tel" id="telefono" name="telefono" value="{{telefono}}" autocomplete="tel" inputmode="tel" class="campo">
+    </div>
+
+    <div class="grupo md:col-span-2">
+        <label for="avatar" class="etiqueta">{{t.avatar_opcional}}</label>
+        <div class="flex items-center gap-4">
+            <!-- Vista previa: la foto actual, o la que elijas (la pone js/tienda/sesion.js) -->
+            <span class="vista-previa-avatar" aria-hidden="true">
+                <img id="vista_previa_avatar" src="mostrar_avatar?t={{t_avatar}}" alt="" {{^avatar}}hidden{{/avatar}}>
+            </span>
+            <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/png" aria-describedby="ayuda_avatar"
+                   class="campo-archivo min-w-0">
+        </div>
+        <p id="ayuda_avatar" class="text-sm text-texto-atenuado">{{t.avatar_ayuda}}</p>
+        {{#avatar}}
+        <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="quitarAvatar" value="true"> {{t.md_quitar_foto}}
+        </label>
+        {{/avatar}}
+    </div>
+
+    <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
+        <button type="submit" class="btn btn-primario">{{t.md_guardar}}</button>
+    </div>
+</form>
+
+<form id="form_mis_datos_pass" class="formulario mt-10">
+    <h3 class="etiqueta md:col-span-2">{{t.md_pass_titulo}}</h3>
+
+    <div class="grupo md:col-span-2">
+        <label for="pass_actual" class="etiqueta">{{t.md_pass_actual}}</label>
+        <input type="password" id="pass_actual" name="actual" autocomplete="current-password" class="campo">
+    </div>
+
+    <div class="grupo">
+        <label for="pass_nueva" class="etiqueta">{{t.md_pass_nueva}}</label>
+        <input type="password" id="pass_nueva" name="nueva" autocomplete="new-password" class="campo">
+    </div>
+
+    <div class="grupo">
+        <label for="pass_repetir" class="etiqueta">{{t.md_pass_repetir}}</label>
+        <input type="password" id="pass_repetir" name="repetir" autocomplete="new-password" class="campo">
+    </div>
+
+    <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
+        <button type="submit" class="btn btn-primario">{{t.md_pass_cambiar}}</button>
+    </div>
+</form>
