@@ -1,20 +1,41 @@
 <!-- Rejilla del listado: 1, 2 o 3 columnas según el ancho (estilos en fragments/estilos/productos.html).
-     Mustache repite la tarjeta por cada elemento del array. Las claves van en mayúsculas, como las devuelve H2. -->
+     Mustache repite la tarjeta por cada reloj de "relojes". Las claves van en mayúsculas, como las devuelve H2. -->
 
-<!-- ===== BUSCADOR Y PAGINACIÓN =====
-     js/tienda/listado.js rellena el buscador y el total y oculta Anterior/Siguiente cuando no proceden -->
-<div class="mb-6 flex flex-wrap items-end gap-4">
-    <label class="grid gap-1">
-        <span>{{t.adm_rel_buscar}}</span>
-        <input type="search" id="titulo_buscador" class="campo">
-    </label>
-    <p aria-live="polite">{{t.adm_total_resultados}} <span id="total_resultados"></span></p>
-    <button type="button" id="enlace_anterior" class="btn btn-secundario">{{t.adm_anterior}}</button>
-    <button type="button" id="enlace_siguiente" class="btn btn-secundario">{{t.adm_siguiente}}</button>
+<!-- ===== CABECERA DEL LISTADO: TÍTULO, BUSCADOR Y PAGINACIÓN =====
+     Los datos los prepara js/tienda/listado.js (mostrarRelojes): {relojes, total, linea_paginas,
+     varias_paginas, hay_anterior, hay_siguiente}. El título lleva tabindex="-1" para recibir
+     el foco al cambiar de página -->
+<div class="barra-listado">
+    <h2 id="titulo_listado" class="titulo-seccion" tabindex="-1">{{t.relojes_titulo}}</h2>
+    {{#total}}
+    <p id="total_resultados" class="texto-ayuda">{{linea_paginas}}</p>
+    {{/total}}
+    <!-- role="search": el lector de pantalla lo anuncia como buscador. El submit no hace nada:
+         ya se busca según se escribe -->
+    <form role="search" class="buscador-listado" onsubmit="return false">
+        <label for="titulo_buscador" class="etiqueta">{{t.adm_rel_buscar}}</label>
+        <input type="search" id="titulo_buscador" class="campo" autocomplete="off" spellcheck="false">
+    </form>
 </div>
 
+{{#varias_paginas}}
+<!-- disabled y no ocultos: así los botones no se mueven de sitio al cambiar de página -->
+<nav class="paginacion" aria-label="{{t.paginas_listado}}">
+    <button type="button" id="enlace_anterior" class="btn btn-secundario" {{^hay_anterior}}disabled{{/hay_anterior}}>{{t.adm_anterior}}</button>
+    <button type="button" id="enlace_siguiente" class="btn btn-secundario" {{^hay_siguiente}}disabled{{/hay_siguiente}}>{{t.adm_siguiente}}</button>
+</nav>
+{{/varias_paginas}}
+
+<!-- Búsqueda sin resultados: con la lista vacía, Mustache pinta este trozo -->
+{{^relojes}}
+<div class="sin-resultados">
+    <p>{{t.sin_resultados}}</p>
+    <button type="button" data-borrar-busqueda class="btn btn-secundario">{{t.borrar_busqueda}}</button>
+</div>
+{{/relojes}}
+
 <div class="rejilla-productos">
-    {{#.}}
+    {{#relojes}}
     <article class="tarjeta tarjeta-producto">
 
         <!-- ===== FOTOS =====
@@ -39,10 +60,11 @@
         <!-- ===== DATOS ===== -->
         <div class="tarjeta-datos">
             <p class="marca">{{MARCA_RELOJ}}</p>
-            <h2 class="titulo-producto">
+            <!-- h3: va por debajo del h2 "Relojes" del listado -->
+            <h3 class="titulo-producto">
                 <a href="#" data-detalles="{{ID}}"
-                   class="transition-colors duration-200 ease-out hover:text-principal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-principal">{{MODELO}}</a>
-            </h2>
+                   class="inline-flex min-h-11 items-center transition-colors duration-200 ease-out hover:text-principal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-principal">{{MODELO}}</a>
+            </h3>
             <p class="texto-ayuda">{{CATEGORIA}}</p>
             <!-- La ficha técnica completa está en detalles_producto.html; aquí, un resumen en una línea -->
             <p class="tarjeta-resumen">{{TIPO_MOVIMIENTO}} · {{RESISTENCIA_AGUA}} atm · {{GENERO}}</p>
@@ -58,5 +80,14 @@
                aria-label="{{t.agregar_al_carrito}}: {{MARCA_RELOJ}} {{MODELO}}">{{t.al_carrito}}</a>
         </div>
     </article>
-    {{/.}}
+    {{/relojes}}
 </div>
+
+<!-- Paginación también al final: después de 10 tarjetas no hay que volver arriba.
+     Clases y no id (los id no se repiten); listado.js escucha los dos -->
+{{#varias_paginas}}
+<nav class="paginacion mt-8" aria-label="{{t.paginas_listado}}">
+    <button type="button" class="btn btn-secundario pagina-anterior" {{^hay_anterior}}disabled{{/hay_anterior}}>{{t.adm_anterior}}</button>
+    <button type="button" class="btn btn-secundario pagina-siguiente" {{^hay_siguiente}}disabled{{/hay_siguiente}}>{{t.adm_siguiente}}</button>
+</nav>
+{{/varias_paginas}}

@@ -4,6 +4,7 @@
 let busqueda_relojes = "";
 let comienzo_relojes = 0;
 let ultima_peticion = 0;
+let esperaBuscador = null;
 
 // Pido una página de relojes al servidor (JSON) y la pinto con la plantilla del listado.
 // Después preparo las fotos de cada tarjeta (flechas y puntos).
@@ -16,19 +17,34 @@ function mostrarRelojes(enfocar = false) {
         if (peticion !== ultima_peticion) {
             return;
         }
-        pintar("listado_productos", json.relojes, false);
-        $("#total_resultados").text(json.totalRelojes);
-        // toggle y no hidden: la clase .btn pondría display y ganaría al atributo hidden
-        $("#enlace_anterior").toggle(comienzo_relojes > 0);
-        $("#enlace_siguiente").toggle(comienzo_relojes + 10 < json.totalRelojes);
+        const total = json.totalRelojes;
+        const paginas = Math.ceil(total / 10);
+        // false: el foco del listado lo manejo yo (buscador o título), no pintar()
+        pintar("listado_productos", {
+            relojes: json.relojes,
+            total,
+            linea_paginas: texto("pagina_de", comienzo_relojes / 10 + 1, paginas, total),
+            varias_paginas: paginas > 1,
+            hay_anterior: comienzo_relojes > 0,
+            hay_siguiente: comienzo_relojes + 10 < total
+        }, false);
         // Para no perder lo escrito al volver a pintar
         $("#titulo_buscador").val(busqueda_relojes);
         if (enfocar) {
             $("#titulo_buscador").focus();
+            // El lector de pantalla oye cuántos hay (#aviso tiene role="status")
+            avisar(texto("relojes_encontrados", total));
         }
         prepararFotosTarjetas();
         pasarFotosSolas();
     });
+}
+
+// Cambia de página: los botones se vuelven a pintar y perderían el foco,
+// así que lo llevo al título del listado (y subo si no se ve, enfocarTitulo en nucleo.js)
+function irAPagina(salto) {
+    comienzo_relojes += salto;
+    mostrarRelojes().done(enfocarTitulo);
 }
 
 // Desde el menú: pinto el listado y, cuando ya está en pantalla, bajo hasta las tarjetas
@@ -190,18 +206,21 @@ $("#contenedor")
     })
 
     // Según se escribe, busco desde la primera página ----- BUSCADOR
+    // Espero 250 ms sin teclear: así no pido (ni repinto) una vez por cada letra
     .on("input", "#titulo_buscador", function () {
         busqueda_relojes = $(this).val();
+        comienzo_relojes = 0;
+        clearTimeout(esperaBuscador);
+        esperaBuscador = setTimeout(() => mostrarRelojes(true), 250);
+    })
+
+    // "Borrar búsqueda" cuando no hay resultados
+    .on("click", "[data-borrar-busqueda]", () => {
+        busqueda_relojes = "";
         comienzo_relojes = 0;
         mostrarRelojes(true);
     })
 
-    // ----- PAGINACIÓN
-    .on("click", "#enlace_anterior", () => {
-        comienzo_relojes -= 10;
-        mostrarRelojes();
-    })
-    .on("click", "#enlace_siguiente", () => {
-        comienzo_relojes += 10;
-        mostrarRelojes();
-    });
+    // ----- PAGINACIÓN: los botones de arriba (id) y los de abajo (clase)
+    .on("click", "#enlace_anterior, .pagina-anterior", () => irAPagina(-10))
+    .on("click", "#enlace_siguiente, .pagina-siguiente", () => irAPagina(10));

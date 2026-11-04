@@ -43,6 +43,30 @@
             @apply mt-1 text-base font-medium text-texto;
         }
 
+        /* ===== CABECERA DEL LISTADO (plantillas_html/listado_productos.html) =====
+           Móvil: título, línea de páginas y buscador uno debajo de otro.
+           Desde md: título y línea a la izquierda, buscador a la derecha ocupando las dos filas */
+        .barra-listado {
+            @apply mb-6 grid gap-x-8 gap-y-4 border-b border-borde pb-5 md:grid-cols-[1fr_minmax(16rem,22rem)] md:items-end;
+        }
+
+        .barra-listado .texto-ayuda {
+            @apply md:col-start-1;
+        }
+
+        .buscador-listado {
+            @apply grid gap-1 md:col-start-2 md:row-span-2 md:row-start-1;
+        }
+
+        /* Anterior a la izquierda y Siguiente a la derecha, arriba y abajo de la rejilla */
+        .paginacion {
+            @apply mb-6 flex items-center justify-between gap-4;
+        }
+
+        .sin-resultados {
+            @apply grid justify-items-center gap-4 py-10 text-center text-texto-atenuado;
+        }
+
         /* ===== LISTADO EN REJILLA (plantillas_html/listado_productos.html) ===== */
         /* 1 columna en el móvil, 2 desde sm y 3 desde lg */
         .rejilla-productos {
