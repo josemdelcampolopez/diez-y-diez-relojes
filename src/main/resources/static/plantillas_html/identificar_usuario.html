@@ -1,31 +1,29 @@
 <!-- Formulario de identificacion: se inserta dentro de #contenedor -->
 <div class="barra-seccion">
     <div>
-        <h2 class="titulo-seccion">{{t.login_titulo}}</h2>
+        <h1 class="titulo-seccion">{{t.login_titulo}}</h1>
         <p class="texto-ayuda">{{t.login_texto}}</p>
     </div>
 </div>
 
 <form id="form_login" class="formulario">
 
-<!--    QUITAR VALORES POR DEFECTO DE PASS Y GMAIL-->
-    
     <div class="grupo">
         <label for="email" class="etiqueta">{{t.email}}</label>
-        <input value="pepe@gmail.com" type="email" id="email" name="email" autocomplete="email" spellcheck="false" class="campo">
+        <input type="email" id="email" name="email" autocomplete="email" spellcheck="false" class="campo">
     </div>
 
     <div class="grupo">
         <label for="pass" class="etiqueta">{{t.contrasena}}</label>
-        <input value="123" type="password" id="pass" name="pass" autocomplete="new-password" class="campo">
+        <input type="password" id="pass" name="pass" autocomplete="current-password" class="campo">
     </div>
 
-    <div class="grupo">
-        <label for="recordar_pass" class="etiqueta">{{t.recordar}}</label>
-        <input type="checkbox" id="recordar_pass" name="recordar_pass" autocomplete="recordar_pass" class="campo">
-    </div>
+    <label class="flex min-h-11 items-center gap-2 text-sm md:col-span-2">
+        <input type="checkbox" id="recordar_pass" name="recordar_pass"> {{t.recordar}}
+    </label>
 
-    <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
-        <button type="submit" class="btn btn-primario">{{t.identificarse}}</button>
+    <div class="flex flex-wrap items-center justify-between gap-4 border-t border-borde pt-5 md:col-span-2">
+        <a href="#" data-accion="registrarme" class="enlace-texto">{{t.sin_cuenta}}</a>
+        <button type="submit" class="btn btn-primario ml-auto">{{t.identificarse}}</button>
     </div>
 </form>
