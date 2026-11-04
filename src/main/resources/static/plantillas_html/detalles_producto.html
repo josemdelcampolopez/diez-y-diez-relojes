@@ -7,6 +7,9 @@
             <p class="marca">{{MARCA_RELOJ}}</p>
             <h1 id="titulo_reloj" class="mt-2 font-serif text-4xl font-medium leading-tight sm:text-6xl">{{MODELO}}</h1>
         </div>
+        <!-- js/carrusel.js cambia el texto entre data-pausar y data-reanudar -->
+        <button type="button" class="btn btn-claro carrusel-pausa" data-pausa
+                data-pausar="{{t.pausar}}" data-reanudar="{{t.reanudar}}">{{t.pausar}}</button>
     </section>
 
     <!-- ===== DATOS ===== -->

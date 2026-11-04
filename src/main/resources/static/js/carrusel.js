@@ -15,8 +15,10 @@ const CAMARA = 1.6;       // distancia de la cámara, en radios del cilindro
 const ANCHO_MAXIMO = 55;  // una baldosa nunca ocupa más de este % del ancho (en el móvil)
 const FRENADA = 800;      // milisegundos que tarda en pararse al entrar el ratón (y en arrancar al salir)
 
-// Valores por defecto, pensados para fotos de reloj cuadradas
+// Valores por defecto, pensados para fotos de reloj cuadradas.
+// "descripcion" es el texto que oye el lector de pantalla en lugar de las fotos
 const OPCIONES_CARRUSEL = {
+    descripcion: "",
     velocidad: 4,      // segundos que tarda la fila en avanzar una baldosa
     altoBaldosa: 46,   // alto de la baldosa, en % del alto de la banda
     proporcion: 1,     // ancho / alto de la baldosa (1 = cuadrada, como las fotos)
@@ -70,11 +72,20 @@ function crearCarrusel(selector, imagenes, opciones = {}) {
         new Image().src = src;
     });
 
-    // Al entrar el ratón la fila frena poco a poco hasta pararse; al salir acelera igual
+    // Al entrar el ratón la fila frena poco a poco hasta pararse; al salir acelera igual.
+    // El botón de pausa (data-pausa, en la plantilla) la para del todo hasta que se vuelve a pulsar:
+    // con él se cumple que todo lo que se mueve solo se pueda parar (WCAG 2.2.2)
     let velocidad = 1;  // 1 = normal, 0 = parada
     let fotograma = null;
+    let pausado = false;
+    const $pausa = $banda.find("[data-pausa]");
     $banda.on("mouseenter", () => cambiarVelocidad(0))
-        .on("mouseleave", () => cambiarVelocidad(1));
+        .on("mouseleave", () => cambiarVelocidad(pausado ? 0 : 1));
+    $pausa.on("click", () => {
+        pausado = !pausado;
+        $pausa.text(pausado ? $pausa.data("reanudar") : $pausa.data("pausar"));
+        cambiarVelocidad(pausado ? 0 : 1);
+    });
 
     function ponerVelocidad() {
         $banda[0].getAnimations({subtree: true}).forEach(a => a.playbackRate = velocidad);
@@ -166,10 +177,13 @@ function crearCarrusel(selector, imagenes, opciones = {}) {
 
         $banda.find(".carrusel-pista").remove();
         $banda.prepend(
-            `<div class="carrusel-pista" aria-hidden="true" style="perspective:${+(r * CAMARA).toFixed(3)}cqw;` +
+            // Para el lector de pantalla, la pista entera es una sola imagen con su descripción
+            // (las 16 tiras por foto no le dicen nada)
+            `<div class="carrusel-pista" role="img" style="perspective:${+(r * CAMARA).toFixed(3)}cqw;` +
             `perspective-origin:50% ${o.eje}%;mask-image:${mascara};-webkit-mask-image:${mascara}">` +
             `<style>${css}</style>${baldosas}</div>`
         );
+        $banda.find(".carrusel-pista").attr("aria-label", o.descripcion);  // con attr, unas comillas en el modelo no lo rompen
         ponerVelocidad();  // si se repinta con el ratón encima, las baldosas nuevas siguen paradas
 
         // Cada vez que una baldosa da la vuelta (fuera de la vista) le pongo la foto siguiente

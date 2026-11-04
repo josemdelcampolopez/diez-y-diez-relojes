@@ -268,6 +268,18 @@
         .carrusel-titulo .marca {
             @apply text-fondo;
         }
+
+        /* Pausa del carrusel: abajo a la derecha, por encima de las fotos.
+           Con "reducir movimiento" el carrusel ya está quieto y el botón sobra */
+        .carrusel-pausa {
+            @apply absolute bottom-4 right-4 z-10;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .carrusel-pausa {
+                display: none;
+            }
+        }
     }
 </style>
 </body>

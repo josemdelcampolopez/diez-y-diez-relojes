@@ -108,6 +108,9 @@ $("#contenedor")
                 return;
             }
             avisar(res.substring(3));       // quito el "OK," del principio
-            confetti({count: 300, velocity: 300});   // animación de la librería confetti.min.js
+            // Animación de la librería confetti.min.js: sin ella si el usuario ha pedido reducir las animaciones
+            if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                confetti({count: 300, velocity: 300});
+            }
         });
     });

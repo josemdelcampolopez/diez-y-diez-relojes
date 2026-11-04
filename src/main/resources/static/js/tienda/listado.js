@@ -36,7 +36,6 @@ function mostrarRelojes(enfocar = false) {
             avisar(texto("relojes_encontrados", total));
         }
         prepararFotosTarjetas();
-        pasarFotosSolas();
     });
 }
 
@@ -144,36 +143,6 @@ function cambiarFoto($marco, indice) {
     });
 }
 
-// Las fotos de cada tarjeta pasan solas, por filas: cada 2 segundos cae una fila entera
-// a la vez y después la de debajo. Al acabar la última, vuelve a la primera
-let temporizadorFotos = null;
-const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-function pasarFotosSolas() {
-    clearInterval(temporizadorFotos);   // al volver al listado, que no queden dos temporizadores
-    let tic = 0;
-    temporizadorFotos = setInterval(() => {
-        const $marcos = $(".tarjeta-foto");
-        // Sin listado en pantalla (estás en la ficha o el carrito) no hay nada que mover
-        if ($marcos.length === 0 || document.hidden || sinMovimiento.matches) {
-            return;
-        }
-        // Cuántas tarjetas hay por fila ahora mismo (1, 2 o 3, según el ancho de la pantalla)
-        const columnas = getComputedStyle($(".rejilla-productos")[0]).gridTemplateColumns.split(" ").length;
-        const fila = tic++ % Math.ceil($marcos.length / columnas);
-        $marcos.slice(fila * columnas, (fila + 1) * columnas).each(function () {
-            const $marco = $(this);
-            // Quieta si solo tiene una foto o si el foco del teclado está en la tarjeta
-            if ($marco.data("lista").length < 2
-                || $marco.closest(".tarjeta-producto")[0].matches(":focus-within")) {
-                return;
-            }
-            cambiarFoto($marco, $marco.data("actual") + 1);
-        });
-    }, 2000);
-}
-
-
 // Igual, pero para un solo reloj. Pido a la vez sus datos y la lista de sus fotos extra;
 // cuando llegan las dos, pinto la ficha y monto el carrusel (js/carrusel.js)
 function mostrarDetalles(id) {
@@ -185,7 +154,8 @@ function mostrarDetalles(id) {
         pintar("detalles_producto", reloj[0]);
         // La portada va primero y detrás las extra, en su orden
         const imagenes = [`mostrar_imagen?id=${id}`, ...extras[0].map(foto => `mostrar_imagen_extra?id=${foto.ID}`)];
-        crearCarrusel("#carrusel_reloj", imagenes);
+        crearCarrusel("#carrusel_reloj", imagenes,
+            {descripcion: texto("fotos_de_reloj", reloj[0].MARCA_RELOJ, reloj[0].MODELO)});
         // Si venías de abajo del listado, subo para que se vea el carrusel
         window.scrollTo({top: 0});
     }).fail(() => avisar(texto("aviso_reloj_no_existe"), "error"));
