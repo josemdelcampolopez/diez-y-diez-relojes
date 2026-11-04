@@ -2,6 +2,7 @@ package com.chema.tienda.relojes.controladoresREST;
 
 
 import com.chema.tienda.relojes.model.Reloj;
+import com.chema.tienda.relojes.responseData.InfoRelojes;
 import com.chema.tienda.relojes.servicios.ServicioRelojes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,20 @@ public class RelojesREST {
     @RequestMapping("listar")
     public List<Map<String, Object>> listar () {
         return servicioRelojes.obtenerJSONrelojes();
+    }
+
+    // Listado de la tienda: una página de 10 relojes y el total de resultados.
+    // listar se queda como estaba porque el hero 3D necesita la lista completa
+    @RequestMapping("buscar")
+    public InfoRelojes buscar(
+            @RequestParam(name = "busqueda", defaultValue = "") String busqueda,
+            @RequestParam(name = "comienzo", defaultValue = "0") Integer comienzo) {
+
+        InfoRelojes info = new InfoRelojes();
+        info.setTotalRelojes(servicioRelojes.obtenerTotalRelojes(busqueda));
+        // Un comienzo negativo daría un error de SQL
+        info.setRelojes(servicioRelojes.obtenerJSONrelojes(busqueda, Math.max(0, comienzo)));
+        return info;
     }
 
 

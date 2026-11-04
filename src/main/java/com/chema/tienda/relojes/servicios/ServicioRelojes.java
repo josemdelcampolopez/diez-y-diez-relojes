@@ -27,6 +27,8 @@ public interface ServicioRelojes {
 
     List<Map<String, Object>> obtenerJSONrelojes();
 
+    List<Map<String, Object>> obtenerJSONrelojes(String busqueda, int comienzo);
+
     Map<String, Object> obtenerJSONRelojPorId(Long id);
 
     String validarImagen(MultipartFile archivo, boolean esPrincipal);

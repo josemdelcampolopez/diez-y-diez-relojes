@@ -1,5 +1,18 @@
 <!-- Rejilla del listado: 1, 2 o 3 columnas según el ancho (estilos en fragments/estilos/productos.html).
      Mustache repite la tarjeta por cada elemento del array. Las claves van en mayúsculas, como las devuelve H2. -->
+
+<!-- ===== BUSCADOR Y PAGINACIÓN =====
+     js/tienda/listado.js rellena el buscador y el total y oculta Anterior/Siguiente cuando no proceden -->
+<div class="mb-6 flex flex-wrap items-end gap-4">
+    <label class="grid gap-1">
+        <span>{{t.adm_rel_buscar}}</span>
+        <input type="search" id="titulo_buscador" class="campo">
+    </label>
+    <p aria-live="polite">{{t.adm_total_resultados}} <span id="total_resultados"></span></p>
+    <button type="button" id="enlace_anterior" class="btn btn-secundario">{{t.adm_anterior}}</button>
+    <button type="button" id="enlace_siguiente" class="btn btn-secundario">{{t.adm_siguiente}}</button>
+</div>
+
 <div class="rejilla-productos">
     {{#.}}
     <article class="tarjeta tarjeta-producto">
