@@ -25,9 +25,20 @@ public class ControladorRelojes {
     private ServicioCategorias servicioCategorias;
 
     @RequestMapping("gestionarRelojes")
-    public String gestionarRelojes(Model model) {
+    public String gestionarRelojes(
+            @RequestParam(name = "busqueda", defaultValue = "") String busqueda,
+            @RequestParam(name = "comienzo", defaultValue = "0") Integer comienzo,
+            Model model) {
 
-        model.addAttribute("relojes", servicioRelojes.obtenerRelojes());
+        // Un comienzo negativo en la URL haría fallar setFirstResult
+        comienzo = Math.max(0, comienzo);
+        model.addAttribute("relojes",
+                servicioRelojes.obtenerRelojesPorMarcaOModeloYComienzoYFin(busqueda, comienzo, 10));
+        // La vista usa siguiente y anterior para formar los enlaces
+        model.addAttribute("siguiente", comienzo + 10);
+        model.addAttribute("anterior", comienzo - 10);
+        model.addAttribute("total", servicioRelojes.obtenerTotalRelojes(busqueda));
+        model.addAttribute("busqueda", busqueda);
         return "admin/producto/gestionar_productos";
     }
 
@@ -78,7 +89,7 @@ public class ControladorRelojes {
             model.addAttribute("error", e.getMessage());
         }
 
-        return gestionarRelojes(model);
+        return gestionarRelojes("", 0, model);
     }
 
 
@@ -117,7 +128,7 @@ public class ControladorRelojes {
             return "admin/producto/editar_producto";
         } else {
             servicioRelojes.guardarCambiosReloj(relojEditar);
-            return gestionarRelojes(model);
+            return gestionarRelojes("", 0, model);
         }
 
     }
