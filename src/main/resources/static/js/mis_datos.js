@@ -34,3 +34,20 @@ $("#contenedor").on("submit", "#form_mis_datos", function (e) {
         mostrarMisDatos();   // repinta para que el checkbox y la vista previa reflejen lo guardado
     });
 });
+
+// Cambiar contraseña: el servidor responde "OK" o el texto del error
+$("#contenedor").on("submit", "#form_mis_datos_pass", function (e) {
+    e.preventDefault();
+    $.post("restUsuarios/cambiarPass", {
+        actual: this.actual.value,
+        nueva: this.nueva.value,
+        repetir: this.repetir.value
+    }).done(res => {
+        if (res !== "OK") {
+            avisar(res, "error");
+            return;
+        }
+        avisar(texto("md_pass_cambiada"));
+        this.reset();
+    });
+});

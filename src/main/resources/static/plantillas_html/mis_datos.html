@@ -53,4 +53,25 @@
     </div>
 </form>
 
-<!-- Aquí irá el formulario de cambiar contraseña (Task B2) -->
+<form id="form_mis_datos_pass" class="formulario mt-10">
+    <h3 class="etiqueta md:col-span-2">{{t.md_pass_titulo}}</h3>
+
+    <div class="grupo md:col-span-2">
+        <label for="pass_actual" class="etiqueta">{{t.md_pass_actual}}</label>
+        <input type="password" id="pass_actual" name="actual" autocomplete="current-password" class="campo">
+    </div>
+
+    <div class="grupo">
+        <label for="pass_nueva" class="etiqueta">{{t.md_pass_nueva}}</label>
+        <input type="password" id="pass_nueva" name="nueva" autocomplete="new-password" class="campo">
+    </div>
+
+    <div class="grupo">
+        <label for="pass_repetir" class="etiqueta">{{t.md_pass_repetir}}</label>
+        <input type="password" id="pass_repetir" name="repetir" autocomplete="new-password" class="campo">
+    </div>
+
+    <div class="flex justify-end border-t border-borde pt-5 md:col-span-2">
+        <button type="submit" class="btn btn-primario">{{t.md_pass_cambiar}}</button>
+    </div>
+</form>

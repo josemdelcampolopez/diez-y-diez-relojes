@@ -170,6 +170,36 @@ public class UsuariosREST {
         return "OK," + u.getNombre() + "," + (u.getImagenAvatar() != null ? "1" : "0");
     }
 
+    // Cambia la contraseña. Todo se comprueba antes de tocar el usuario (ver guardarMisDatos)
+    @RequestMapping("cambiarPass")
+    public String cambiarPass(@RequestParam(value = "actual", defaultValue = "") String actual,
+                              @RequestParam(value = "nueva", defaultValue = "") String nueva,
+                              @RequestParam(value = "repetir", defaultValue = "") String repetir,
+                              HttpServletRequest request) {
+        Usuario sesion = (Usuario) request.getSession().getAttribute("usuario_identificado");
+        if (sesion == null) {
+            return mensajes.getMessage("err_identificate");
+        }
+
+        Usuario u = servicioUsuarios.obtenerUsuarioPorId(sesion.getId());
+        if (!u.getPass().equals(actual)) {
+            return mensajes.getMessage("err_pass_actual");
+        }
+        if (!nueva.equals(repetir)) {
+            return mensajes.getMessage("err_pass_distintas");
+        }
+        // Aplica las anotaciones de "pass" sin crear un Usuario
+        Set<ConstraintViolation<Usuario>> errores = validator.validateValue(Usuario.class, "pass", nueva);
+        if (!errores.isEmpty()) {
+            return errores.iterator().next().getMessage();
+        }
+
+        u.setPass(nueva);
+        servicioUsuarios.actualizarUsuario(u);
+        request.getSession().setAttribute("usuario_identificado", u);
+        return "OK";
+    }
+
     // Cierra la sesión del usuario de la tienda. Solo borro su variable de sesión
     // (no invalido la sesión entera) para no cerrar también la del admin
     @RequestMapping("cerrarSesion")
