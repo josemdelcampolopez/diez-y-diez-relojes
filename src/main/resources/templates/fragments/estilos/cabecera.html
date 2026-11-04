@@ -75,8 +75,9 @@
         }
 
         /* Acceso al admin: en escritorio solo el icono (el texto queda para lectores de pantalla) */
+        /* min-w-11: en escritorio solo queda el icono y medía 20 px de ancho (WCAG 2.5.8 pide 24) */
         .cabecera-admin {
-            @apply inline-flex min-h-11 items-center gap-2 rounded-sm text-base font-medium text-fondo transition-colors duration-200 ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo lg:ml-auto lg:text-terciario;
+            @apply inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-sm text-base font-medium text-fondo transition-colors duration-200 ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fondo lg:ml-auto lg:text-terciario;
         }
 
         /* Usuario identificado: avatar con su inicial y desplegable */

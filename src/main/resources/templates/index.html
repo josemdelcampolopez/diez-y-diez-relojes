@@ -41,8 +41,9 @@
                 <span class="lg:sr-only" th:text="#{nav_admin}"></span>
             </a>
             <div th:replace="~{fragments/tienda :: idiomas}"></div>
-            <a href="#" data-accion="identificarme" class="nav-enlace solo-anonimo" th:text="#{nav_identificarme}"></a>
-            <a href="#" data-accion="registrarme" class="btn btn-claro solo-anonimo" th:text="#{nav_registrarme}"></a>
+            <!-- Identificarse es lo que hacen casi todos (y el login ya enlaza al registro): por eso es el botón -->
+            <a href="#" data-accion="registrarme" class="nav-enlace solo-anonimo" th:text="#{nav_registrarme}"></a>
+            <a href="#" data-accion="identificarme" class="btn btn-claro solo-anonimo" th:text="#{nav_identificarme}"></a>
         </nav>
 
         <!-- Usuario identificado: avatar con su inicial y desplegable (solo con sesión) -->
