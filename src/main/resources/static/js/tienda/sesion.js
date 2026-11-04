@@ -72,6 +72,9 @@ function cerrarSesion() {
         nombre_login = "";
         avatar_login = false;
         pendienteCarrito = null;
+        // Lo escrito en el checkout (con la tarjeta) no debe verlo quien entre después
+        datosPedido.paso1 = datosPedido.paso2 = null;
+        datosPedido.motivo = "";
         pintarSesion();
         mostrarRelojes();
     });

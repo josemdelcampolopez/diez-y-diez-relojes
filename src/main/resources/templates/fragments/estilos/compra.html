@@ -84,6 +84,15 @@
         }
 
         /* ===== CHECKOUT (plantillas_html/check_out_1..4.html) ===== */
+        /* Mensaje de error debajo de su campo (lo pone marcarError en js/tienda/pedido.js) */
+        .error-campo {
+            @apply text-sm font-medium text-error;
+        }
+
+        .campo[aria-invalid="true"] {
+            @apply border-error;
+        }
+
         /* Indicador: 4 pasos en fila. El número lo pone counter(); el actual lleva aria-current="step" */
         .pasos-pedido {
             @apply mt-6 grid grid-cols-4 gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-texto-atenuado;
