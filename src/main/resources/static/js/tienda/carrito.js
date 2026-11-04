@@ -4,7 +4,8 @@
 // subtotales, total y qué botones − y + hay que desactivar
 function mostrar_productos_carrito() {
     if (nombre_login == "") {
-        avisar(texto("aviso_identificate_ver"), "error")
+        avisar(texto("aviso_identificate_ver"))
+        mostrar_login()
         return
     }
     $.get("restCarrito/obtenerProductos").done(
@@ -34,6 +35,21 @@ function cambiarCantidad(id, cantidad) {
     })
 }
 
+// Reloj que se quiso añadir sin sesión: {id, cantidad}. Se añade al identificarse
+// y se olvida al cerrar sesión (sesion.js)
+let pendienteCarrito = null
+
+// Mando a un servicio REST el id y la cantidad del reloj
+function anadirAlCarrito(id, cantidad) {
+    $.post("restCarrito/agregarProducto", {id, cantidad}).done(function (res) {
+        if (res !== "OK") {
+            avisar(res, "error")
+            return
+        }
+        avisar(texto("aviso_anadido"))
+    })
+}
+
 // Eventos delegados en #contenedor (lo que pinta Mustache): ver la explicación en tienda.js
 $("#contenedor")
 
@@ -42,22 +58,14 @@ $("#contenedor")
         e.preventDefault();
         const idProducto = $(this).data("carrito")
         const cantidad = Number($("#cantidad_" + idProducto).val()) || 1
+        // Sin sesión: guardo el reloj y llevo al login; al entrar lo añade mostrar_login (sesion.js)
         if (nombre_login == "") {
-            avisar(texto("aviso_identificate_anadir"), "error")
+            pendienteCarrito = {id: idProducto, cantidad}
+            avisar(texto("aviso_identificate_anadir"))
+            mostrar_login()
             return
         }
-        // alert("Agregar producto de id " + idProducto + " al carrito de " + nombre_login)
-        // Tenemos que mandar a un servicio REST la id y la cantidad del producto
-        $.post("restCarrito/agregarProducto", {
-            id: idProducto,
-            cantidad: cantidad
-        }).done(function (res){
-            if (res !== "OK") {
-                avisar(res, "error")
-                return
-            }
-            avisar(texto("aviso_anadido"))
-        })
+        anadirAlCarrito(idProducto, cantidad)
     })
 
     // Botones − y + del carrito: data-sumar vale -1 o 1 ------------------------------- CANTIDAD

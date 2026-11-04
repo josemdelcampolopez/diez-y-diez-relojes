@@ -26,6 +26,11 @@ function mostrar_login() {
                 // Aprovechamos y listamos los productos
                 avisar(texto("aviso_hola", nombre_login))
                 mostrarRelojes()
+                // Si venía de "Al carrito" sin sesión, añado ahora ese reloj (carrito.js)
+                if (pendienteCarrito) {
+                    anadirAlCarrito(pendienteCarrito.id, pendienteCarrito.cantidad)
+                    pendienteCarrito = null
+                }
             })
         }
     )
@@ -66,6 +71,7 @@ function cerrarSesion() {
     $.post("restUsuarios/cerrarSesion").done(function () {
         nombre_login = "";
         avatar_login = false;
+        pendienteCarrito = null;
         pintarSesion();
         mostrarRelojes();
     });
