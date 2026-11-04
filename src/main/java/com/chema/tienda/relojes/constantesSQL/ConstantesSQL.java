@@ -84,4 +84,16 @@ public class ConstantesSQL {
                     "GROUP BY u.id, u.nombre, u.apellidos, u.email, u.telefono\n" +
                     "ORDER BY gastado DESC, u.id";
 
+
+    // Una fila por reloj de cada pedido del usuario; mis_pedidos.js las agrupa por ID.
+    // Sin los EnProceso (carritos a medias). Precio actual del reloj, como en SQL_CLIENTES
+    public static final String SQL_MIS_PEDIDOS =
+            "SELECT p.id, p.fecha, p.estado, p.nombre_completo, p.direccion, p.provincia, p.codigo_postal,\n" +
+                    "       r.id AS reloj_id, r.marca_reloj, r.modelo, r.precio, pp.cantidad\n" +
+                    "FROM pedido AS p\n" +
+                    "JOIN producto_pedido AS pp ON pp.pedido_id = p.id\n" +
+                    "JOIN tabla_relojes AS r ON r.id = pp.reloj_id\n" +
+                    "WHERE p.usuario_id = :usuario_id AND p.estado <> 'EnProceso'\n" +
+                    "ORDER BY p.id DESC, pp.id";
+
 }

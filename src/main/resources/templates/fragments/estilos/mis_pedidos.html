@@ -7,6 +7,43 @@
 <style th:fragment="estilos" type="text/tailwindcss">
     @layer components {
         /* ===== MIS PEDIDOS (plantillas_html/mis_pedidos.html) ===== */
+        .lista-pedidos {
+            @apply mt-2 flex flex-col gap-4;
+        }
+
+        .pedido {
+            @apply rounded-md border border-borde bg-superficie-elevada p-4 sm:p-5;
+        }
+
+        /* Cabecera clicable: título, fecha, estado y total; salta de línea en el móvil */
+        .pedido > summary {
+            @apply flex cursor-pointer flex-wrap items-center gap-x-4 gap-y-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-principal;
+        }
+
+        .pedido > summary .precio {
+            @apply ml-auto;
+        }
+
+        .pedido[open] > summary {
+            @apply mb-3 border-b border-borde pb-3;
+        }
+
+        /* Foto | datos, sin columna de acciones */
+        .linea-pedido {
+            @apply grid grid-cols-[5rem_1fr] items-center gap-x-4 py-4;
+        }
+
+        .chip-estado {
+            @apply rounded-full border border-borde px-3 py-0.5 text-xs font-semibold uppercase tracking-wider text-texto-atenuado;
+        }
+
+        .chip-estado[data-estado="Completado"] {
+            @apply border-exito text-exito;
+        }
+
+        .chip-estado[data-estado="Incidencia"] {
+            @apply border-error text-error;
+        }
     }
 </style>
 </body>
