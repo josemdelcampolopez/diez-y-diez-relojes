@@ -75,6 +75,18 @@ public class ServicioRelojesImplJPA implements ServicioRelojes {
     }
 
     @Override
+    public List<Reloj> obtenerRelojesPorMarcaOModeloYComienzoYFin(String busqueda, int comienzo, int resultadosPorPagina) {
+        return entityManager.createQuery("select r from Reloj r where lower(r.marca) like lower(:busqueda) or lower(r.modelo) like lower(:busqueda) order by r.id").setParameter("busqueda", "%" + busqueda + "%").setFirstResult(comienzo).setMaxResults(resultadosPorPagina).getResultList();
+    }
+
+    @Override
+    public int obtenerTotalRelojes(String busqueda) {
+        Query q = entityManager.createNativeQuery(ConstantesSQL.SQL_OBTENER_TOTAL_RELOJES);
+        q.setParameter("busqueda", "%" + busqueda.toLowerCase() + "%");
+        return Integer.parseInt(q.getSingleResult().toString());
+    }
+
+    @Override
     public List<Map<String, Object>> obtenerRelojesStockBajo() {
         return ((NativeQueryImpl) entityManager.createNativeQuery(ConstantesSQL.SQL_STOCK_BAJO))
                 .setTupleTransformer(AliasToEntityMapResultTransformer.INSTANCE).getResultList();

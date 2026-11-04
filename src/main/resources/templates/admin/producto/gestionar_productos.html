@@ -20,6 +20,11 @@
             </label>
             <input type="submit" th:value="#{adm_buscar}" class="btn btn-secundario">
         </form>
+        <div class="mt-4 flex flex-wrap items-center gap-4">
+            <span><span th:text="#{adm_total_resultados}"></span> <span th:text="${total}"></span></span>
+            <a th:if="${anterior >= 0}" th:href="@{gestionarRelojes(comienzo=${anterior}, busqueda=${busqueda})}" th:text="#{adm_anterior}"></a>
+            <a th:if="${siguiente < total}" th:href="@{gestionarRelojes(comienzo=${siguiente}, busqueda=${busqueda})}" th:text="#{adm_siguiente}"></a>
+        </div>
         <p th:if="${error}" th:text="${error}" class="aviso-error"></p>
         <p th:if="${#lists.isEmpty(relojes)}" class="vacio" th:text="#{adm_rel_vacio}"></p>
 

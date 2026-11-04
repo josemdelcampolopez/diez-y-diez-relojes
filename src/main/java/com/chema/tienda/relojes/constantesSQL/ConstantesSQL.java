@@ -96,4 +96,7 @@ public class ConstantesSQL {
                     "WHERE p.usuario_id = :usuario_id AND p.estado <> 'EnProceso'\n" +
                     "ORDER BY p.id DESC, pp.id";
 
+    public static final String SQL_OBTENER_TOTAL_RELOJES =
+            "SELECT COUNT(id) FROM tabla_relojes WHERE LOWER(marca_reloj) LIKE :busqueda OR LOWER(modelo) LIKE :busqueda";
+
 }
