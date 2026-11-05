@@ -33,7 +33,7 @@
         <label for="caducidad_tarjeta" class="etiqueta">{{t.pago_caducidad}}</label>
         <input type="text" id="caducidad_tarjeta" value="{{caducidad}}" required pattern="(0[1-9]|1[0-2])/[0-9]{2}" data-error="error_caducidad" autocomplete="cc-exp" placeholder="{{t.pago_formato}}" class="campo">
     </div>
-    <!-- Justo antes de pagar: cuánto y la tranquilidad de que es una tienda de prácticas -->
+    <!-- Justo antes de pagar: cuánto y la tranquilidad del cambio en 30 días -->
     <p class="texto-ayuda md:col-span-2">{{t.total}}: <strong class="precio">{{total}}&nbsp;€</strong> · {{t.confianza_pago}}</p>
     <div class="flex flex-wrap items-center gap-4 border-t border-borde pt-5 md:col-span-2">
         <button type="button" data-volver="1" class="btn btn-secundario">{{t.volver}}</button>
