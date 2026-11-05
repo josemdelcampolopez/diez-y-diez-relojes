@@ -2,12 +2,8 @@
 
 // Pido los productos del carrito y los pinto. Antes calculo lo que Mustache no sabe hacer:
 // subtotales, total y qué botones − y + hay que desactivar
+// Sin sesión, el servidor devuelve el carrito de invitado (CarritoREST)
 function mostrar_productos_carrito() {
-    if (nombre_login == "") {
-        avisar(texto("aviso_identificate_ver"))
-        mostrar_login()
-        return
-    }
     $.get("restCarrito/obtenerProductos").done(
         function (res) {
             let total = 0
@@ -35,10 +31,6 @@ function cambiarCantidad(id, cantidad) {
     })
 }
 
-// Reloj que se quiso añadir sin sesión: {id, cantidad}. Se añade al identificarse
-// y se olvida al cerrar sesión (sesion.js)
-let pendienteCarrito = null
-
 // Mando a un servicio REST el id y la cantidad del reloj
 function anadirAlCarrito(id, cantidad) {
     $.post("restCarrito/agregarProducto", {id, cantidad}).done(function (res) {
@@ -58,13 +50,6 @@ $("#contenedor")
         e.preventDefault();
         const idProducto = $(this).data("carrito")
         const cantidad = Number($("#cantidad_" + idProducto).val()) || 1
-        // Sin sesión: guardo el reloj y llevo al login; al entrar lo añade mostrar_login (sesion.js)
-        if (nombre_login == "") {
-            pendienteCarrito = {id: idProducto, cantidad}
-            avisar(texto("aviso_identificate_anadir"))
-            mostrar_login()
-            return
-        }
         anadirAlCarrito(idProducto, cantidad)
     })
 

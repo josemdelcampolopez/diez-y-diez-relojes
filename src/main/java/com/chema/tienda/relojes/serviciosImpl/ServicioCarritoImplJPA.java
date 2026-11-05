@@ -132,5 +132,78 @@ public class ServicioCarritoImplJPA implements ServicioCarrito {
         return "OK";
     }
 
+    // ----- Carrito de invitado (el Map vive en la sesión: ver CarritoREST) -----
+
+    @Override
+    public String agregarProductoInvitado(Map<Long, Integer> carrito, long idProducto, int cantidad) {
+        Reloj reloj = entityManager.find(Reloj.class, idProducto);
+        if (reloj == null) {
+            return mensajes.getMessage("aviso_reloj_no_existe");
+        }
+        if (cantidad < 1 || cantidad > reloj.getStock()) {
+            return mensajes.getMessage("err_cantidad_rango", new Object[]{reloj.getStock()});
+        }
+        int yaTiene = carrito.getOrDefault(idProducto, 0);
+        if (yaTiene + cantidad > reloj.getStock()) {
+            return mensajes.getMessage("err_quedan_ya_tienes", new Object[]{reloj.getStock(), yaTiene});
+        }
+        carrito.put(idProducto, yaTiene + cantidad);
+        return "OK";
+    }
+
+    @Override
+    public String cambiarCantidadInvitado(Map<Long, Integer> carrito, long idProducto, int cantidad) {
+        Reloj reloj = entityManager.find(Reloj.class, idProducto);
+        if (reloj == null || !carrito.containsKey(idProducto)) {
+            return mensajes.getMessage("err_ya_no_en_carrito");
+        }
+        if (cantidad < 1 || cantidad > reloj.getStock()) {
+            return mensajes.getMessage("err_cantidad_rango", new Object[]{reloj.getStock()});
+        }
+        carrito.put(idProducto, cantidad);
+        return "OK";
+    }
+
+    @Override
+    public List<Map<String, Object>> obtenerProductosInvitado(Map<Long, Integer> carrito) {
+        // "IN ()" vacío no es SQL válido
+        if (carrito.isEmpty()) {
+            return List.of();
+        }
+        Query query = entityManager.createNativeQuery(ConstantesSQL.SQL_OBTENER_RELOJES_CARRITO_INVITADO);
+        query.setParameter("ids", carrito.keySet());
+        NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
+        nativeQuery.setTupleTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+        List<Map<String, Object>> filas = nativeQuery.getResultList();
+        // H2 devuelve los alias en mayúsculas, como espera carrito.js
+        for (Map<String, Object> fila : filas) {
+            fila.put("CANTIDAD", carrito.get(((Number) fila.get("RELOJ_ID")).longValue()));
+        }
+        return filas;
+    }
+
+    @Override
+    public boolean pasarCarritoInvitado(long idUsuario, Map<Long, Integer> carrito) {
+        boolean ajustado = false;
+        for (Map.Entry<Long, Integer> linea : carrito.entrySet()) {
+            if ("OK".equals(agregarProducto(idUsuario, linea.getKey(), linea.getValue()))) {
+                continue;
+            }
+            // No cabe (o el reloj ya no está): dejo en el carrito todo el stock que haya
+            ajustado = true;
+            Reloj reloj = entityManager.find(Reloj.class, linea.getKey());
+            if (reloj == null || reloj.getStock() < 1) {
+                continue;
+            }
+            ProductoCarrito pc = buscarProductoCarrito(idUsuario, linea.getKey());
+            if (pc != null) {
+                pc.setCantidad(reloj.getStock());
+            } else {
+                agregarProducto(idUsuario, linea.getKey(), reloj.getStock());
+            }
+        }
+        return ajustado;
+    }
+
 
 }

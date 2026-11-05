@@ -87,7 +87,13 @@ function mostrarRealizado(id) {
 $("#contenedor")
 
     // Botón "Realizar pedido" del carrito ------------------------------------------- PEDIDO
+    // Sin sesión, primero el login: al entrar vuelve al carrito con lo añadido (sesion.js)
     .on("click", "#realizar_pedido", function () {
+        if (nombre_login == "") {
+            avisar(texto("aviso_identificate_pedido"))
+            mostrar_login()
+            return
+        }
         pintarPaso1()
     })
 

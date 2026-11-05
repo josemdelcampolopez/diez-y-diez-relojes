@@ -23,13 +23,16 @@ function mostrar_login() {
                 nombre_login = partes[1]
                 avatar_login = partes[2] === "1"
                 pintarSesion()
-                // Aprovechamos y listamos los productos
                 avisar(texto("aviso_hola", nombre_login))
-                mostrarRelojes()
-                // Si venía de "Al carrito" sin sesión, añado ahora ese reloj (carrito.js)
-                if (pendienteCarrito) {
-                    anadirAlCarrito(pendienteCarrito.id, pendienteCarrito.cantidad)
-                    pendienteCarrito = null
+                // partes[3]: "C" si traía carrito de invitado (ya está en el suyo), "A" si además
+                // alguna cantidad se ha ajustado al stock. Entonces vuelve al carrito; si no, al listado
+                if (partes[3]) {
+                    if (partes[3] === "A") {
+                        avisar(texto("aviso_carrito_ajustado"))
+                    }
+                    mostrar_productos_carrito()
+                } else {
+                    mostrarRelojes()
                 }
             })
         }
@@ -71,7 +74,6 @@ function cerrarSesion() {
     $.post("restUsuarios/cerrarSesion").done(function () {
         nombre_login = "";
         avatar_login = false;
-        pendienteCarrito = null;
         // Lo escrito en el checkout (con la tarjeta) no debe verlo quien entre después
         datosPedido.paso1 = datosPedido.paso2 = null;
         datosPedido.motivo = "";

@@ -44,6 +44,12 @@ public class ConstantesSQL {
                     "AND\n" +
                     "pc.carrito_id = :carrito_id";
 
+    // Carrito de invitado: las mismas columnas sin la cantidad, que está en la sesión
+    // (la añade ServicioCarritoImplJPA.obtenerProductosInvitado)
+    public static final String SQL_OBTENER_RELOJES_CARRITO_INVITADO =
+            "SELECT tr.id as reloj_id, tr.precio as precio, tr.stock, tr.marca_reloj, tr.modelo " +
+                    "FROM tabla_relojes AS tr WHERE tr.id IN (:ids)";
+
 
     public static final String SQL_BORRAR_PRODUCTOS_CARRITO =
             "DELETE FROM producto_carrito WHERE carrito_id = :carrito_id";

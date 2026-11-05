@@ -4,6 +4,7 @@ package com.chema.tienda.relojes.controladoresREST;
 // en la parte pública
 
 import com.chema.tienda.relojes.model.Usuario;
+import com.chema.tienda.relojes.servicios.ServicioCarrito;
 import com.chema.tienda.relojes.servicios.ServicioUsuarios;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +30,9 @@ public class UsuariosREST {
 
     @Autowired
     private ServicioUsuarios servicioUsuarios;
+
+    @Autowired
+    private ServicioCarrito servicioCarrito;
 
     @Autowired
     private Validator validator;
@@ -76,6 +80,7 @@ public class UsuariosREST {
     }
 
 
+    @SuppressWarnings("unchecked")
     @RequestMapping("identificarUsuario")
     public String identificarUsuario(@RequestParam("email") String email,
                                      @RequestParam("pass") String pass,
@@ -92,6 +97,13 @@ public class UsuariosREST {
             request.getSession().setAttribute("usuario_identificado", u);
             // "OK,Nombre,1" si tiene foto de avatar; "OK,Nombre,0" si no
             respuesta = "OK," + u.getNombre() + "," + (u.getImagenAvatar() != null ? "1" : "0");
+            // Lo que añadió como invitado (CarritoREST) pasa a su carrito. Cuarto dato:
+            // "C" si había carrito y "A" si además alguna cantidad se ha ajustado al stock
+            Map<Long, Integer> invitado = (Map<Long, Integer>) request.getSession().getAttribute("carrito_invitado");
+            if (invitado != null && !invitado.isEmpty()) {
+                respuesta += servicioCarrito.pasarCarritoInvitado(u.getId(), invitado) ? ",A" : ",C";
+            }
+            request.getSession().removeAttribute("carrito_invitado");
         }else{
             respuesta = mensajes.getMessage("err_credenciales");
         }
