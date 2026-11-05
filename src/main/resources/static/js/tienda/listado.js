@@ -6,6 +6,16 @@ let comienzo_relojes = 0;
 let ultima_peticion = 0;
 let esperaBuscador = null;
 
+// Foto que no carga (p. ej. un reloj sin imagen): pongo el logo en su lugar.
+// "error" no sube por el DOM, por eso se escucha en la fase de captura (true) y no con jQuery
+document.getElementById("contenedor").addEventListener("error", function (e) {
+    const img = e.target;
+    if (img.tagName === "IMG" && !img.classList.contains("foto-respaldo")) {
+        img.classList.add("foto-respaldo");
+        img.src = "favicon.svg";
+    }
+}, true);
+
 // Pido una página de relojes al servidor (JSON) y la pinto con la plantilla del listado.
 // Después preparo las fotos de cada tarjeta (flechas y puntos).
 // "enfocar" vuelve a poner el cursor en el buscador: solo cuando se está escribiendo,
@@ -33,7 +43,7 @@ function mostrarRelojes(enfocar = false) {
         if (enfocar) {
             $("#titulo_buscador").focus();
             // El lector de pantalla oye cuántos hay (#aviso tiene role="status")
-            avisar(texto("relojes_encontrados", total));
+            avisar(texto(total === 1 ? "reloj_encontrado" : "relojes_encontrados", total));
         }
         prepararFotosTarjetas();
     });

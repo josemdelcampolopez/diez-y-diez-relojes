@@ -72,6 +72,12 @@
             @apply h-full w-full object-cover;
         }
 
+        /* Títulos que reciben el foco desde enfocarTitulo() (js/tienda/nucleo.js): el foco es para
+           el teclado y el lector, no hace falta pintarlo (no son controles) */
+        [tabindex="-1"]:focus {
+            outline: none;
+        }
+
         /* ===== LOGO ===== */
         .logo-reloj {
             @apply h-9 w-9 shrink-0;
