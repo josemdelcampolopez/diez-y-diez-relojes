@@ -77,6 +77,12 @@ function pintarPaso3() {
     })
 }
 
+// Pantalla «Pedido realizado». Sin id (petición fallida o lista vacía) sale sin «Pedido nº»
+function mostrarRealizado(id) {
+    pintar("pedido_realizado", {NUMERO: id > 0 ? texto("mp_pedido", id) : ""})
+    window.scrollTo({top: 0})
+}
+
 // Eventos delegados en #contenedor (lo que pinta Mustache): ver la explicación en tienda.js
 $("#contenedor")
 
@@ -155,7 +161,7 @@ $("#contenedor")
         })
     })
 
-    // Paso 4 confirmar
+    // Paso 4 confirmar. Pantalla final con el número de pedido (si lo hay)
     .on("click", "#confirmar_pedido", function () {
         $.post("restPedidos/confirmar").done(function (res) {
             if (res !== "OK") {
@@ -165,11 +171,10 @@ $("#contenedor")
             // Pedido hecho: el siguiente empieza en blanco (o con los datos de la cuenta)
             datosPedido.paso1 = datosPedido.paso2 = null
             datosPedido.motivo = ""
-            pintar("pedido_realizado")
-            window.scrollTo({top: 0})
-            // El confeti se mueve mucho: sin él si el usuario ha pedido reducir las animaciones
-            if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-                confetti({count: 300, velocity: 300})
-            }
+            // "confirmar" no devuelve el id: el pedido recién hecho es el de id mayor de Mis pedidos.
+            // Si la petición falla, la pantalla sale igual, sin el número
+            $.getJSON("restPedidos/misPedidos")
+                .done(filas => mostrarRealizado(Math.max(...filas.map(f => f.ID))))
+                .fail(() => mostrarRealizado())
         })
     });

@@ -125,6 +125,41 @@
         .pasos-pedido li[aria-current="step"]::before {
             @apply border-acento bg-acento text-white;
         }
+
+        /* ===== PEDIDO REALIZADO (plantillas_html/pedido_realizado.html) =====
+           Las agujas llegan a las 10:10 una sola vez: el minutero da una vuelta y el horario avanza una hora */
+        .cierre-reloj {
+            @apply h-[120px] w-[120px];
+        }
+
+        .cierre-horas,
+        .cierre-minutos {
+            transform-origin: 24px 24px;
+            animation: 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .cierre-horas {
+            animation-name: cierre-horas;
+        }
+
+        .cierre-minutos {
+            animation-name: cierre-minutos;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cierre-horas,
+            .cierre-minutos {
+                animation: none;
+            }
+        }
+    }
+
+    @keyframes cierre-horas {
+        from { transform: rotate(-30deg); }
+    }
+
+    @keyframes cierre-minutos {
+        from { transform: rotate(-360deg); }
     }
 </style>
 </body>
