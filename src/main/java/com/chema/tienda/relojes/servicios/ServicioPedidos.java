@@ -26,7 +26,9 @@ public interface ServicioPedidos {
     void procesarPaso2(String titular, String numero,
                        String tipoTarjeta, String caducidad, long idUsuario);
 
-    void procesarPaso3(String motivo, long idUsuario);
+    // Respuesta opcional de «Pedido realizado» a un pedido ya confirmado.
+    // Devuelve "OK" o el texto del error (el pedido no existe o no es de ese usuario)
+    String guardarOpinion(long idUsuario, long idPedido, String motivo);
 
     ResumenPedido obtenerResumenPedido(long idUsuario);
     String confirmarPedido(long idUsuario);

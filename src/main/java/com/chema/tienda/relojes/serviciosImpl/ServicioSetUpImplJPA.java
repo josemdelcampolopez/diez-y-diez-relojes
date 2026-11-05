@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -139,7 +140,7 @@ public class ServicioSetUpImplJPA implements ServicioSetUp {
                     "Pedro Fernandez del Soto", "12345678912",
                     "VISA", "12/30",u1.getId()
             );
-            servicioPedidos.procesarPaso3("marca", u1.getId());
+            // Sin opinión: es opcional y se contesta después, en «Pedido realizado»
             servicioPedidos.confirmarPedido(u1.getId());
 
             // Ya tenemos un pedido en bd :)
@@ -187,14 +188,14 @@ public class ServicioSetUpImplJPA implements ServicioSetUp {
             return;
         }
 
-        Usuario[] clientes = {
+        List<Usuario> clientes = new ArrayList<>(List.of(
                 new Usuario("lucia.martin@ejemplo.com", "123", "Lucía", "Martín Gil", "611000001"),
                 new Usuario("javier.ortega@ejemplo.com", "123", "Javier", "Ortega Ruiz", "611000002"),
                 new Usuario("marta.vidal@ejemplo.com", "123", "Marta", "Vidal Soler", "611000003"),
                 new Usuario("diego.romero@ejemplo.com", "123", "Diego", "Romero Paz", "611000004"),
                 new Usuario("elena.castro@ejemplo.com", "123", "Elena", "Castro Vega", "611000005"),
                 new Usuario("hugo.navarro@ejemplo.com", "123", "Hugo", "Navarro Ibáñez", "611000006")
-        };
+        ));
         String[][] zonas = {{"Madrid", "28013"}, {"Sevilla", "41001"}, {"Valencia", "46002"},
                 {"Zaragoza", "50001"}, {"Vizcaya", "48001"}, {"Málaga", "29001"}};
         String[] motivos = {"marca", "precio", "diseno", "recomendacion"};
@@ -203,13 +204,17 @@ public class ServicioSetUpImplJPA implements ServicioSetUp {
         for (Usuario cliente : clientes) {
             entityManager.persist(cliente);
         }
+        // pepe también recibe pedidos (ya está en BD): así «Mis pedidos» tiene historial,
+        // unos con opinión y otros sin ella, y se puede probar la pregunta de «Pedido realizado»
+        entityManager.createQuery("select u from Usuario u where u.email = 'pepe@gmail.com'", Usuario.class)
+                .getResultStream().findFirst().ifPresent(clientes::add);
 
         int n = 0;
         for (int i = 0; i < pedidosPorDia.length; i++) {
             int diasAtras = pedidosPorDia.length - 1 - i;
             for (int j = 0; j < pedidosPorDia[i]; j++, n++) {
-                Usuario cliente = clientes[n % clientes.length];
-                String[] zona = zonas[n % clientes.length];
+                Usuario cliente = clientes.get(n % clientes.size());
+                String[] zona = zonas[n % zonas.length];
                 String nombre = cliente.getNombre() + " " + cliente.getApellidos();
 
                 Pedido p = new Pedido();
@@ -224,7 +229,8 @@ public class ServicioSetUpImplJPA implements ServicioSetUp {
                 p.setNumeroTarjeta("4000000000001234");
                 p.setTipoTarjeta("VISA");
                 p.setCaducidad("12/30");
-                p.setMotivoCompra(motivos[n % motivos.length]);
+                // La opinión es opcional: uno de cada tres pedidos sale sin ella
+                p.setMotivoCompra(n % 3 == 1 ? null : motivos[n % motivos.length]);
                 p.setFecha(LocalDateTime.now().minusDays(diasAtras).minusMinutes(n * 7L));
 
                 if (n % 8 == 3) {

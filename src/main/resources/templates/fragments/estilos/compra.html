@@ -93,9 +93,9 @@
             @apply border-error;
         }
 
-        /* Indicador: 4 pasos en fila. El número lo pone counter(); el actual lleva aria-current="step" */
+        /* Indicador: 3 pasos en fila. El número lo pone counter(); el actual lleva aria-current="step" */
         .pasos-pedido {
-            @apply mt-6 grid grid-cols-4 gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-texto-atenuado;
+            @apply mt-6 grid grid-cols-3 gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-texto-atenuado;
             counter-reset: paso;
         }
 
@@ -130,6 +130,11 @@
            Las agujas llegan a las 10:10 una sola vez: el minutero da una vuelta y el horario avanza una hora */
         .cierre-reloj {
             @apply h-[120px] w-[120px];
+        }
+
+        /* Pregunta opcional: separada y en segundo plano, debajo de «Seguir comprando» */
+        .opinion-pedido {
+            @apply mx-auto mt-10 max-w-md border-t border-borde pt-6;
         }
 
         .cierre-horas,

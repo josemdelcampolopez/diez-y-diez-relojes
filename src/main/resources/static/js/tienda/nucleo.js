@@ -18,7 +18,7 @@ avatar_login = false // true si el usuario identificado tiene foto de avatar
 function cargarPlantillas() {
     // Nombres de los ficheros de static/plantillas_html/ (sin el .html)
     const nombres = ["listado_productos", "detalles_producto", "registro_usuario",
-        "identificar_usuario", "carrito", "check_out_1", "check_out_2", "check_out_3", "check_out_4",
+        "identificar_usuario", "carrito", "check_out_1", "check_out_2", "check_out_4",
         "pedido_realizado", "mis_datos", "mis_pedidos"];
     // Por cada nombre pido su HTML al servidor y, cuando llega, lo guardo en "plantillas"
     const peticiones = nombres.map(nombre =>

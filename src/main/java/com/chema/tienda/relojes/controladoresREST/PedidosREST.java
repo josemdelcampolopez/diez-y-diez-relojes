@@ -72,8 +72,10 @@ public class PedidosREST {
     }
 
 
-    @RequestMapping("paso3")
-    public String paso3(@RequestParam("motivo") String motivo, HttpServletRequest request){
+    // Pregunta opcional de «Pedido realizado»: por qué eligió el reloj
+    @RequestMapping("opinion")
+    public String opinion(@RequestParam("id") Long id, @RequestParam("motivo") String motivo,
+                          HttpServletRequest request){
         Usuario u = (Usuario) request.getSession().getAttribute("usuario_identificado");
         if (u == null) {
             return mensajes.getMessage("err_identificate");
@@ -81,8 +83,7 @@ public class PedidosREST {
         if (motivo.isBlank()) {
             return mensajes.getMessage("err_elige_opcion");
         }
-        servicioPedidos.procesarPaso3(motivo, u.getId());
-        return "OK";
+        return servicioPedidos.guardarOpinion(u.getId(), id, motivo);
     }
 
     @RequestMapping("resumen")

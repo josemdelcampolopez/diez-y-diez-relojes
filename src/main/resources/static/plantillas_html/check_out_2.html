@@ -9,7 +9,6 @@
 <ol class="pasos-pedido" aria-label="{{t.pasos_pedido}}">
     <li class="hecho">{{t.paso_envio}}</li>
     <li aria-current="step">{{t.paso_pago}}</li>
-    <li>{{t.paso_opinion}}</li>
     <li>{{t.paso_resumen}}</li>
 </ol>
 
@@ -38,6 +37,6 @@
     <p class="texto-ayuda md:col-span-2">{{t.total}}: <strong class="precio">{{total}}&nbsp;€</strong> · {{t.confianza_pago}}</p>
     <div class="flex flex-wrap items-center gap-4 border-t border-borde pt-5 md:col-span-2">
         <button type="button" data-volver="1" class="btn btn-secundario">{{t.volver}}</button>
-        <button type="button" id="aceptar_paso_2" class="btn btn-primario ml-auto">{{t.continuar}}</button>
+        <button type="button" id="aceptar_paso_2" class="btn btn-primario ml-auto">{{t.ver_resumen}}</button>
     </div>
 </form>

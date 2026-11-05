@@ -139,10 +139,15 @@ public class ServicioPedidosImplJPA implements ServicioPedidos {
     }
 
     @Override
-    public void procesarPaso3(String motivo, long idUsuario) {
-        Pedido p = obtenerPedidoActual(idUsuario);
+    public String guardarOpinion(long idUsuario, long idPedido, String motivo) {
+        Pedido p = entityManager.find(Pedido.class, idPedido);
+        // Solo el dueño puede contestar por su pedido
+        if (p == null || p.getUsuario().getId() != idUsuario) {
+            return mensajes.getMessage("err_pedido_no_encontrado");
+        }
+        // p lo controla el EntityManager: al terminar la transacción se guarda solo
         p.setMotivoCompra(motivo);
-        entityManager.merge(p);
+        return "OK";
     }
 
 
@@ -164,8 +169,8 @@ public class ServicioPedidosImplJPA implements ServicioPedidos {
     @Override
     public String confirmarPedido(long idUsuario) {
         Pedido p = obtenerPedidoActual(idUsuario);
-        // Los pasos 1, 2 y 3 tienen que estar hechos
-        if (p.getNombreCompleto() == null || p.getTitularTarjeta() == null || p.getMotivoCompra() == null) {
+        // Los pasos 1 y 2 tienen que estar hechos (la opinión es opcional y va después)
+        if (p.getNombreCompleto() == null || p.getTitularTarjeta() == null) {
             return mensajes.getMessage("err_completa_pasos");
         }
 

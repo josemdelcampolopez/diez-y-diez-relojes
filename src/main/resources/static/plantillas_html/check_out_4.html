@@ -1,4 +1,4 @@
-<!-- Checkout · paso 4: resumen. Los datos los pinta js/tienda/pedido.js (handler de #aceptar_paso_3).
+<!-- Checkout · paso 3: resumen (el nombre check_out_4 viene de cuando había 4 pasos). Lo pinta pintarResumen en js/tienda/pedido.js.
      Las claves de los relojes van en mayúsculas, como en el carrito (las devuelve H2) -->
 <div class="barra-seccion">
     <div>
@@ -10,7 +10,6 @@
 <ol class="pasos-pedido" aria-label="{{t.pasos_pedido}}">
     <li class="hecho">{{t.paso_envio}}</li>
     <li class="hecho">{{t.paso_pago}}</li>
-    <li class="hecho">{{t.paso_opinion}}</li>
     <li aria-current="step">{{t.paso_resumen}}</li>
 </ol>
 
@@ -54,6 +53,6 @@
 </div>
 
 <div class="mt-6 flex flex-wrap items-center gap-4 border-t border-borde pt-5">
-    <button type="button" data-volver="3" class="btn btn-secundario">{{t.volver}}</button>
+    <button type="button" data-volver="2" class="btn btn-secundario">{{t.volver}}</button>
     <button type="button" id="confirmar_pedido" class="btn btn-primario ml-auto">{{t.confirmar_pedido}}</button>
 </div>

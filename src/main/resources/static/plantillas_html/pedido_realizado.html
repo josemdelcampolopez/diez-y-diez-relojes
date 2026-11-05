@@ -16,4 +16,25 @@
     <h2 class="titulo-seccion mt-2">{{t.realizado_titulo}}</h2>
     <p class="texto-ayuda mx-auto max-w-md">{{t.realizado_texto}}</p>
     <a href="#" data-accion="ver_relojes" class="btn btn-primario mt-7">{{t.seguir_comprando}}</a>
+
+    <!-- Pregunta opcional (antes era el paso 3 del checkout). Solo con id: la respuesta va a ese pedido.
+         La envía js/tienda/pedido.js (#form_opinion) -->
+    {{#ID}}
+    <section class="opinion-pedido">
+        <p class="texto-ayuda">{{t.opinion_texto}}</p>
+        <form id="form_opinion" data-pedido="{{ID}}" class="mt-3 flex flex-wrap items-end justify-center gap-3" novalidate>
+            <div class="grupo text-left">
+                <label for="motivo_compra" class="etiqueta">{{t.opinion_pregunta}}</label>
+                <select id="motivo_compra" class="campo">
+                    <option value="">{{t.opinion_elegir}}</option>
+                    <option value="marca">{{t.opinion_marca}}</option>
+                    <option value="precio">{{t.opinion_precio}}</option>
+                    <option value="diseno">{{t.opinion_diseno}}</option>
+                    <option value="recomendacion">{{t.opinion_recomendacion}}</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-secundario">{{t.opinion_enviar}}</button>
+        </form>
+    </section>
+    {{/ID}}
 </div>
