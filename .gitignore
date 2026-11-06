@@ -32,3 +32,18 @@ build/
 ### VS Code ###
 .vscode/
 data/
+
+### Ficheros locales (no se publican) ###
+docs/
+DESIGN.md
+PRODUCT.md
+HELP.md
+
+### Varios ###
+*.log
+logs/
+*.mv.db
+*.trace.db
+.env
+.DS_Store
+Thumbs.db

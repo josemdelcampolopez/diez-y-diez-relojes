@@ -108,7 +108,7 @@ public class ServicioSetUpImplJPA implements ServicioSetUp {
             Usuario u1 = new Usuario();
             u1.setNombre("Pepe");
             u1.setApellidos("Lopez Raya");
-            u1.setEmail("pepe@gmail.com");
+            u1.setEmail("pepe@ejemplo.com");
             u1.setPass("123");
             u1.setTelefono("666666666");
             entityManager.persist(u1);
@@ -206,7 +206,7 @@ public class ServicioSetUpImplJPA implements ServicioSetUp {
         }
         // pepe también recibe pedidos (ya está en BD): así «Mis pedidos» tiene historial,
         // unos con opinión y otros sin ella, y se puede probar la pregunta de «Pedido realizado»
-        entityManager.createQuery("select u from Usuario u where u.email = 'pepe@gmail.com'", Usuario.class)
+        entityManager.createQuery("select u from Usuario u where u.email = 'pepe@ejemplo.com'", Usuario.class)
                 .getResultStream().findFirst().ifPresent(clientes::add);
 
         int n = 0;
