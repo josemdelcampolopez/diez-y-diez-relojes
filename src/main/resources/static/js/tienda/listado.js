@@ -85,7 +85,7 @@ function prepararFotosTarjetas() {
         const puntos = lista.map((_, k) =>
             `<button type="button" class="punto-foto" data-ir="${k}" aria-label="${texto("foto_de", k + 1, lista.length)}"></button>`
         ).join("");
-        $marco.find(".puntos-foto").html(puntos);
+        $marco.find(".lista-puntos").html(puntos);
         $marco.find(".punto-foto").first().attr("aria-current", "true");
 
         // Con varias fotos, la pila lleva 4 cartas: 3 a la vista y una escondida para la que entra.
@@ -183,6 +183,12 @@ $("#contenedor")
     // Puntos: data-ir lleva la posición de la foto ----- FOTOS
     .on("click", "[data-ir]", function () {
         cambiarFoto($(this).closest(".tarjeta-foto"), $(this).data("ir"));
+    })
+
+    // Flechas: data-paso suma -1 o 1 a la foto actual (cambiarFoto da la vuelta con el %)
+    .on("click", "[data-paso]", function () {
+        const $marco = $(this).closest(".tarjeta-foto");
+        cambiarFoto($marco, $marco.data("actual") + $(this).data("paso"));
     })
 
     // Según se escribe, busco desde la primera página ----- BUSCADOR

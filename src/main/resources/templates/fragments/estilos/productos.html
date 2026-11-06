@@ -226,6 +226,11 @@
             @apply bg-acento;
         }
 
+        /* Flechas a los lados de los puntos: 24 px como los puntos, para que sea fácil pulsarlas */
+        .flecha-foto {
+            @apply inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-principal/60 transition-colors duration-200 ease-out hover:text-principal focus-visible:outline-2 focus-visible:outline-principal;
+        }
+
         /* Sin zoom si el usuario ha pedido en su sistema que se reduzcan las animaciones */
         @media (prefers-reduced-motion: reduce) {
             .tarjeta-producto:hover .carta[data-pos="0"] img {

@@ -21,12 +21,6 @@ public class RelojesREST {
     @Autowired
     private ServicioRelojes servicioRelojes;
 
-//    @RequestMapping("listar")
-//    public List<Reloj> listar () {
-//        return servicioRelojes.obtenerRelojes();
-//    }
-
-
     // Ahora que se ha complicado
     // el codigo porque hay categorias
     // vamos a tomar más control en devolver el JSON

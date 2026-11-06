@@ -86,12 +86,6 @@ function avisar(texto, tipo = "ok") {
     temporizadorAviso = setTimeout(() => $("#aviso").text(""), tipo === "error" ? 6000 : 4000);
 }
 
-// Provisional: devuelve una función que solo muestra un aviso.
-// Sirve para las opciones del menú que aún no están hechas
-function pendiente(clave) {
-    return () => avisar(texto("aviso_no_disponible", texto(clave)));
-}
-
 // Cualquier petición ($.get, $.post, $.getJSON, $.ajax) que falle (404, 500, sin red) avisa aquí,
 // en vez de quedarse la pantalla vacía sin explicación
 // El cliente ve un mensaje sencillo; el código y la URL quedan en la consola (F12) para depurar
