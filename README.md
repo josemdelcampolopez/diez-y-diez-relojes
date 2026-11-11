@@ -1,6 +1,6 @@
-# Tienda de relojes
+# Diez y Diez · Tienda de relojes
 
-Tienda online de relojes hecha con **Spring Boot**: una parte pública para comprar y un panel de administración para gestionar la tienda. Es un proyecto de 2.º curso (módulo Cliente-Servidor).
+**Diez y Diez** es una tienda online de relojes ficticia hecha con **Spring Boot**: una parte pública para comprar y un panel de administración para gestionar la tienda. Es un proyecto de 2.º curso (módulo Cliente-Servidor).
 
 ## Qué hace
 
